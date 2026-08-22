@@ -142,14 +142,11 @@ export function Movimentacao() {
     : [];
 
   const handleConfirmar = () => {
-    if (!tipo || !produtoId || !quantidade) {
-      toast.error('Preencha todos os campos obrigatórios');
-      return;
-    }
-    if (!responsavel || !matricula) {
-      toast.error('Informe o responsável e matrícula');
-      return;
-    }
+    if (!tipo) { toast.error('Selecione o tipo de movimentação (Entrada ou Saída).'); return; }
+    if (!produtoId) { toast.error('Selecione um produto para movimentar.'); return; }
+    if (!quantidade) { toast.error('Informe a quantidade a movimentar.'); return; }
+    if (!responsavel) { toast.error('Informe o nome do responsável.'); return; }
+    if (!matricula) { toast.error('Informe a matrícula do responsável.'); return; }
 
     const produto = produtos.find(p => p.id === produtoId);
     if (!produto) return;
@@ -216,13 +213,14 @@ export function Movimentacao() {
 
               {/* Smart search */}
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Busca Inteligente de Produto *</Label>
+                <Label htmlFor="mov-busca" className="text-sm font-semibold text-foreground">Busca Inteligente de Produto *</Label>
                 <div ref={searchRef} className="relative">
                   <div className={`flex items-center gap-2 border-2 rounded-xl px-3 py-2.5 transition-all ${
                     produtoSelecionadoInfo ? 'border-blue-500 bg-blue-50/50' : 'border-border bg-card'
                   } focus-within:border-blue-500`}>
-                    <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
                     <input
+                      id="mov-busca"
                       type="text"
                       value={searchQuery}
                       onChange={e => handleSearchChange(e.target.value)}
@@ -231,7 +229,7 @@ export function Movimentacao() {
                       className="flex-1 bg-transparent text-sm outline-none text-foreground placeholder:text-muted-foreground"
                     />
                     {(searchQuery || produtoSelecionadoInfo) && (
-                      <button type="button" onClick={limparSelecao} className="text-muted-foreground hover:text-foreground">
+                      <button type="button" onClick={limparSelecao} aria-label="Limpar produto selecionado" className="text-muted-foreground hover:text-foreground">
                         <X className="w-4 h-4" />
                       </button>
                     )}
@@ -302,9 +300,9 @@ export function Movimentacao() {
 
                     {serializadosProduto.length > 0 && !produtoSelecionadoInfo?.numeroSerie && (
                       <div className="mt-3 pt-3 border-t border-blue-200">
-                        <Label className="text-xs text-muted-foreground mb-1.5 block">Selecionar Unidade Específica (opcional)</Label>
+                        <Label htmlFor="mov-unidade" className="text-xs text-muted-foreground mb-1.5 block">Selecionar Unidade Específica (opcional)</Label>
                         <Select value={numeroSerieSelecionado} onValueChange={setNumeroSerieSelecionado}>
-                          <SelectTrigger className="bg-card text-sm h-8">
+                          <SelectTrigger id="mov-unidade" className="bg-card text-sm h-8">
                             <SelectValue placeholder="Selecione a unidade" />
                           </SelectTrigger>
                           <SelectContent>
@@ -325,28 +323,30 @@ export function Movimentacao() {
 
               {/* Tipo */}
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Tipo de Movimentação *</Label>
-                <div className="grid grid-cols-2 gap-3">
+                <Label id="mov-tipo-label" className="text-sm font-semibold text-foreground">Tipo de Movimentação *</Label>
+                <div className="grid grid-cols-2 gap-3" role="group" aria-labelledby="mov-tipo-label">
                   <button
                     type="button"
                     onClick={() => setTipo('Entrada')}
+                    aria-pressed={tipo === 'Entrada'}
                     className="flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-semibold text-sm transition-all"
                     style={tipo === 'Entrada' ? {
                       borderColor: '#22C55E',
                       background: 'rgba(34,197,94,0.08)',
-                      color: '#16A34A',
+                      color: '#15803D',
                     } : {
                       borderColor: 'rgba(11,24,38,0.1)',
                       background: 'transparent',
                       color: '#64748B',
                     }}
                   >
-                    <ArrowDownRight className="w-4 h-4" />
+                    <ArrowDownRight className="w-4 h-4" aria-hidden="true" />
                     Entrada
                   </button>
                   <button
                     type="button"
                     onClick={() => setTipo('Saída')}
+                    aria-pressed={tipo === 'Saída'}
                     className="flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-semibold text-sm transition-all"
                     style={tipo === 'Saída' ? {
                       borderColor: '#EF4444',
@@ -358,7 +358,7 @@ export function Movimentacao() {
                       color: '#64748B',
                     }}
                   >
-                    <ArrowUpRight className="w-4 h-4" />
+                    <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
                     Saída
                   </button>
                 </div>
@@ -366,27 +366,32 @@ export function Movimentacao() {
 
               {/* Qty */}
               <div className="space-y-2">
-                <Label>Quantidade *</Label>
-                <Input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} placeholder="0" min="1" className="rounded-xl" />
+                <Label htmlFor="mov-quantidade">Quantidade *</Label>
+                <Input
+                  id="mov-quantidade"
+                  type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} placeholder="0" min="1" className="rounded-xl"
+                  aria-invalid={!!(produtoAtual && tipo === 'Saída' && quantidade && parseInt(quantidade) > produtoAtual.quantidade)}
+                  aria-describedby={produtoAtual && tipo === 'Saída' && quantidade && parseInt(quantidade) > produtoAtual.quantidade ? 'mov-quantidade-erro' : undefined}
+                />
                 {produtoAtual && tipo === 'Saída' && quantidade && parseInt(quantidade) > produtoAtual.quantidade && (
-                  <p className="text-xs text-red-600">⚠️ Quantidade maior que o estoque disponível ({produtoAtual.quantidade})</p>
+                  <p id="mov-quantidade-erro" className="text-xs text-red-600 font-semibold"><span aria-hidden="true">⚠️</span> Quantidade maior que o estoque disponível ({produtoAtual.quantidade})</p>
                 )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Responsável *</Label>
-                  <Input value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
+                  <Label htmlFor="mov-responsavel">Responsável *</Label>
+                  <Input id="mov-responsavel" value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Matrícula *</Label>
-                  <Input value={matricula} onChange={e => setMatricula(e.target.value)} placeholder="Ex: 123456" className="rounded-xl" />
+                  <Label htmlFor="mov-matricula">Matrícula *</Label>
+                  <Input id="mov-matricula" value={matricula} onChange={e => setMatricula(e.target.value)} placeholder="Ex: 123456" className="rounded-xl" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Observação (opcional)</Label>
-                <Textarea value={observacao} onChange={e => setObservacao(e.target.value)}
+                <Label htmlFor="mov-observacao">Observação (opcional)</Label>
+                <Textarea id="mov-observacao" value={observacao} onChange={e => setObservacao(e.target.value)}
                   placeholder="Informações adicionais..." rows={2} className="rounded-xl" />
               </div>
 
