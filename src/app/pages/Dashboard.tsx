@@ -65,6 +65,13 @@ export function Dashboard() {
   const itensEstoqueBaixo = itensAbaixoDoMinimoTodos.length;
   const itensCriticosAbaixoDoMinimoTodos = itensAbaixoDoMinimoTodos.filter(p => p.criticidade === 'Alta');
 
+  // "Compras Emergenciais Evitadas" — construído em cima do estado atual, sem histórico/log inventado.
+  // Risco identificado antecipadamente: já está abaixo do mínimo, mas ainda > 0 (dá tempo de agir).
+  // Ruptura já ocorrida: quantidade zerada — já faltou, não conta como prevenção.
+  const itensRiscoAntecipado = itensAbaixoDoMinimoTodos.filter(p => p.quantidade > 0);
+  const itensCriticosRiscoAntecipado = itensRiscoAntecipado.filter(p => p.criticidade === 'Alta');
+  const itensRupturaTotal = itensAbaixoDoMinimoTodos.filter(p => p.quantidade === 0);
+
   // "Situação" de cada produto: Normal / Atenção (dentro de 20% acima do mínimo) / Abaixo do mínimo.
   const getSituacaoEstoque = (quantidade: number, minimo: number) => {
     if (quantidade < minimo) return { key: 'abaixo', label: 'Abaixo do mínimo', color: '#B91C1C', icon: '🔴' } as const;
@@ -335,6 +342,53 @@ export function Dashboard() {
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1"><span aria-hidden="true">🔴</span> Abaixo do mínimo</p>
               <p className="text-2xl font-bold" style={{ color: '#B91C1C' }}>{situacaoBuckets.abaixo}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Compras Emergenciais Evitadas — KPI baseado no estado atual, sem historico inventado */}
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden mb-8">
+        <div className="px-6 pt-5 pb-4 border-b border-border flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Compras Emergenciais Evitadas</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Com base no estoque atual — sem contador acumulado ou histórico inventado</p>
+          </div>
+          <div className="p-2 rounded-lg" style={{ background: 'rgba(26,86,219,0.1)' }}>
+            <CheckCircle2 className="w-4 h-4" style={{ color: '#1A56DB' }} aria-hidden="true" />
+          </div>
+        </div>
+        <div className="p-6 space-y-3">
+          <div className="flex items-start gap-3 p-4 rounded-lg border" style={{ background: 'rgba(217,119,6,0.05)', borderColor: 'rgba(217,119,6,0.2)' }}>
+            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#92400E' }} aria-hidden="true" />
+            <div>
+              <p className="text-sm font-bold" style={{ color: '#92400E' }}>
+                {itensRiscoAntecipado.length} {itensRiscoAntecipado.length === 1 ? 'item identificado' : 'itens identificados'} em risco antes da falta
+                {itensCriticosRiscoAntecipado.length > 0 && ` — ${itensCriticosRiscoAntecipado.length} ${itensCriticosRiscoAntecipado.length === 1 ? 'é crítico' : 'são críticos'}`}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Quantidade atual abaixo do mínimo cadastrado, mas ainda maior que zero — o sistema sinalizou a tempo de repor antes de faltar.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 p-4 rounded-lg border" style={{
+            background: itensRupturaTotal.length > 0 ? 'rgba(220,38,38,0.05)' : 'rgba(34,197,94,0.05)',
+            borderColor: itensRupturaTotal.length > 0 ? 'rgba(220,38,38,0.2)' : 'rgba(34,197,94,0.2)',
+          }}>
+            {itensRupturaTotal.length > 0 ? (
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#B91C1C' }} aria-hidden="true" />
+            ) : (
+              <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#166534' }} aria-hidden="true" />
+            )}
+            <div>
+              <p className="text-sm font-bold" style={{ color: itensRupturaTotal.length > 0 ? '#B91C1C' : '#166534' }}>
+                {itensRupturaTotal.length} {itensRupturaTotal.length === 1 ? 'item já em ruptura' : 'itens já em ruptura'} (quantidade zerada)
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {itensRupturaTotal.length > 0
+                  ? 'Esses já chegaram a faltar — não contam como prevenção, precisam de reposição imediata.'
+                  : 'Nenhum item chegou a zerar o estoque no momento.'}
+              </p>
             </div>
           </div>
         </div>
