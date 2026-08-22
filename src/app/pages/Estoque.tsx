@@ -48,15 +48,15 @@ const thStyle: React.CSSProperties = {
 };
 
 const CritBadge = ({ c }: { c: Criticidade }) => {
-  const cfg: Record<Criticidade, { bg: string; color: string; border: string; label: string }> = {
-    Alta: { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)', label: 'Alta' },
-    Média: { bg: 'rgba(245,158,11,0.1)', color: '#D97706', border: 'rgba(245,158,11,0.3)', label: 'Média' },
-    Baixa: { bg: 'rgba(34,197,94,0.1)', color: '#16A34A', border: 'rgba(34,197,94,0.3)', label: 'Baixa' },
+  const cfg: Record<Criticidade, { bg: string; color: string; border: string; label: string; icon: string }> = {
+    Alta: { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)', label: 'Alta', icon: '🔴' },
+    Média: { bg: 'rgba(245,158,11,0.1)', color: '#92400E', border: 'rgba(245,158,11,0.3)', label: 'Média', icon: '🟡' },
+    Baixa: { bg: 'rgba(34,197,94,0.1)', color: '#15803D', border: 'rgba(34,197,94,0.3)', label: 'Baixa', icon: '🟢' },
   };
   const s = cfg[c] || cfg['Baixa'];
   return (
     <span style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}`, borderRadius: '9999px', padding: '2px 10px', fontSize: '11px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color, display: 'inline-block' }} />
+      <span aria-hidden="true">{s.icon}</span>
       {s.label}
     </span>
   );
@@ -150,8 +150,8 @@ export function Estoque() {
     if (produtoExistente && !isEditMode) { toast.error('Este produto já existe no estoque.'); return; }
 
     const quantidade = parseInt(novoProduto.quantidade);
-    if (quantidade < produtoCatalogo.estoqueMinimo) { toast.error(`Mínimo: ${produtoCatalogo.estoqueMinimo}`); return; }
-    if (quantidade > produtoCatalogo.estoqueMaximo) { toast.error(`Máximo: ${produtoCatalogo.estoqueMaximo}`); return; }
+    if (quantidade < produtoCatalogo.estoqueMinimo) { toast.error(`Quantidade abaixo do mínimo permitido (mínimo: ${produtoCatalogo.estoqueMinimo}).`); return; }
+    if (quantidade > produtoCatalogo.estoqueMaximo) { toast.error(`Quantidade acima do máximo permitido (máximo: ${produtoCatalogo.estoqueMaximo}).`); return; }
 
     if (isEditMode && produtoEditando) {
       setProdutosData(produtosData.map(p =>
@@ -233,9 +233,9 @@ export function Estoque() {
 
             <div className="space-y-4 py-2">
               <div className="space-y-2">
-                <Label>Produto *</Label>
+                <Label htmlFor="estoque-produto">Produto *</Label>
                 <Select value={novoProduto.produtoId} onValueChange={(v) => setNovoProduto({ ...novoProduto, produtoId: v })} disabled={isEditMode}>
-                  <SelectTrigger><SelectValue placeholder="Selecione um produto cadastrado" /></SelectTrigger>
+                  <SelectTrigger id="estoque-produto" autoFocus={!isEditMode}><SelectValue placeholder="Selecione um produto cadastrado" /></SelectTrigger>
                   <SelectContent>
                     {produtosCatalogo.map(prod => (
                       <SelectItem key={prod.id} value={prod.id}>
@@ -252,14 +252,14 @@ export function Estoque() {
                 })()}
               </div>
               <div className="space-y-2">
-                <Label>Quantidade *</Label>
-                <Input type="number" min="0" value={novoProduto.quantidade}
+                <Label htmlFor="estoque-quantidade">Quantidade *</Label>
+                <Input id="estoque-quantidade" type="number" min="0" value={novoProduto.quantidade}
                   onChange={e => setNovoProduto({ ...novoProduto, quantidade: e.target.value })} placeholder="0" />
               </div>
               <div className="space-y-2">
-                <Label>Localizações *</Label>
+                <Label htmlFor="estoque-localizacao">Localizações *</Label>
                 <div className="flex gap-2">
-                  <Input value={novoProduto.novaLocalizacao}
+                  <Input id="estoque-localizacao" value={novoProduto.novaLocalizacao}
                     onChange={e => setNovoProduto({ ...novoProduto, novaLocalizacao: e.target.value })}
                     onKeyDown={e => {
                       if (e.key === 'Enter') {
@@ -271,7 +271,7 @@ export function Estoque() {
                       }
                     }}
                     placeholder="Ex: A-3, B-5 (Enter para adicionar)" />
-                  <Button type="button" variant="outline" onClick={() => {
+                  <Button type="button" variant="outline" aria-label="Adicionar localização" onClick={() => {
                     const loc = novoProduto.novaLocalizacao.trim();
                     if (loc && !novoProduto.localizacoes.includes(loc)) {
                       setNovoProduto({ ...novoProduto, localizacoes: [...novoProduto.localizacoes, loc], novaLocalizacao: '' });
@@ -283,7 +283,7 @@ export function Estoque() {
                     {novoProduto.localizacoes.map((loc, idx) => (
                       <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded border border-blue-200">
                         {loc}
-                        <button type="button" onClick={() => setNovoProduto({ ...novoProduto, localizacoes: novoProduto.localizacoes.filter((_, i) => i !== idx) })} className="hover:bg-blue-200 rounded-full p-0.5">
+                        <button type="button" aria-label={`Remover localização ${loc}`} onClick={() => setNovoProduto({ ...novoProduto, localizacoes: novoProduto.localizacoes.filter((_, i) => i !== idx) })} className="hover:bg-blue-200 rounded-full p-0.5">
                           <X className="w-3 h-3" />
                         </button>
                       </span>
@@ -292,9 +292,9 @@ export function Estoque() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Criticidade</Label>
+                <Label htmlFor="estoque-criticidade">Criticidade</Label>
                 <Select value={novoProduto.criticidade} onValueChange={v => setNovoProduto({ ...novoProduto, criticidade: v as Criticidade })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger id="estoque-criticidade"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Baixa">🟢 Baixa</SelectItem>
                     <SelectItem value="Média">🟡 Média</SelectItem>
@@ -325,8 +325,8 @@ export function Estoque() {
       {/* Search */}
       <div className="mb-5">
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input type="text" placeholder="Buscar por código, nome, categoria ou localização..."
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+          <Input type="text" aria-label="Buscar produtos no estoque" placeholder="Buscar por código, nome, categoria ou localização..."
             value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl" />
         </div>
       </div>
@@ -337,13 +337,13 @@ export function Estoque() {
           <table className="w-full">
             <thead>
               <tr>
-                <th style={thStyle}>Código ID</th>
-                <th style={thStyle}>Nome do Produto</th>
-                <th style={thStyle}>Categoria</th>
-                <th style={thStyle}>Quantidade</th>
-                <th style={thStyle}>Localizações</th>
-                <th style={thStyle}>Criticidade</th>
-                <th style={thStyle}>Ações</th>
+                <th scope="col" style={thStyle}>Código ID</th>
+                <th scope="col" style={thStyle}>Nome do Produto</th>
+                <th scope="col" style={thStyle}>Categoria</th>
+                <th scope="col" style={thStyle}>Quantidade</th>
+                <th scope="col" style={thStyle}>Localizações</th>
+                <th scope="col" style={thStyle}>Criticidade</th>
+                <th scope="col" style={thStyle}>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -376,7 +376,11 @@ export function Estoque() {
                     <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                       <div className={`font-bold text-sm ${produto.quantidade < 10 ? 'text-red-600' : 'text-foreground'}`}>
                         {produto.quantidade}
-                        {produto.quantidade < 10 && <span className="ml-1 text-xs">⚠️</span>}
+                        {produto.quantidade < 10 && (
+                          <span className="ml-1.5 text-xs font-semibold">
+                            <span aria-hidden="true">⚠️</span> Estoque baixo
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td style={{ padding: '14px 20px' }}>
@@ -403,18 +407,22 @@ export function Estoque() {
                     <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                       <div className="flex items-center gap-1">
                         <button onClick={() => abrirDetalhes(produto)}
+                          aria-label={`Ver detalhes de ${produto.nome}`}
                           className="p-1.5 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors" title="Detalhes">
                           <Eye className="w-4 h-4" />
                         </button>
                         <button onClick={() => abrirHistorico(produto)}
+                          aria-label={`Ver histórico de ${produto.nome}`}
                           className="p-1.5 rounded-lg text-purple-500 hover:text-purple-700 hover:bg-purple-50 transition-colors" title="Histórico">
                           <History className="w-4 h-4" />
                         </button>
                         <button onClick={() => abrirDialogEditar(produto)}
+                          aria-label={`Editar ${produto.nome}`}
                           className="p-1.5 rounded-lg text-blue-500 hover:text-blue-700 hover:bg-blue-50 transition-colors" title="Editar">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => setProdutoParaDeletar(produto.id)}
+                          aria-label={`Excluir ${produto.nome} do estoque`}
                           className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Excluir">
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -549,6 +557,11 @@ export function Estoque() {
                     <p className={`text-2xl font-bold ${produtoDetalhes.quantidade < 10 ? 'text-red-600' : 'text-foreground'}`}>
                       {produtoDetalhes.quantidade}
                     </p>
+                    {produtoDetalhes.quantidade < 10 && (
+                      <p className="text-xs font-semibold text-red-600 mt-1">
+                        <span aria-hidden="true">⚠️</span> Estoque próximo do mínimo
+                      </p>
+                    )}
                   </div>
                   <div className="p-3 bg-muted/50 rounded-lg border border-border">
                     <p className="text-xs text-muted-foreground mb-1.5">Criticidade</p>
