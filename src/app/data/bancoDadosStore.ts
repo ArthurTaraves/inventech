@@ -80,17 +80,43 @@ const quantidadesEstoque: Record<string, number> = {
   'MAN-008': 30, // Soquete
 };
 
+// Localização física (corredor + prateleiras vizinhas) de cada produto — todas as
+// unidades de um mesmo produto ficam no mesmo corredor, em prateleiras consecutivas.
+const localizacoesPorProduto: Record<string, string[]> = {
+  'ELE-001': ['A-1'],
+  'ELE-002': ['A-3', 'A-4'],
+  'ELE-003': ['A-3'],
+  'ELE-004': ['A-5'],
+  'ELE-005': ['B-1', 'B-2'],
+  'ELE-006': ['A-6'],
+  'ELE-007': ['A-7'],
+  'ELE-008': ['B-1'],
+  'ELE-009': ['A-8'],
+  'HID-001': ['C-1'],
+  'HID-002': ['C-1', 'C-2'],
+  'HID-003': ['C-3'],
+  'SEG-001': ['D-1'],
+  'MAN-001': ['E-1'],
+  'MAN-002': ['E-2', 'E-3'],
+  'MAN-003': ['E-4'],
+  'MAN-004': ['E-2'],
+  'MAN-005': ['E-5'],
+  'MAN-006': ['E-6'],
+  'MAN-007': ['E-7'],
+  'MAN-008': ['E-3', 'E-4'],
+};
+
 // Gerar produtos serializados automaticamente
 const gerarProdutosSerializados = (): ProdutoSerializadoDB[] => {
   const serializados: ProdutoSerializadoDB[] = [];
-  const localizacoesPadrao = ['A-1', 'A-2', 'A-3', 'B-1', 'B-2', 'B-5', 'C-1', 'C-2', 'D-1', 'E-1', 'E-2', 'E-3', 'E-4'];
 
   produtosCatalogoInicial.forEach((produto) => {
     const quantidade = quantidadesEstoque[produto.codigoProduto] || 0;
+    const localizacoesProduto = localizacoesPorProduto[produto.codigoProduto] || ['A-1'];
 
     for (let i = 1; i <= quantidade; i++) {
       const numeroSerie = `${produto.codigoProduto}-${String(i).padStart(2, '0')}`;
-      const localizacao = localizacoesPadrao[Math.floor(Math.random() * localizacoesPadrao.length)];
+      const localizacao = localizacoesProduto[(i - 1) % localizacoesProduto.length];
 
       serializados.push({
         id: `${produto.id}-${i}`,

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  Search, Plus, Trash2, CheckCircle, XCircle, Eye, AlertTriangle, Package,
+  Search, Plus, Trash2, CheckCircle, XCircle, Eye, EyeOff, AlertTriangle, Package,
   MapPin, User, Hash, Building2, Calendar, ShoppingCart, Inbox, Layers,
-  MessageSquare, ChevronRight, Flag, Truck, ClipboardCheck,
+  MessageSquare, ChevronRight, Flag, Truck, ClipboardCheck, Lock,
 } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -147,6 +147,20 @@ const CriticidadeBadge = ({ criticidade }: { criticidade?: string }) => {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function PortalRequisicoes() {
+  const [autenticado, setAutenticado] = useState(false);
+  const [usuario, setUsuario] = useState('');
+  const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+
+  const handleLogin = () => {
+    if (usuario === 'Admin' && senha === 'Admin') {
+      setAutenticado(true);
+      toast.success('Login realizado com sucesso!');
+    } else {
+      toast.error('Usuário ou senha incorretos!');
+    }
+  };
+
   const { produtos } = useAlmoxarifado();
   const catalogo = bancoDadosStore.getProdutos();
   const catalogMap = new Map(catalogo.map(c => [c.codigoProduto ?? '', c]));
@@ -379,6 +393,118 @@ export function PortalRequisicoes() {
 
   // ─────────────────────────────────────────────────────────────────────────────
 
+  if (!autenticado) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #060F1A 0%, #0B1826 45%, #0D2244 100%)' }}
+      >
+        {/* Grid overlay */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+        }} />
+        {/* Glow orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)' }} />
+
+        {/* Login card */}
+        <div
+          className="relative w-full max-w-md rounded-2xl p-8"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(16px)',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
+          }}
+        >
+          {/* Logo */}
+          <div className="flex flex-col items-center mb-8">
+            <h1 className="text-2xl font-bold text-white mt-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '0.04em' }}>
+              InvenTech
+            </h1>
+            <p className="text-sm mt-1" style={{ color: 'rgba(184,200,217,0.7)' }}>Portal de Requisições</p>
+          </div>
+
+          <div className="mb-2 text-center">
+            <p className="text-sm font-medium" style={{ color: 'rgba(184,200,217,0.9)' }}>Acesso Restrito</p>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(184,200,217,0.5)' }}>Informe suas credenciais para continuar</p>
+          </div>
+
+          <div className="space-y-4 mt-6">
+            <div className="space-y-1.5">
+              <label htmlFor="portal-login-usuario" className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Usuário</label>
+              <input
+                id="portal-login-usuario"
+                type="text"
+                autoFocus
+                value={usuario}
+                onChange={e => setUsuario(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                placeholder="Digite seu usuário"
+                className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                style={{
+                  background: 'rgba(255,255,255,0.07)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                }}
+                onFocus={e => { e.currentTarget.style.border = '1px solid rgba(37,99,235,0.6)'; e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; }}
+                onBlur={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.12)'; e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; }}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="portal-login-senha" className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Senha</label>
+              <div className="relative">
+                <input
+                  id="portal-login-senha"
+                  type={mostrarSenha ? 'text' : 'password'}
+                  value={senha}
+                  onChange={e => setSenha(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                  placeholder="Digite sua senha"
+                  className="w-full px-4 py-3 pr-12 rounded-xl text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                  style={{
+                    background: 'rgba(255,255,255,0.07)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                  }}
+                  onFocus={e => { e.currentTarget.style.border = '1px solid rgba(37,99,235,0.6)'; e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; }}
+                  onBlur={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.12)'; e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarSenha(!mostrarSenha)}
+                  aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                  aria-pressed={mostrarSenha}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
+                >
+                  {mostrarSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogin}
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all mt-2"
+              style={{
+                background: 'linear-gradient(135deg, #1A56DB 0%, #2563EB 100%)',
+                boxShadow: '0 4px 16px rgba(37,99,235,0.4)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,99,235,0.55)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.4)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              <Lock className="w-4 h-4 inline-block mr-2 -mt-0.5" />
+              Entrar no Sistema
+            </button>
+          </div>
+
+          <div className="mt-6 p-3 rounded-xl text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <p className="text-xs" style={{ color: 'rgba(184,200,217,0.45)' }}>Credenciais: <span style={{ color: 'rgba(184,200,217,0.7)', fontFamily: "'JetBrains Mono', monospace" }}>Admin / Admin</span></p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const tabDef = [
     { key: 'nova',    label: 'Nova Solicitação',       icon: Plus,           badge: cart.length > 0 ? cart.length : null },
     { key: 'minhas',  label: 'Minhas Solicitações',    icon: Inbox,          badge: null },
@@ -388,13 +514,23 @@ export function PortalRequisicoes() {
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          Portal de Requisições
-        </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Solicite materiais e equipamentos ao almoxarifado de forma rápida e rastreável.
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Portal de Requisições
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Solicite materiais e equipamentos ao almoxarifado de forma rápida e rastreável.
+          </p>
+        </div>
+        <Button
+          onClick={() => { setAutenticado(false); setUsuario(''); setSenha(''); toast.success('Logout realizado'); }}
+          variant="outline"
+          className="border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10"
+          style={{ color: 'var(--text-red)', background: 'var(--card)' }}
+        >
+          <Lock className="w-4 h-4 mr-2" aria-hidden="true" />Sair
+        </Button>
       </div>
 
       {/* Tab bar */}
@@ -431,7 +567,7 @@ export function PortalRequisicoes() {
 
       {/* ══ NOVA SOLICITAÇÃO ═══════════════════════════════════════════════════ */}
       {activeTab === 'nova' && (
-        <div className="max-w-3xl space-y-6">
+        <div className="max-w-3xl mx-auto space-y-6">
 
           {/* Product search */}
           <div className="bg-card rounded-2xl border border-border shadow-sm overflow-visible">
@@ -831,7 +967,7 @@ export function PortalRequisicoes() {
 
       {/* ══ MINHAS SOLICITAÇÕES ════════════════════════════════════════════════ */}
       {activeTab === 'minhas' && (
-        <div className="max-w-3xl">
+        <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between mb-5">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />

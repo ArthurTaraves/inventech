@@ -47,7 +47,7 @@ export interface ItemManutencao {
 
 export const produtos: Produto[] = [
   { id: '1', nome: 'Detector de Gás', quantidade: 5, localizacoes: ['A-1'], criticidade: 'Alta', codigoProduto: 'ELE-001' },
-  { id: '2', nome: 'Esmerilhadeira 4"', quantidade: 8, localizacoes: ['A-3', 'B-5'], criticidade: 'Alta', codigoProduto: 'ELE-002' },
+  { id: '2', nome: 'Esmerilhadeira 4"', quantidade: 8, localizacoes: ['A-3', 'A-4'], criticidade: 'Alta', codigoProduto: 'ELE-002' },
   { id: '3', nome: 'Esmerilhadeira 7"', quantidade: 4, localizacoes: ['A-3'], criticidade: 'Alta', codigoProduto: 'ELE-003' },
   { id: '4', nome: 'Furadeira', quantidade: 15, localizacoes: ['B-1', 'B-2'], criticidade: 'Média', codigoProduto: 'ELE-005' },
   { id: '5', nome: 'Parafusadeira', quantidade: 12, localizacoes: ['B-1'], criticidade: 'Média', codigoProduto: 'ELE-008' },

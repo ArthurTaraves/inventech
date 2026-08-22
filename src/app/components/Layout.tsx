@@ -11,6 +11,11 @@ const NAV_GROUPS = [
       { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
       { path: '/estoque', icon: Package, label: 'Estoque' },
       { path: '/movimentacao', icon: ArrowLeftRight, label: 'Movimentação' },
+    ],
+  },
+  {
+    label: 'SOLICITAÇÕES',
+    items: [
       { path: '/solicitacoes', icon: ClipboardList, label: 'Solicitações' },
       { path: '/portal-requisicoes', icon: LayoutGrid, label: 'Portal de Requisições' },
     ],
