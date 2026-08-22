@@ -72,10 +72,11 @@ export function Suporte() {
   const [filtroTipo, setFiltroTipo] = useState<TipoChamado | 'Todos'>('Todos');
 
   const handleEnviarChamado = () => {
-    if (!formulario.nome || !formulario.matricula || !formulario.tipo || !formulario.assunto || !formulario.mensagem) {
-      toast.error('Por favor, preencha todos os campos obrigatórios');
-      return;
-    }
+    if (!formulario.nome) { toast.error('Informe seu nome completo.'); return; }
+    if (!formulario.matricula) { toast.error('Informe sua matrícula.'); return; }
+    if (!formulario.tipo) { toast.error('Selecione o tipo do chamado.'); return; }
+    if (!formulario.assunto) { toast.error('Informe o assunto do chamado.'); return; }
+    if (!formulario.mensagem) { toast.error('Descreva sua dúvida, erro ou sugestão na mensagem.'); return; }
 
     const novoChamado: Chamado = {
       id: String(Date.now()),
@@ -177,37 +178,38 @@ export function Suporte() {
           <CardContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Nome Completo *</Label>
-                <Input value={formulario.nome} onChange={e => setFormulario({ ...formulario, nome: e.target.value })} placeholder="Seu nome completo" />
+                <Label htmlFor="sup-nome">Nome Completo *</Label>
+                <Input id="sup-nome" value={formulario.nome} onChange={e => setFormulario({ ...formulario, nome: e.target.value })} placeholder="Seu nome completo" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Matrícula *</Label>
-                  <Input value={formulario.matricula} onChange={e => setFormulario({ ...formulario, matricula: e.target.value })} placeholder="Ex: 123456" />
+                  <Label htmlFor="sup-matricula">Matrícula *</Label>
+                  <Input id="sup-matricula" value={formulario.matricula} onChange={e => setFormulario({ ...formulario, matricula: e.target.value })} placeholder="Ex: 123456" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Telefone</Label>
-                  <Input value={formulario.telefone} onChange={e => setFormulario({ ...formulario, telefone: e.target.value })} placeholder="(24) 98765-4321" />
+                  <Label htmlFor="sup-telefone">Telefone</Label>
+                  <Input id="sup-telefone" value={formulario.telefone} onChange={e => setFormulario({ ...formulario, telefone: e.target.value })} placeholder="(24) 98765-4321" />
                 </div>
               </div>
 
               {/* Tipo do chamado — NEW */}
               <div className="space-y-2">
-                <Label>Tipo do Chamado *</Label>
-                <div className="grid grid-cols-3 gap-2">
+                <Label id="sup-tipo-label">Tipo do Chamado *</Label>
+                <div className="grid grid-cols-3 gap-2" role="group" aria-labelledby="sup-tipo-label">
                   {(Object.entries(TIPO_CONFIG) as [TipoChamado, typeof TIPO_CONFIG[TipoChamado]][]).map(([key, cfg]) => (
                     <button
                       key={key}
                       type="button"
                       onClick={() => setFormulario({ ...formulario, tipo: key })}
+                      aria-pressed={formulario.tipo === key}
                       className={`p-2.5 rounded-lg border-2 text-center transition-all ${
                         formulario.tipo === key
                           ? `${cfg.bg} border-current ${cfg.color} font-semibold`
-                          : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
-                      <div className="text-lg">{cfg.emoji}</div>
+                      <div className="text-lg" aria-hidden="true">{cfg.emoji}</div>
                       <div className="text-xs mt-0.5">{cfg.label}</div>
                     </button>
                   ))}
@@ -215,13 +217,14 @@ export function Suporte() {
               </div>
 
               <div className="space-y-2">
-                <Label>Assunto *</Label>
-                <Input value={formulario.assunto} onChange={e => setFormulario({ ...formulario, assunto: e.target.value })} placeholder="Resumo do problema ou dúvida" />
+                <Label htmlFor="sup-assunto">Assunto *</Label>
+                <Input id="sup-assunto" value={formulario.assunto} onChange={e => setFormulario({ ...formulario, assunto: e.target.value })} placeholder="Resumo do problema ou dúvida" />
               </div>
 
               <div className="space-y-2">
-                <Label>Mensagem *</Label>
+                <Label htmlFor="sup-mensagem">Mensagem *</Label>
                 <Textarea
+                  id="sup-mensagem"
                   value={formulario.mensagem}
                   onChange={e => setFormulario({ ...formulario, mensagem: e.target.value })}
                   placeholder="Descreva detalhadamente seu problema ou dúvida..."
@@ -249,7 +252,7 @@ export function Suporte() {
             <CardContent>
               <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200 mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true" />
                   <span className="font-medium text-green-900">Sistema Operacional</span>
                 </div>
                 <span className="text-xs text-green-700">Todos os serviços ativos</span>
@@ -325,7 +328,7 @@ export function Suporte() {
           {chamados.length > 0 && (
             <div className="flex gap-3 mt-3">
               <Select value={filtroStatus} onValueChange={v => setFiltroStatus(v as StatusChamado | 'Todos')}>
-                <SelectTrigger className="w-40 h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectTrigger aria-label="Filtrar chamados por status" className="w-40 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Todos">Todos os status</SelectItem>
                   <SelectItem value="Aberto">Aberto</SelectItem>
@@ -334,7 +337,7 @@ export function Suporte() {
                 </SelectContent>
               </Select>
               <Select value={filtroTipo} onValueChange={v => setFiltroTipo(v as TipoChamado | 'Todos')}>
-                <SelectTrigger className="w-36 h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectTrigger aria-label="Filtrar chamados por tipo" className="w-36 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Todos">Todos os tipos</SelectItem>
                   <SelectItem value="duvida">❓ Dúvida</SelectItem>
@@ -350,7 +353,7 @@ export function Suporte() {
             <div className="text-center py-12">
               <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500">Nenhum chamado registrado ainda</p>
-              <p className="text-sm text-gray-400 mt-1">Seus chamados aparecerão aqui após o envio</p>
+              <p className="text-sm text-gray-600 mt-1">Seus chamados aparecerão aqui após o envio</p>
             </div>
           ) : chamadosFiltrados.length === 0 ? (
             <div className="text-center py-8 text-gray-500 text-sm">Nenhum chamado com os filtros selecionados</div>
