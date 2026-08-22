@@ -2,13 +2,17 @@ import { Package, Wrench, AlertTriangle, TrendingUp, ArrowUpRight, ArrowDownRigh
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
 import { bancoDadosStore } from '../data/bancoDadosStore';
 
-const SemaforoIndicator = ({ status }: { status: 'green' | 'yellow' | 'red' }) => {
+const SemaforoIndicator = ({ status, contexto = 'prazo' }: { status: 'green' | 'yellow' | 'red'; contexto?: 'prazo' | 'estoque' }) => {
   const colors = { green: '#22C55E', yellow: '#EAB308', red: '#EF4444' };
-  const labels = { green: 'No prazo', yellow: 'Atenção', red: 'Atrasado' };
+  const labelsPorContexto = {
+    prazo: { green: 'No prazo', yellow: 'Atenção', red: 'Atrasado' },
+    estoque: { green: 'Disponível', yellow: 'Atenção', red: 'Estoque baixo' },
+  };
+  const labels = labelsPorContexto[contexto];
   return (
     <div className="flex items-center gap-1.5">
-      <div className="w-2.5 h-2.5 rounded-full" style={{ background: colors[status], boxShadow: status === 'red' ? `0 0 6px ${colors.red}` : 'none' }} />
-      <span className="text-xs font-medium" style={{ color: colors[status] }}>{labels[status]}</span>
+      <div className="w-2.5 h-2.5 rounded-full" style={{ background: colors[status], boxShadow: status === 'red' ? `0 0 6px ${colors.red}` : 'none' }} aria-hidden="true" />
+      <span className="text-xs font-medium" style={{ color: status === 'yellow' ? '#92400E' : status === 'red' ? '#DC2626' : '#15803D' }}>{labels[status]}</span>
     </div>
   );
 };
@@ -128,6 +132,8 @@ export function Dashboard() {
     }).format(data);
   };
 
+  const labelCriticidadeABC = { A: 'Crítico', B: 'Médio', C: 'Baixo' } as const;
+
   const totalPrioridades = itensCriticosEstoqueBaixo.length + itensAtrasados.length + itensComInercia.length;
   const barColors = ['#1A56DB', '#8B5CF6', '#F59E0B', '#EC4899', '#14B8A6'];
 
@@ -186,8 +192,8 @@ export function Dashboard() {
           }}>
             <div className="flex items-center gap-3">
               {totalPrioridades > 0
-                ? <AlertCircle className="w-5 h-5 text-red-500" />
-                : <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                ? <AlertCircle className="w-5 h-5 text-red-500" aria-hidden="true" />
+                : <CheckCircle2 className="w-5 h-5 text-green-500" aria-hidden="true" />}
               <div>
                 <h2 className="text-sm font-semibold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Painel de Prioridades</h2>
                 <p className="text-xs text-muted-foreground">Itens que exigem atenção imediata</p>
@@ -225,7 +231,7 @@ export function Dashboard() {
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <SemaforoIndicator status="red" />
+                          <SemaforoIndicator status="red" contexto="estoque" />
                           <span className="text-sm font-bold text-red-600">{p.quantidade} un.</span>
                         </div>
                       </div>
@@ -252,7 +258,7 @@ export function Dashboard() {
                               item.criticidadeABC === 'A' ? 'bg-red-100 text-red-700' :
                               item.criticidadeABC === 'B' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
                             }`}>
-                              {item.criticidadeABC}
+                              {item.criticidadeABC} · {labelCriticidadeABC[item.criticidadeABC]}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -420,11 +426,11 @@ export function Dashboard() {
                     <div key={item.id} className="p-3 rounded-lg border" style={{ background: bgColors[s], borderColor: `${borderColors[s]}40` }}>
                       <div className="flex items-start justify-between mb-1.5">
                         <span className="text-sm font-medium text-foreground truncate flex-1">{item.produtoNome}</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded font-bold ml-2 ${
+                        <span className={`text-xs px-1.5 py-0.5 rounded font-bold ml-2 whitespace-nowrap ${
                           item.criticidadeABC === 'A' ? 'bg-red-100 text-red-800' :
                           item.criticidadeABC === 'B' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
                         }`}>
-                          {item.criticidadeABC}
+                          {item.criticidadeABC} · {labelCriticidadeABC[item.criticidadeABC]}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
