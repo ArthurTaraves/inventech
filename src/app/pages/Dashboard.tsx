@@ -43,10 +43,17 @@ const KpiCard = ({ label, value, sub, accent, icon }: KpiCardProps) => (
 export function Dashboard() {
   const { produtos, movimentacoes, itensManutencao } = useAlmoxarifado();
   const produtosCatalogo = bancoDadosStore.getProdutos();
+  const catalogMap = new Map(produtosCatalogo.map(c => [c.codigoProduto, c]));
+
+  // Estoque mínimo é individual por produto (cadastrado na Área Administrativa) —
+  // nunca um limite fixo. Mesma fonte de dados usada em Estoque, Portal de
+  // Requisições e Solicitações.
+  const getEstoqueMinimo = (produto: typeof produtos[number]) =>
+    catalogMap.get(produto.codigoProduto ?? '')?.estoqueMinimo ?? 0;
 
   const totalItens = produtos.reduce((acc, p) => acc + p.quantidade, 0);
   const itensEmManutencao = itensManutencao.filter(item => item.status !== 'Retorno').length;
-  const itensEstoqueBaixo = produtos.filter(p => p.quantidade < 10).length;
+  const itensEstoqueBaixo = produtos.filter(p => p.quantidade < getEstoqueMinimo(p)).length;
   const itensAltaCriticidade = produtos.filter(p => p.criticidade === 'Alta').length;
 
   const ultimasMovimentacoes = [...movimentacoes]
@@ -98,7 +105,7 @@ export function Dashboard() {
   const maxVolume = Math.max(...volumeCategoria.map(v => v.quantidade), 1);
 
   const itensCriticosEstoqueBaixo = produtos
-    .filter(p => p.criticidade === 'Alta' && p.quantidade < 10)
+    .filter(p => p.criticidade === 'Alta' && p.quantidade < getEstoqueMinimo(p))
     .sort((a, b) => a.quantidade - b.quantidade)
     .slice(0, 3);
 
@@ -169,7 +176,7 @@ export function Dashboard() {
         <KpiCard
           label="Estoque Baixo"
           value={itensEstoqueBaixo}
-          sub="produtos abaixo de 10 un."
+          sub="produtos abaixo do mínimo cadastrado"
           accent="#EF4444"
           icon={<AlertTriangle className="w-4 h-4" />}
         />
