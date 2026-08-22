@@ -92,10 +92,10 @@ function MaintenanceTimeline({ item }: { item: ItemManutencao }) {
                   background: 'white',
                 }}
               >
-                {isDone ? '✅' : step.emoji}
+                <span aria-hidden="true">{isDone ? '✅' : step.emoji}</span>
               </div>
               <div className="mt-2 text-center px-1">
-                <p className="text-xs font-semibold" style={{ color: isCurrent ? '#1A56DB' : isDone ? '#16A34A' : '#94A3B8' }}>
+                <p className="text-xs font-semibold" style={{ color: isCurrent ? '#1A56DB' : isDone ? '#15803D' : '#94A3B8' }}>
                   {step.label}
                 </p>
                 {isCurrent && (
@@ -238,8 +238,8 @@ export function Manutencao() {
 
   const getCriticidadeStyle = (c: CriticidadeABC) => {
     if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#DC2626', border: '2px solid rgba(239,68,68,0.35)' };
-    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#D97706', border: '2px solid rgba(245,158,11,0.35)' };
-    return { background: 'rgba(34,197,94,0.12)', color: '#16A34A', border: '2px solid rgba(34,197,94,0.35)' };
+    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#92400E', border: '2px solid rgba(245,158,11,0.35)' };
+    return { background: 'rgba(34,197,94,0.12)', color: '#15803D', border: '2px solid rgba(34,197,94,0.35)' };
   };
 
   const getCriticidadeLabel = (c: CriticidadeABC) => ({ A: 'Crítico', B: 'Médio', C: 'Baixo' }[c] || c);
@@ -274,10 +274,9 @@ export function Manutencao() {
   };
 
   const handleEnviarManutencao = () => {
-    if (!produtoId || !quantidade || !responsavel) {
-      toast.error('Preencha todos os campos obrigatórios');
-      return;
-    }
+    if (!produtoId) { toast.error('Selecione o produto a ser enviado para manutenção.'); return; }
+    if (!quantidade) { toast.error('Informe a quantidade a ser enviada.'); return; }
+    if (!responsavel) { toast.error('Informe o nome do responsável pelo envio.'); return; }
     const produto = produtos.find(p => p.id === produtoId);
     if (!produto) return;
     const qtd = parseInt(quantidade);
@@ -356,12 +355,14 @@ export function Manutencao() {
             </DialogHeader>
             <div className="space-y-4 py-2">
               <div className="space-y-2">
-                <Label>Produto *</Label>
+                <Label htmlFor="man-produto">Produto *</Label>
                 <div ref={searchRef} className="relative">
                   <div className={`flex items-center gap-2 border-2 rounded-xl px-3 py-2.5 transition-all ${produtoSelecionadoInfo ? 'border-blue-500 bg-blue-50/50' : 'border-border bg-card'} focus-within:border-blue-500`}>
-                    <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
                     <input
+                      id="man-produto"
                       type="text"
+                      autoFocus
                       value={searchQuery}
                       onChange={e => handleSearchChange(e.target.value)}
                       onFocus={() => { if (sugestoes.length > 0) setShowSugestoes(true); }}
@@ -369,7 +370,7 @@ export function Manutencao() {
                       className="flex-1 bg-transparent text-sm outline-none text-foreground placeholder:text-muted-foreground"
                     />
                     {(searchQuery || produtoSelecionadoInfo) && (
-                      <button type="button" onClick={limparSelecaoProduto} className="text-muted-foreground hover:text-foreground">
+                      <button type="button" onClick={limparSelecaoProduto} aria-label="Limpar produto selecionado" className="text-muted-foreground hover:text-foreground">
                         <X className="w-4 h-4" />
                       </button>
                     )}
@@ -433,9 +434,9 @@ export function Manutencao() {
                     </div>
                     {serializados.length > 0 && !produtoSelecionadoInfo?.numeroSerie && (
                       <div className="pt-2 mt-2 border-t border-blue-200">
-                        <Label className="text-xs text-muted-foreground mb-1.5 block">Unidade Serializada (opcional)</Label>
+                        <Label htmlFor="man-unidade" className="text-xs text-muted-foreground mb-1.5 block">Unidade Serializada (opcional)</Label>
                         <Select value={numeroSerieSelecionado} onValueChange={setNumeroSerieSelecionado}>
-                          <SelectTrigger className="bg-card text-sm"><SelectValue placeholder="Selecione (opcional)" /></SelectTrigger>
+                          <SelectTrigger id="man-unidade" className="bg-card text-sm"><SelectValue placeholder="Selecione (opcional)" /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="">Não especificar</SelectItem>
                             {serializados.map(ps => (
@@ -460,19 +461,19 @@ export function Manutencao() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Quantidade *</Label>
-                  <Input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} placeholder="Qtd" min="1" className="rounded-xl" />
+                  <Label htmlFor="man-quantidade">Quantidade *</Label>
+                  <Input id="man-quantidade" type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} placeholder="Qtd" min="1" className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Responsável *</Label>
-                  <Input value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
+                  <Label htmlFor="man-responsavel">Responsável *</Label>
+                  <Input id="man-responsavel" value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Grau de Criticidade *</Label>
+                <Label htmlFor="man-criticidade">Grau de Criticidade *</Label>
                 <Select value={criticidadeABC} onValueChange={v => setCriticidadeABC(v as CriticidadeABC)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger id="man-criticidade"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="A">🔴 A — Crítico</SelectItem>
                     <SelectItem value="B">🟡 B — Médio</SelectItem>
@@ -482,12 +483,12 @@ export function Manutencao() {
               </div>
 
               <div className="space-y-2">
-                <Label>Observação (opcional)</Label>
-                <Textarea value={observacao} onChange={e => setObservacao(e.target.value)} placeholder="Descreva o problema..." rows={3} className="rounded-xl" />
+                <Label htmlFor="man-observacao">Observação (opcional)</Label>
+                <Textarea id="man-observacao" value={observacao} onChange={e => setObservacao(e.target.value)} placeholder="Descreva o problema..." rows={3} className="rounded-xl" />
               </div>
 
               <div className="p-3 rounded-xl flex items-start gap-2" style={{ background: 'rgba(26,86,219,0.06)', border: '1px solid rgba(26,86,219,0.15)' }}>
-                <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#1A56DB' }} />
+                <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#1A56DB' }} aria-hidden="true" />
                 <p className="text-xs" style={{ color: '#1A56DB' }}>
                   Ao enviar, o item sai do estoque. Ao marcar como "Retorno" na Manutenção Visual, as unidades retornam automaticamente.
                 </p>
@@ -523,8 +524,9 @@ export function Manutencao() {
       {/* Search */}
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <Input
+            aria-label="Buscar ordens de manutenção"
             placeholder="Buscar por produto, número de série, responsável ou status..."
             value={filtro}
             onChange={e => setFiltro(e.target.value)}
@@ -558,18 +560,27 @@ export function Manutencao() {
               style={{ border: `1.5px solid ${cardBorderColor}` }}
             >
               {/* Header row */}
-              <div
-                className="flex items-center gap-4 px-5 py-4 cursor-pointer transition-colors hover:bg-muted/40"
+              <button
+                type="button"
+                className="w-full flex items-center gap-4 px-5 py-4 cursor-pointer transition-colors hover:bg-muted/40 text-left"
                 onClick={() => setExpandedId(isExpanded ? null : item.id)}
+                aria-expanded={isExpanded}
+                aria-label={`${item.produtoNome} — ${isExpanded ? 'recolher' : 'expandir'} linha do tempo e histórico`}
               >
-                <div
-                  className="w-3 h-3 rounded-full shrink-0"
-                  style={{
-                    background: semaforoColors[semaforo],
-                    boxShadow: semaforo === 'red' ? `0 0 8px ${semaforoColors.red}` : 'none',
-                    animation: semaforo === 'red' ? 'pulse 2s infinite' : 'none',
-                  }}
-                />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div
+                    className="w-3 h-3 rounded-full shrink-0"
+                    aria-hidden="true"
+                    style={{
+                      background: semaforoColors[semaforo],
+                      boxShadow: semaforo === 'red' ? `0 0 8px ${semaforoColors.red}` : 'none',
+                      animation: semaforo === 'red' ? 'pulse 2s infinite' : 'none',
+                    }}
+                  />
+                  <span className="text-xs font-semibold" style={{ color: semaforo === 'red' ? '#DC2626' : semaforo === 'yellow' ? '#92400E' : '#15803D' }}>
+                    {semaforo === 'red' ? 'Atrasado' : semaforo === 'yellow' ? 'Atenção' : 'No prazo'}
+                  </span>
+                </div>
 
                 <div className="shrink-0">
                   {produto?.codigoProduto && (
@@ -586,7 +597,7 @@ export function Manutencao() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    {temInercia && <span className="text-red-500 animate-pulse">⚠️</span>}
+                    {temInercia && <span className="text-red-500 animate-pulse font-semibold text-xs"><span aria-hidden="true">⚠️</span> Sem atualização</span>}
                     <p className="font-semibold text-foreground">{item.produtoNome}</p>
                   </div>
                   {item.responsavel && (
@@ -597,16 +608,16 @@ export function Manutencao() {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={critStyle}>
-                    {item.criticidadeABC}
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap" style={critStyle}>
+                    {item.criticidadeABC} · {getCriticidadeLabel(item.criticidadeABC)}
                   </span>
                   <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusColor(item.status)}`}>
                     {item.status}
                   </span>
                   <span className="text-xs text-muted-foreground">{item.status !== 'Retorno' ? `${dias}d` : '✓'}</span>
-                  {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" aria-hidden="true" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" aria-hidden="true" />}
                 </div>
-              </div>
+              </button>
 
               {/* Expanded panel */}
               {isExpanded && (
@@ -637,24 +648,24 @@ export function Manutencao() {
                         </div>
                         <div className="rounded-lg border p-3" style={{ background: atrasado ? 'rgba(239,68,68,0.05)' : dias > 7 ? 'rgba(234,179,8,0.05)' : 'white', borderColor: atrasado ? 'rgba(239,68,68,0.3)' : 'rgba(11,24,38,0.1)' }}>
                           <p className="text-xs text-muted-foreground mb-1">Dias Decorridos</p>
-                          <p className="font-semibold text-sm" style={{ color: atrasado ? '#DC2626' : dias > 7 ? '#D97706' : '#0B1826' }}>
-                            {dias}d {atrasado ? '🔴' : dias > 7 ? '🟡' : '🟢'}
+                          <p className="font-semibold text-sm" style={{ color: atrasado ? '#DC2626' : dias > 7 ? '#92400E' : '#0B1826' }}>
+                            {dias}d <span aria-hidden="true">{atrasado ? '🔴' : dias > 7 ? '🟡' : '🟢'}</span>
                           </p>
                         </div>
                         {item.status !== 'Retorno' ? (
                           <div className="rounded-lg border p-3" style={{ background: atrasado ? 'rgba(239,68,68,0.05)' : 'white', borderColor: atrasado ? 'rgba(239,68,68,0.3)' : 'rgba(11,24,38,0.1)' }}>
                             <p className="text-xs text-muted-foreground mb-1">Dias Restantes</p>
                             {atrasado ? (
-                              <p className="font-semibold text-sm text-red-700">🔴 {Math.abs(diasRestantes!)} dias atrasado</p>
+                              <p className="font-semibold text-sm text-red-700"><span aria-hidden="true">🔴</span> {Math.abs(diasRestantes!)} dias atrasado</p>
                             ) : (
-                              <p className="font-semibold text-sm" style={{ color: diasRestantes! <= 3 ? '#D97706' : '#0B1826' }}>
+                              <p className="font-semibold text-sm" style={{ color: diasRestantes! <= 3 ? '#92400E' : '#0B1826' }}>
                                 {diasRestantes} {diasRestantes === 1 ? 'dia' : 'dias'}
                               </p>
                             )}
                           </div>
                         ) : (
                           <div className="rounded-lg border p-3" style={{ background: 'rgba(34,197,94,0.05)', borderColor: 'rgba(34,197,94,0.25)' }}>
-                            <p className="text-xs mb-1 flex items-center gap-1" style={{ color: '#16A34A' }}><CheckCircle className="w-3 h-3" />Retornado em</p>
+                            <p className="text-xs mb-1 flex items-center gap-1" style={{ color: '#15803D' }}><CheckCircle className="w-3 h-3" aria-hidden="true" />Retornado em</p>
                             <p className="font-semibold text-sm text-green-800">{item.dataRetorno ? formatarData(item.dataRetorno) : '—'}</p>
                           </div>
                         )}
@@ -725,7 +736,7 @@ export function Manutencao() {
 
                   {temInercia && (
                     <div className="p-3 rounded-lg flex items-center gap-2" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)' }}>
-                      <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                      <AlertCircle className="w-4 h-4 text-red-500 shrink-0" aria-hidden="true" />
                       <p className="text-sm text-red-800 font-medium">Sem atualização há mais de 48 horas — requer atenção imediata.</p>
                     </div>
                   )}
