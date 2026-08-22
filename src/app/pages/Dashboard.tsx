@@ -14,7 +14,7 @@ const SemaforoIndicator = ({ status, contexto = 'prazo' }: { status: 'green' | '
   return (
     <div className="flex items-center gap-1.5">
       <div className="w-2.5 h-2.5 rounded-full" style={{ background: colors[status], boxShadow: status === 'red' ? `0 0 6px ${colors.red}` : 'none' }} aria-hidden="true" />
-      <span className="text-xs font-medium" style={{ color: status === 'yellow' ? '#92400E' : status === 'red' ? '#DC2626' : '#15803D' }}>{labels[status]}</span>
+      <span className="text-xs font-medium" style={{ color: status === 'yellow' ? '#92400E' : status === 'red' ? '#B91C1C' : '#166534' }}>{labels[status]}</span>
     </div>
   );
 };

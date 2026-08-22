@@ -518,7 +518,7 @@ export function PortalRequisicoes() {
                             </span>
                             <span
                               className="text-xs font-semibold"
-                              style={{ color: p.quantidade === 0 ? '#DC2626' : estoqueBaixoP ? '#92400E' : 'var(--muted-foreground)' }}
+                              style={{ color: p.quantidade === 0 ? '#B91C1C' : estoqueBaixoP ? '#92400E' : 'var(--muted-foreground)' }}
                             >
                               {p.quantidade} un.{estoqueBaixoP && <span aria-hidden="true"> ⚠</span>}
                             </span>
@@ -543,7 +543,7 @@ export function PortalRequisicoes() {
                 const critCfg = CRIT_CONFIG[selectedProduct.criticidade] ?? CRIT_CONFIG['Baixa'];
                 const disponivel = selectedProduct.quantidade;
                 const estoqueMinimo = cat?.estoqueMinimo ?? 0;
-                const availColor = disponivel === 0 ? '#DC2626' : disponivel < estoqueMinimo ? '#92400E' : '#166534';
+                const availColor = disponivel === 0 ? '#B91C1C' : disponivel < estoqueMinimo ? '#92400E' : '#166534';
                 return (
                   <div className="rounded-2xl overflow-hidden" style={{ border: '2px solid rgba(26,86,219,0.2)', background: 'rgba(26,86,219,0.02)' }}>
                     {/* Product header */}
@@ -1188,8 +1188,8 @@ export function PortalRequisicoes() {
                           <div className="grid grid-cols-3 gap-3 mb-3">
                             {[
                               { label: 'Solicitado', value: item.quantidade, color: '#1A56DB' },
-                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? '#166534' : '#DC2626' },
-                              { label: 'Saldo',       value: info.saldo,       color: info.saldo >= 0 ? '#64748B' : '#DC2626' },
+                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? '#166534' : '#B91C1C' },
+                              { label: 'Saldo',       value: info.saldo,       color: info.saldo >= 0 ? '#4B5768' : '#B91C1C' },
                             ].map(col => (
                               <div key={col.label} className="bg-card rounded-lg px-3 py-2.5 text-center border border-border">
                                 <p className="text-xs text-muted-foreground mb-1">{col.label}</p>

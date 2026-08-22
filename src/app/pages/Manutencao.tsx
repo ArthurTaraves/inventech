@@ -576,7 +576,7 @@ export function Manutencao() {
                       animation: semaforo === 'red' ? 'pulse 2s infinite' : 'none',
                     }}
                   />
-                  <span className="text-xs font-semibold" style={{ color: semaforo === 'red' ? '#DC2626' : semaforo === 'yellow' ? '#92400E' : '#166534' }}>
+                  <span className="text-xs font-semibold" style={{ color: semaforo === 'red' ? '#B91C1C' : semaforo === 'yellow' ? '#92400E' : '#166534' }}>
                     {semaforo === 'red' ? 'Atrasado' : semaforo === 'yellow' ? 'Atenção' : 'No prazo'}
                   </span>
                 </div>
@@ -596,7 +596,7 @@ export function Manutencao() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    {temInercia && <span className="text-red-500 animate-pulse font-semibold text-xs"><span aria-hidden="true">⚠️</span> Sem atualização</span>}
+                    {temInercia && <span className="text-red-700 font-semibold text-xs"><span aria-hidden="true">⚠️</span> Sem atualização</span>}
                     <p className="font-semibold text-foreground">{item.produtoNome}</p>
                   </div>
                   {item.responsavel && (
@@ -647,7 +647,7 @@ export function Manutencao() {
                         </div>
                         <div className="rounded-lg border p-3" style={{ background: atrasado ? 'rgba(239,68,68,0.05)' : dias > 7 ? 'rgba(234,179,8,0.05)' : 'white', borderColor: atrasado ? 'rgba(239,68,68,0.3)' : 'rgba(11,24,38,0.1)' }}>
                           <p className="text-xs text-muted-foreground mb-1">Dias Decorridos</p>
-                          <p className="font-semibold text-sm" style={{ color: atrasado ? '#DC2626' : dias > 7 ? '#92400E' : '#0B1826' }}>
+                          <p className="font-semibold text-sm" style={{ color: atrasado ? '#B91C1C' : dias > 7 ? '#92400E' : '#0B1826' }}>
                             {dias}d <span aria-hidden="true">{atrasado ? '🔴' : dias > 7 ? '🟡' : '🟢'}</span>
                           </p>
                         </div>

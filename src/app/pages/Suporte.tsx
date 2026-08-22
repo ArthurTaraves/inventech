@@ -279,7 +279,7 @@ export function Suporte() {
                     <span className="text-lg">{cfg.emoji}</span>
                     <div>
                       <p className={`font-medium text-sm ${cfg.color}`}>{cfg.label}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-600">
                         {key === 'duvida' ? 'Como usar o sistema, explicações' :
                          key === 'erro' ? 'Problema técnico ou comportamento incorreto' :
                          'Proposta de melhoria ou nova funcionalidade'}

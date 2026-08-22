@@ -376,7 +376,7 @@ export function ManutencaoTecnica() {
               <Calendar className="w-3 h-3" aria-hidden="true" />{formatarData(item.dataEnvio)}
             </p>
             {item.status !== 'Retorno' && (
-              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? '#DC2626' : dias > 7 ? '#92400E' : '#166534' }}>
+              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? '#B91C1C' : dias > 7 ? '#92400E' : '#166534' }}>
                 <span className="w-2 h-2 rounded-full inline-block" style={{ background: semaforoColor }} aria-hidden="true" />
                 {dias}d · {semaforoLabel}
               </span>

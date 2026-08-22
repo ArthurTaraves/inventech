@@ -849,7 +849,7 @@ export function Solicitacoes() {
                           {[
                             { label: 'Solicitado', value: item.quantidade, color: '#1A56DB', suffix: null as string | null },
                             { label: 'Disponível', value: disponivel, color: '#166534', suffix: null as string | null },
-                            { label: 'Saldo após separação', value: saldo, color: saldo >= 0 ? '#334155' : '#DC2626', suffix: saldo < 0 ? 'Insuficiente' : null },
+                            { label: 'Saldo após separação', value: saldo, color: saldo >= 0 ? '#334155' : '#B91C1C', suffix: saldo < 0 ? 'Insuficiente' : null },
                           ].map(col => (
                             <div key={col.label} className="bg-card rounded-lg p-2.5 text-center border border-border">
                               <p className="text-xs text-muted-foreground mb-0.5">{col.label}</p>

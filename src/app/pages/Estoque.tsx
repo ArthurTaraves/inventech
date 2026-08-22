@@ -483,7 +483,7 @@ export function Estoque() {
                 <p className="text-muted-foreground text-sm">Nenhuma movimentação registrada para este produto</p>
               </div>
             ) : (
-              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1" tabIndex={0} role="region" aria-label="Histórico de movimentações do produto">
                 {historicosProduto.map(mov => (
                   <div key={mov.id} className="rounded-xl border-l-4 p-4" style={{
                     borderLeftColor: mov.tipo === 'Entrada' ? '#22C55E' : '#EF4444',

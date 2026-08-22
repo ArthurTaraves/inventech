@@ -333,7 +333,7 @@ export function Movimentacao() {
                     style={tipo === 'Entrada' ? {
                       borderColor: '#22C55E',
                       background: 'rgba(34,197,94,0.08)',
-                      color: '#15803D',
+                      color: '#166534',
                     } : {
                       borderColor: 'rgba(11,24,38,0.1)',
                       background: 'transparent',
@@ -427,7 +427,7 @@ export function Movimentacao() {
             <span className="text-xs text-muted-foreground bg-muted px-2.5 py-1 rounded-full">{movimentacoesRecentes.length} registros</span>
           </div>
           <div className="p-4">
-            <div className="space-y-3 max-h-[580px] overflow-y-auto pr-1">
+            <div className="space-y-3 max-h-[580px] overflow-y-auto pr-1" tabIndex={0} role="region" aria-label="Histórico de movimentações">
               {movimentacoesRecentes.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
                   <Package className="w-10 h-10 mx-auto mb-3 opacity-30" />
