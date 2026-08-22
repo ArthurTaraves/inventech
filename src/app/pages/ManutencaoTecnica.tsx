@@ -45,7 +45,7 @@ const KANBAN_COLUMNS: {
     label: 'Em Peritagem',
     emoji: '🔍',
     headerBg: 'rgba(245,158,11,0.12)',
-    headerText: '#D97706',
+    headerText: '#92400E',
     accent: '#D97706',
     cardBorderActive: 'rgba(245,158,11,0.4)',
   },
@@ -63,7 +63,7 @@ const KANBAN_COLUMNS: {
     label: 'Em Manutenção',
     emoji: '🔧',
     headerBg: 'rgba(249,115,22,0.12)',
-    headerText: '#EA580C',
+    headerText: '#9A3412',
     accent: '#EA580C',
     cardBorderActive: 'rgba(249,115,22,0.4)',
   },
@@ -72,7 +72,7 @@ const KANBAN_COLUMNS: {
     label: 'Concluído',
     emoji: '🚚',
     headerBg: 'rgba(34,197,94,0.12)',
-    headerText: '#16A34A',
+    headerText: '#15803D',
     accent: '#22C55E',
     cardBorderActive: 'rgba(34,197,94,0.4)',
   },
@@ -111,8 +111,8 @@ export function ManutencaoTecnica() {
 
   const getCriticidadeStyle = (c: CriticidadeABC) => {
     if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#DC2626', border: '2px solid rgba(239,68,68,0.4)' };
-    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#D97706', border: '2px solid rgba(245,158,11,0.4)' };
-    return { background: 'rgba(34,197,94,0.12)', color: '#16A34A', border: '2px solid rgba(34,197,94,0.4)' };
+    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#92400E', border: '2px solid rgba(245,158,11,0.4)' };
+    return { background: 'rgba(34,197,94,0.12)', color: '#15803D', border: '2px solid rgba(34,197,94,0.4)' };
   };
 
   const getCriticidadeLabel = (c: CriticidadeABC) => ({ A: 'Crítico', B: 'Médio', C: 'Baixo' }[c]);
@@ -227,9 +227,11 @@ export function ManutencaoTecnica() {
 
           <div className="space-y-4 mt-6">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Usuário</label>
+              <label htmlFor="mt-usuario" className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Usuário</label>
               <input
+                id="mt-usuario"
                 type="text"
+                autoFocus
                 value={usuario}
                 onChange={e => setUsuario(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleLogin()}
@@ -245,9 +247,10 @@ export function ManutencaoTecnica() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Senha</label>
+              <label htmlFor="mt-senha" className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Senha</label>
               <div className="relative">
                 <input
+                  id="mt-senha"
                   type={mostrarSenha ? 'text' : 'password'}
                   value={senha}
                   onChange={e => setSenha(e.target.value)}
@@ -264,6 +267,8 @@ export function ManutencaoTecnica() {
                 <button
                   type="button"
                   onClick={() => setMostrarSenha(!mostrarSenha)}
+                  aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                  aria-pressed={mostrarSenha}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
                 >
                   {mostrarSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -323,11 +328,15 @@ export function ManutencaoTecnica() {
     const critStyle = getCriticidadeStyle(item.criticidadeABC);
     const semaforoColor = atrasado ? '#EF4444' : dias > 7 ? '#EAB308' : '#22C55E';
 
+    const semaforoLabel = item.status === 'Retorno' ? null : atrasado ? 'Atrasado' : dias > 7 ? 'Atenção' : 'No prazo';
+
     return (
-      <div
+      <button
         key={item.id}
+        type="button"
         onClick={() => { setItemSelecionado(item); setIsDetalhesOpen(true); }}
-        className="p-3 bg-card rounded-xl cursor-pointer transition-all hover:shadow-md"
+        aria-label={`${item.produtoNome} — ${getCriticidadeLabel(item.criticidadeABC)}${semaforoLabel ? ` — ${semaforoLabel}` : ''} — abrir ordem de serviço`}
+        className="w-full text-left p-3 bg-card rounded-xl cursor-pointer transition-all hover:shadow-md"
         style={{
           border: `1.5px solid ${temInercia ? '#EF4444' : atrasado ? 'rgba(239,68,68,0.35)' : 'rgba(11,24,38,0.1)'}`,
         }}
@@ -337,7 +346,7 @@ export function ManutencaoTecnica() {
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1 mb-0.5 flex-wrap">
-              {temInercia && <span className="text-red-500 animate-pulse text-sm">⚠️</span>}
+              {temInercia && <span className="text-red-500 animate-pulse text-sm" aria-hidden="true">⚠️</span>}
               {produto?.codigoProduto && (
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 5px' }}>
                   {produto.codigoProduto}
@@ -351,25 +360,25 @@ export function ManutencaoTecnica() {
               </span>
             )}
           </div>
-          <span className="text-xs font-bold px-2 py-0.5 rounded-full ml-2 shrink-0" style={critStyle}>
-            {item.criticidadeABC}
+          <span className="text-xs font-bold px-2 py-0.5 rounded-full ml-2 shrink-0 whitespace-nowrap" style={critStyle}>
+            {item.criticidadeABC} · {getCriticidadeLabel(item.criticidadeABC)}
           </span>
         </div>
 
         <div className="space-y-1">
           {item.responsavel && (
             <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <User className="w-3 h-3" />{item.responsavel}
+              <User className="w-3 h-3" aria-hidden="true" />{item.responsavel}
             </p>
           )}
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Calendar className="w-3 h-3" />{formatarData(item.dataEnvio)}
+              <Calendar className="w-3 h-3" aria-hidden="true" />{formatarData(item.dataEnvio)}
             </p>
             {item.status !== 'Retorno' && (
-              <span className="text-xs font-bold flex items-center gap-1" style={{ color: semaforoColor }}>
-                <span className="w-2 h-2 rounded-full inline-block" style={{ background: semaforoColor }} />
-                {dias}d
+              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? '#DC2626' : dias > 7 ? '#92400E' : '#15803D' }}>
+                <span className="w-2 h-2 rounded-full inline-block" style={{ background: semaforoColor }} aria-hidden="true" />
+                {dias}d · {semaforoLabel}
               </span>
             )}
           </div>
@@ -377,10 +386,10 @@ export function ManutencaoTecnica() {
 
         {temInercia && (
           <div className="mt-2 text-xs rounded-lg px-2 py-1" style={{ color: '#DC2626', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
-            +48h sem atualização
+            <span aria-hidden="true">⚠️</span> +48h sem atualização
           </div>
         )}
-      </div>
+      </button>
     );
   };
 
@@ -422,8 +431,8 @@ export function ManutencaoTecnica() {
       {/* Search */}
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar por produto, status ou responsável..." value={searchTerm}
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+          <Input aria-label="Buscar ordens de serviço" placeholder="Buscar por produto, status ou responsável..." value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl" />
         </div>
       </div>
@@ -569,13 +578,13 @@ export function ManutencaoTecnica() {
               )}
 
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Atualizar Status</label>
+                <label htmlFor="mt-status" className="text-sm font-semibold text-foreground">Atualizar Status</label>
                 {itemSelecionado.status !== 'Retorno' ? (
                   <Select
                     value={itemSelecionado.status}
                     onValueChange={v => handleAtualizarStatus(itemSelecionado.id, v as StatusManutencao)}
                   >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger id="mt-status" autoFocus><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Envio">📦 Envio</SelectItem>
                       <SelectItem value="Peritagem">🔍 Peritagem</SelectItem>
