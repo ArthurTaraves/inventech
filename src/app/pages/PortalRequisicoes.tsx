@@ -47,25 +47,25 @@ interface Solicitacao {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; border: string; portalLabel: string; icon: string }> = {
-  'Solicitada':           { color: '#1A56DB', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   portalLabel: 'Solicitada',           icon: '📋' },
-  'Em análise':           { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   portalLabel: 'Em análise',           icon: '🔍' },
-  'Aprovada':             { color: '#166534', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  portalLabel: 'Aprovada',             icon: '✅' },
-  'Em separação':         { color: '#6D28D9', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', portalLabel: 'Separando materiais',  icon: '⏳' },
-  'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  portalLabel: 'Pronta para retirada', icon: '🟠' },
-  'Entregue':             { color: '#166534', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   portalLabel: 'Entregue',             icon: '✅' },
-  'Cancelada':            { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   portalLabel: 'Cancelada',            icon: '🔴' },
+  'Solicitada':           { color: 'var(--text-blue)', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   portalLabel: 'Solicitada',           icon: '📋' },
+  'Em análise':           { color: 'var(--text-amber)', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   portalLabel: 'Em análise',           icon: '🔍' },
+  'Aprovada':             { color: 'var(--text-green)', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  portalLabel: 'Aprovada',             icon: '✅' },
+  'Em separação':         { color: 'var(--text-violet)', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', portalLabel: 'Separando materiais',  icon: '⏳' },
+  'Pronta para retirada': { color: 'var(--text-orange)', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  portalLabel: 'Pronta para retirada', icon: '🟠' },
+  'Entregue':             { color: 'var(--text-green)', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   portalLabel: 'Entregue',             icon: '✅' },
+  'Cancelada':            { color: 'var(--text-red)', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   portalLabel: 'Cancelada',            icon: '🔴' },
 };
 
 const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string; icon: string }> = {
-  'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
-  'Média':  { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡'   },
-  'Alta':   { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴'   },
+  'Baixa':  { color: 'var(--muted-foreground)', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
+  'Média':  { color: 'var(--text-amber)', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡'   },
+  'Alta':   { color: 'var(--text-red)', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴'   },
 };
 
 const CRIT_CONFIG: Record<string, { color: string; bg: string; border: string; icon: string }> = {
-  'Alta':  { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)', icon: '🔴'   },
-  'Média': { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)', icon: '🟡'   },
-  'Baixa': { color: '#166534', bg: 'rgba(22,163,74,0.1)',   border: 'rgba(22,163,74,0.25)', icon: '🟢'   },
+  'Alta':  { color: 'var(--text-red)', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)', icon: '🔴'   },
+  'Média': { color: 'var(--text-amber)', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)', icon: '🟡'   },
+  'Baixa': { color: 'var(--text-green)', bg: 'rgba(22,163,74,0.1)',   border: 'rgba(22,163,74,0.25)', icon: '🟢'   },
 };
 
 const STATUS_TODOS: StatusSolicitacao[] = [
@@ -74,8 +74,8 @@ const STATUS_TODOS: StatusSolicitacao[] = [
 
 const thStyle: React.CSSProperties = {
   padding: '10px 20px', textAlign: 'left', fontSize: '11px', fontWeight: 600,
-  letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4B5768',
-  background: '#F1F5FB', borderBottom: '1px solid rgba(11,24,38,0.08)', whiteSpace: 'nowrap',
+  letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted-foreground)',
+  background: 'var(--muted)', borderBottom: '1px solid rgba(11,24,38,0.08)', whiteSpace: 'nowrap',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -409,7 +409,7 @@ export function PortalRequisicoes() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all relative"
               style={active ? {
                 background: '#1A56DB', color: 'white', boxShadow: '0 2px 8px rgba(26,86,219,0.3)',
-              } : { color: '#4B5768' }}
+              } : { color: 'var(--muted-foreground)' }}
             >
               <Icon className="w-4 h-4" aria-hidden="true" />
               {tab.label}
@@ -436,7 +436,7 @@ export function PortalRequisicoes() {
           {/* Product search */}
           <div className="bg-card rounded-2xl border border-border shadow-sm overflow-visible">
             <div className="px-6 py-4 border-b border-border flex items-center gap-2">
-              <Search className="w-5 h-5" style={{ color: '#1A56DB' }} />
+              <Search className="w-5 h-5" style={{ color: 'var(--text-blue)' }} />
               <h2 className="font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Pesquisar Produto</h2>
             </div>
             <div className="p-6 space-y-5">
@@ -458,14 +458,14 @@ export function PortalRequisicoes() {
                     placeholder="Digite o nome, código ou categoria do produto..."
                     className="w-full pl-12 pr-4 py-4 text-base rounded-xl outline-none transition-all"
                     style={{
-                      background: '#F1F5FB', border: '2px solid rgba(11,24,38,0.08)',
+                      background: 'var(--input-background)', border: '2px solid rgba(11,24,38,0.08)',
                       fontFamily: "'Inter', sans-serif",
                     }}
                     onFocus={e => {
                       setShowSuggestions(true);
-                      e.currentTarget.style.borderColor = '#1A56DB'; e.currentTarget.style.background = '#fff';
+                      e.currentTarget.style.borderColor = '#1A56DB'; e.currentTarget.style.background = 'var(--card)';
                     }}
-                    onBlur={e => { e.currentTarget.style.borderColor = 'rgba(11,24,38,0.08)'; e.currentTarget.style.background = '#F1F5FB'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = 'rgba(11,24,38,0.08)'; e.currentTarget.style.background = 'var(--input-background)'; }}
                   />
                   {searchQuery && (
                     <button type="button" aria-label="Limpar busca de produto" onClick={() => { setSearchQuery(''); setSelectedProduct(null); setShowSuggestions(false); setActiveSuggestionIndex(-1); }}
@@ -500,7 +500,7 @@ export function PortalRequisicoes() {
                               width: 36, height: 36, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
                               background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.15)',
                             }}>
-                              <Package className="w-4 h-4" style={{ color: '#1A56DB' }} aria-hidden="true" />
+                              <Package className="w-4 h-4" style={{ color: 'var(--text-blue)' }} aria-hidden="true" />
                             </div>
                             <div>
                               <p className="text-sm font-semibold text-foreground">{p.nome}</p>
@@ -509,7 +509,7 @@ export function PortalRequisicoes() {
                           </div>
                           <div className="flex items-center gap-3">
                             {p.codigoProduto && (
-                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                                 {p.codigoProduto}
                               </span>
                             )}
@@ -518,7 +518,7 @@ export function PortalRequisicoes() {
                             </span>
                             <span
                               className="text-xs font-semibold"
-                              style={{ color: p.quantidade === 0 ? '#B91C1C' : estoqueBaixoP ? '#92400E' : 'var(--muted-foreground)' }}
+                              style={{ color: p.quantidade === 0 ? 'var(--text-red)' : estoqueBaixoP ? 'var(--text-amber)' : 'var(--muted-foreground)' }}
                             >
                               {p.quantidade} un.{estoqueBaixoP && <span aria-hidden="true"> ⚠</span>}
                             </span>
@@ -587,7 +587,7 @@ export function PortalRequisicoes() {
                           <div className="flex flex-wrap gap-2">
                             {selectedProduct.localizacoes.map(loc => (
                               <span key={loc} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium"
-                                style={{ background: 'rgba(26,86,219,0.07)', color: '#1A56DB', border: '1px solid rgba(26,86,219,0.2)' }}>
+                                style={{ background: 'rgba(26,86,219,0.07)', color: 'var(--text-blue)', border: '1px solid rgba(26,86,219,0.2)' }}>
                                 <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
                                 {formatLoc(loc)}
                               </span>
@@ -600,22 +600,22 @@ export function PortalRequisicoes() {
                       {selectedProduct.criticidade === 'Alta' && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
-                          <p className="text-sm font-semibold" style={{ color: '#B91C1C' }}>Item de alta criticidade — manuseio com atenção</p>
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: 'var(--text-red)' }} aria-hidden="true" />
+                          <p className="text-sm font-semibold" style={{ color: 'var(--text-red)' }}>Item de alta criticidade — manuseio com atenção</p>
                         </div>
                       )}
                       {disponivel > 0 && disponivel <= estoqueMinimo && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#92400E' }} aria-hidden="true" />
-                          <p className="text-sm font-semibold" style={{ color: '#92400E' }}>Estoque próximo do mínimo.</p>
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: 'var(--text-amber)' }} aria-hidden="true" />
+                          <p className="text-sm font-semibold" style={{ color: 'var(--text-amber)' }}>Estoque próximo do mínimo.</p>
                         </div>
                       )}
                       {disponivel === 0 && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
-                          <p className="text-sm font-semibold" style={{ color: '#B91C1C' }}>Sem estoque disponível no momento</p>
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: 'var(--text-red)' }} aria-hidden="true" />
+                          <p className="text-sm font-semibold" style={{ color: 'var(--text-red)' }}>Sem estoque disponível no momento</p>
                         </div>
                       )}
 
@@ -629,12 +629,12 @@ export function PortalRequisicoes() {
                             value={itemQty}
                             onChange={e => setItemQty(Math.max(1, parseInt(e.target.value) || 1))}
                             className="w-24 px-3 py-2.5 rounded-xl text-center font-bold text-lg outline-none transition-all"
-                            style={{ background: '#F1F5FB', border: '2px solid rgba(11,24,38,0.1)' }}
+                            style={{ background: 'var(--input-background)', border: '2px solid rgba(11,24,38,0.1)' }}
                           />
                         </div>
                         <div className="flex-1">
                           {itemQty > disponivel && (
-                            <p className="text-xs text-red-600 font-semibold mb-1">⚠ Quantidade maior que o disponível</p>
+                            <p className="text-xs font-semibold mb-1" style={{ color: 'var(--text-red)' }}>⚠ Quantidade maior que o disponível</p>
                           )}
                           <button
                             onClick={adicionarAoCart}
@@ -660,7 +660,7 @@ export function PortalRequisicoes() {
           <div className="bg-card rounded-2xl border border-border shadow-sm">
             <div className="px-6 py-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5" style={{ color: '#1A56DB' }} />
+                <ShoppingCart className="w-5 h-5" style={{ color: 'var(--text-blue)' }} />
                 <h2 className="font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Itens da Solicitação</h2>
                 {cart.length > 0 && (
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ background: '#1A56DB' }}>
@@ -670,7 +670,7 @@ export function PortalRequisicoes() {
               </div>
             </div>
             <div className="p-6">
-              {formErrors.cart && <p className="text-sm text-red-600 font-semibold mb-3">{formErrors.cart}</p>}
+              {formErrors.cart && <p className="text-sm font-semibold mb-3" style={{ color: 'var(--text-red)' }}>{formErrors.cart}</p>}
               {cart.length === 0 ? (
                 <div className="py-10 text-center">
                   <ShoppingCart className="w-10 h-10 text-muted-foreground/25 mx-auto mb-2" />
@@ -684,11 +684,11 @@ export function PortalRequisicoes() {
                     const critCfg = CRIT_CONFIG[p?.criticidade ?? 'Baixa'];
                     return (
                       <div key={item.produtoId} className="flex items-center justify-between rounded-xl px-4 py-3.5"
-                        style={{ background: i % 2 === 0 ? '#F8FAFD' : '#FFFFFF', border: '1px solid rgba(11,24,38,0.07)' }}>
+                        style={{ background: i % 2 === 0 ? 'var(--surface-alt)' : 'var(--card)', border: '1px solid rgba(11,24,38,0.07)' }}>
                         <div className="flex items-center gap-3">
                           <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: '#1A56DB' }}>{i + 1}</span>
                           {item.codigoProduto && (
-                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 7px' }}>
+                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 7px' }}>
                               {item.codigoProduto}
                             </span>
                           )}
@@ -718,7 +718,7 @@ export function PortalRequisicoes() {
           {/* Request form */}
           <div className="bg-card rounded-2xl border border-border shadow-sm">
             <div className="px-6 py-4 border-b border-border flex items-center gap-2">
-              <User className="w-5 h-5" style={{ color: '#1A56DB' }} />
+              <User className="w-5 h-5" style={{ color: 'var(--text-blue)' }} />
               <h2 className="font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dados do Solicitante</h2>
             </div>
             <div className="p-6 space-y-5">
@@ -735,7 +735,7 @@ export function PortalRequisicoes() {
                     aria-invalid={!!formErrors.solicitante}
                     aria-describedby={formErrors.solicitante ? 'portal-solicitante-erro' : undefined}
                   />
-                  {formErrors.solicitante && <p id="portal-solicitante-erro" className="text-xs text-red-600 font-semibold">{formErrors.solicitante}</p>}
+                  {formErrors.solicitante && <p id="portal-solicitante-erro" className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}>{formErrors.solicitante}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="portal-matricula" className="text-sm font-semibold">Matrícula *</Label>
@@ -749,7 +749,7 @@ export function PortalRequisicoes() {
                     aria-invalid={!!formErrors.matricula}
                     aria-describedby={formErrors.matricula ? 'portal-matricula-erro' : undefined}
                   />
-                  {formErrors.matricula && <p id="portal-matricula-erro" className="text-xs text-red-600 font-semibold">{formErrors.matricula}</p>}
+                  {formErrors.matricula && <p id="portal-matricula-erro" className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}>{formErrors.matricula}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="portal-setor" className="text-sm font-semibold">Setor *</Label>
@@ -762,7 +762,7 @@ export function PortalRequisicoes() {
                     aria-invalid={!!formErrors.setor}
                     aria-describedby={formErrors.setor ? 'portal-setor-erro' : undefined}
                   />
-                  {formErrors.setor && <p id="portal-setor-erro" className="text-xs text-red-600 font-semibold">{formErrors.setor}</p>}
+                  {formErrors.setor && <p id="portal-setor-erro" className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}>{formErrors.setor}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="portal-data">Data Prevista de Retirada *</Label>
@@ -775,7 +775,7 @@ export function PortalRequisicoes() {
                     aria-invalid={!!formErrors.dataPrevista}
                     aria-describedby={formErrors.dataPrevista ? 'portal-data-erro' : undefined}
                   />
-                  {formErrors.dataPrevista && <p id="portal-data-erro" className="text-xs text-red-600 font-semibold">{formErrors.dataPrevista}</p>}
+                  {formErrors.dataPrevista && <p id="portal-data-erro" className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}>{formErrors.dataPrevista}</p>}
                 </div>
               </div>
 
@@ -793,7 +793,7 @@ export function PortalRequisicoes() {
                         className="flex-1 py-3 rounded-xl text-base font-bold transition-all"
                         style={selected
                           ? { background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` }
-                          : { background: 'transparent', color: '#4B5768', border: '2px solid rgba(11,24,38,0.1)' }}
+                          : { background: 'transparent', color: 'var(--muted-foreground)', border: '2px solid rgba(11,24,38,0.1)' }}
                       >
                         <span aria-hidden="true">{cfg.icon}</span> {p}
                       </button>
@@ -871,7 +871,7 @@ export function PortalRequisicoes() {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                               {sol.numero}
                             </span>
                             <PrioridadeBadge prioridade={sol.prioridade} />
@@ -953,10 +953,10 @@ export function PortalRequisicoes() {
           {/* Summary KPIs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
-              { label: 'Aguardando', count: solicitacoes.filter(s => s.status === 'Solicitada').length, color: '#1A56DB' },
-              { label: 'Em análise', count: solicitacoes.filter(s => s.status === 'Em análise').length, color: '#92400E' },
-              { label: 'Em separação', count: solicitacoes.filter(s => s.status === 'Em separação').length, color: '#7C3AED' },
-              { label: 'Prontas', count: solicitacoes.filter(s => s.status === 'Pronta para retirada').length, color: '#9A3412' },
+              { label: 'Aguardando', count: solicitacoes.filter(s => s.status === 'Solicitada').length, color: 'var(--text-blue)' },
+              { label: 'Em análise', count: solicitacoes.filter(s => s.status === 'Em análise').length, color: 'var(--text-amber)' },
+              { label: 'Em separação', count: solicitacoes.filter(s => s.status === 'Em separação').length, color: 'var(--text-violet)' },
+              { label: 'Prontas', count: solicitacoes.filter(s => s.status === 'Pronta para retirada').length, color: 'var(--text-orange)' },
             ].map(kpi => (
               <div key={kpi.label} className="bg-card rounded-xl px-4 py-3 border border-border shadow-sm" style={{ borderTop: `3px solid ${kpi.color}` }}>
                 <p className="text-xs text-muted-foreground mb-1">{kpi.label}</p>
@@ -985,12 +985,12 @@ export function PortalRequisicoes() {
                 <tbody>
                   {centralFiltradas.map((sol, idx) => {
                     const isFinal = sol.status === 'Entregue' || sol.status === 'Cancelada';
-                    const rowBg = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFD';
+                    const rowBg = idx % 2 === 0 ? 'var(--card)' : 'var(--surface-alt)';
                     const criticidadeSol = getCriticidadeSolicitacao(sol);
                     return (
                       <tr key={sol.id} style={{ background: rowBg, borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
                         <td style={{ padding: '14px 20px' }}>
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                             {sol.numero}
                           </span>
                         </td>
@@ -1026,7 +1026,7 @@ export function PortalRequisicoes() {
                             {sol.status === 'Solicitada' && (
                               <button onClick={() => avancarStatus(sol, 'Em análise', 'Análise iniciada')}
                                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: '#92400E', background: 'rgba(217,119,6,0.1)' }}>
+                                style={{ color: 'var(--text-amber)', background: 'rgba(217,119,6,0.1)' }}>
                                 Analisar
                               </button>
                             )}
@@ -1034,12 +1034,12 @@ export function PortalRequisicoes() {
                               <>
                                 <button onClick={() => avancarStatus(sol, 'Aprovada', 'Solicitação aprovada')}
                                   className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                  style={{ color: '#166534', background: 'rgba(16,185,129,0.1)' }}>
+                                  style={{ color: 'var(--text-green)', background: 'rgba(16,185,129,0.1)' }}>
                                   Aprovar
                                 </button>
                                 <button onClick={() => rejeitarSolicitacao(sol)}
                                   className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                  style={{ color: '#B91C1C', background: 'rgba(220,38,38,0.1)' }}>
+                                  style={{ color: 'var(--text-red)', background: 'rgba(220,38,38,0.1)' }}>
                                   Rejeitar
                                 </button>
                               </>
@@ -1047,21 +1047,21 @@ export function PortalRequisicoes() {
                             {sol.status === 'Aprovada' && (
                               <button onClick={() => avancarStatus(sol, 'Em separação', 'Separação iniciada')}
                                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: '#7C3AED', background: 'rgba(124,58,237,0.1)' }}>
+                                style={{ color: 'var(--text-violet)', background: 'rgba(124,58,237,0.1)' }}>
                                 Iniciar Separação
                               </button>
                             )}
                             {sol.status === 'Em separação' && (
                               <button onClick={() => avancarStatus(sol, 'Pronta para retirada', 'Marcado como pronto')}
                                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: '#9A3412', background: 'rgba(234,88,12,0.1)' }}>
+                                style={{ color: 'var(--text-orange)', background: 'rgba(234,88,12,0.1)' }}>
                                 Marcar Pronto
                               </button>
                             )}
                             {sol.status === 'Pronta para retirada' && (
                               <button onClick={() => avancarStatus(sol, 'Entregue', 'Entrega confirmada')}
                                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: '#166534', background: 'rgba(21,128,61,0.1)' }}>
+                                style={{ color: 'var(--text-green)', background: 'rgba(21,128,61,0.1)' }}>
                                 Confirmar Entrega
                               </button>
                             )}
@@ -1169,10 +1169,10 @@ export function PortalRequisicoes() {
                     return (
                       <div key={item.produtoId} className="rounded-xl overflow-hidden border" style={{ borderColor: 'rgba(11,24,38,0.08)' }}>
                         {/* Item header */}
-                        <div className="flex items-center justify-between px-4 py-3" style={{ background: '#F8FAFD', borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
+                        <div className="flex items-center justify-between px-4 py-3" style={{ background: 'var(--surface-alt)', borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
                           <div className="flex items-center gap-2">
                             {item.codigoProduto && (
-                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                                 {item.codigoProduto}
                               </span>
                             )}
@@ -1187,9 +1187,9 @@ export function PortalRequisicoes() {
                         <div className="p-4">
                           <div className="grid grid-cols-3 gap-3 mb-3">
                             {[
-                              { label: 'Solicitado', value: item.quantidade, color: '#1A56DB' },
-                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? '#166534' : '#B91C1C' },
-                              { label: 'Saldo',       value: info.saldo,       color: info.saldo >= 0 ? '#4B5768' : '#B91C1C' },
+                              { label: 'Solicitado', value: item.quantidade, color: 'var(--text-blue)' },
+                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? 'var(--text-green)' : 'var(--text-red)' },
+                              { label: 'Saldo',       value: info.saldo,       color: info.saldo >= 0 ? 'var(--muted-foreground)' : 'var(--text-red)' },
                             ].map(col => (
                               <div key={col.label} className="bg-card rounded-lg px-3 py-2.5 text-center border border-border">
                                 <p className="text-xs text-muted-foreground mb-1">{col.label}</p>
@@ -1206,7 +1206,7 @@ export function PortalRequisicoes() {
                               <div className="flex flex-wrap gap-2">
                                 {info.localizacoes.map(loc => (
                                   <span key={loc} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
-                                    style={{ background: 'rgba(26,86,219,0.07)', color: '#1A56DB', border: '1px solid rgba(26,86,219,0.2)' }}>
+                                    style={{ background: 'rgba(26,86,219,0.07)', color: 'var(--text-blue)', border: '1px solid rgba(26,86,219,0.2)' }}>
                                     <MapPin className="w-3 h-3" />
                                     {formatLoc(loc)}
                                   </span>
@@ -1220,8 +1220,8 @@ export function PortalRequisicoes() {
                             {abaixoMin && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#92400E' }} aria-hidden="true" />
-                                <p className="text-xs font-semibold" style={{ color: '#92400E' }}>
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--text-amber)' }} aria-hidden="true" />
+                                <p className="text-xs font-semibold" style={{ color: 'var(--text-amber)' }}>
                                   Estoque ficará abaixo do mínimo recomendado ({info.estoqueMinimo} un.)
                                 </p>
                               </div>
@@ -1229,15 +1229,15 @@ export function PortalRequisicoes() {
                             {info.criticidade === 'Alta' && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
-                                <p className="text-xs font-semibold" style={{ color: '#B91C1C' }}>Item de alta criticidade</p>
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--text-red)' }} aria-hidden="true" />
+                                <p className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}>Item de alta criticidade</p>
                               </div>
                             )}
                             {info.saldo < 0 && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
-                                <p className="text-xs font-semibold" style={{ color: '#B91C1C' }}>Quantidade solicitada supera o estoque disponível</p>
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--text-red)' }} aria-hidden="true" />
+                                <p className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}>Quantidade solicitada supera o estoque disponível</p>
                               </div>
                             )}
                           </div>
@@ -1269,7 +1269,8 @@ export function PortalRequisicoes() {
                         <CheckCircle className="w-4 h-4" aria-hidden="true" /> Aprovar
                       </button>
                       <button onClick={() => rejeitarSolicitacao(detalhe)}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                        style={{ color: 'var(--text-red)' }}>
                         <XCircle className="w-4 h-4" aria-hidden="true" /> Rejeitar
                       </button>
                     </>)}
@@ -1295,7 +1296,8 @@ export function PortalRequisicoes() {
                       </button>
                     )}
                     <button onClick={() => avancarStatus(detalhe, 'Cancelada', 'Solicitação cancelada')}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-colors ml-auto">
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors ml-auto"
+                      style={{ color: 'var(--text-red)' }}>
                       <XCircle className="w-4 h-4" aria-hidden="true" /> Cancelar Solicitação
                     </button>
                   </div>

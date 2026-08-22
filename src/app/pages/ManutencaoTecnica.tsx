@@ -36,7 +36,7 @@ const KANBAN_COLUMNS: {
     label: 'Enviado',
     emoji: '📦',
     headerBg: 'rgba(26,86,219,0.12)',
-    headerText: '#1A56DB',
+    headerText: 'var(--text-blue)',
     accent: '#1A56DB',
     cardBorderActive: 'rgba(26,86,219,0.4)',
   },
@@ -45,7 +45,7 @@ const KANBAN_COLUMNS: {
     label: 'Em Peritagem',
     emoji: '🔍',
     headerBg: 'rgba(245,158,11,0.12)',
-    headerText: '#92400E',
+    headerText: 'var(--text-amber)',
     accent: '#D97706',
     cardBorderActive: 'rgba(245,158,11,0.4)',
   },
@@ -54,7 +54,7 @@ const KANBAN_COLUMNS: {
     label: 'Ag. Aprovação',
     emoji: '✅',
     headerBg: 'rgba(139,92,246,0.12)',
-    headerText: '#6D28D9',
+    headerText: 'var(--text-violet)',
     accent: '#7C3AED',
     cardBorderActive: 'rgba(139,92,246,0.4)',
   },
@@ -63,7 +63,7 @@ const KANBAN_COLUMNS: {
     label: 'Em Manutenção',
     emoji: '🔧',
     headerBg: 'rgba(249,115,22,0.12)',
-    headerText: '#9A3412',
+    headerText: 'var(--text-orange)',
     accent: '#EA580C',
     cardBorderActive: 'rgba(249,115,22,0.4)',
   },
@@ -72,7 +72,7 @@ const KANBAN_COLUMNS: {
     label: 'Concluído',
     emoji: '🚚',
     headerBg: 'rgba(34,197,94,0.12)',
-    headerText: '#166534',
+    headerText: 'var(--text-green)',
     accent: '#22C55E',
     cardBorderActive: 'rgba(34,197,94,0.4)',
   },
@@ -110,9 +110,9 @@ export function ManutencaoTecnica() {
   };
 
   const getCriticidadeStyle = (c: CriticidadeABC) => {
-    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#B91C1C', border: '2px solid rgba(239,68,68,0.4)' };
-    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#92400E', border: '2px solid rgba(245,158,11,0.4)' };
-    return { background: 'rgba(34,197,94,0.12)', color: '#166534', border: '2px solid rgba(34,197,94,0.4)' };
+    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: 'var(--text-red)', border: '2px solid rgba(239,68,68,0.4)' };
+    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: 'var(--text-amber)', border: '2px solid rgba(245,158,11,0.4)' };
+    return { background: 'rgba(34,197,94,0.12)', color: 'var(--text-green)', border: '2px solid rgba(34,197,94,0.4)' };
   };
 
   const getCriticidadeLabel = (c: CriticidadeABC) => ({ A: 'Crítico', B: 'Médio', C: 'Baixo' }[c]);
@@ -348,14 +348,14 @@ export function ManutencaoTecnica() {
             <div className="flex items-center gap-1 mb-0.5 flex-wrap">
               {temInercia && <span className="text-red-500 animate-pulse text-sm" aria-hidden="true">⚠️</span>}
               {produto?.codigoProduto && (
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 5px' }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 5px' }}>
                   {produto.codigoProduto}
                 </span>
               )}
             </div>
             <p className="font-semibold text-foreground text-sm leading-tight truncate">{item.produtoNome}</p>
             {item.numeroSerie && (
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: '#7C3AED', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 5px', display: 'inline-block', marginTop: 2 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 5px', display: 'inline-block', marginTop: 2 }}>
                 #{item.numeroSerie}
               </span>
             )}
@@ -376,7 +376,7 @@ export function ManutencaoTecnica() {
               <Calendar className="w-3 h-3" aria-hidden="true" />{formatarData(item.dataEnvio)}
             </p>
             {item.status !== 'Retorno' && (
-              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? '#B91C1C' : dias > 7 ? '#92400E' : '#166534' }}>
+              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? 'var(--text-red)' : dias > 7 ? 'var(--text-amber)' : 'var(--text-green)' }}>
                 <span className="w-2 h-2 rounded-full inline-block" style={{ background: semaforoColor }} aria-hidden="true" />
                 {dias}d · {semaforoLabel}
               </span>
@@ -385,7 +385,7 @@ export function ManutencaoTecnica() {
         </div>
 
         {temInercia && (
-          <div className="mt-2 text-xs rounded-lg px-2 py-1" style={{ color: '#B91C1C', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+          <div className="mt-2 text-xs rounded-lg px-2 py-1" style={{ color: 'var(--text-red)', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
             <span aria-hidden="true">⚠️</span> +48h sem atualização
           </div>
         )}
@@ -403,7 +403,8 @@ export function ManutencaoTecnica() {
         <Button
           onClick={() => { setAutenticado(false); setUsuario(''); setSenha(''); toast.success('Logout realizado'); }}
           variant="outline"
-          className="text-red-700 border-red-200 bg-white hover:bg-red-50"
+          className="border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10"
+          style={{ color: 'var(--text-red)', background: 'var(--card)' }}
         >
           <Lock className="w-4 h-4 mr-2" aria-hidden="true" />Sair
         </Button>
@@ -495,14 +496,14 @@ export function ManutencaoTecnica() {
               <div className="p-4 rounded-xl border" style={{ background: 'rgba(26,86,219,0.05)', borderColor: 'rgba(26,86,219,0.2)' }}>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   {produtos.find(p => p.id === itemSelecionado.produtoId)?.codigoProduto && (
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 4, padding: '2px 7px' }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 4, padding: '2px 7px' }}>
                       {produtos.find(p => p.id === itemSelecionado.produtoId)?.codigoProduto}
                     </span>
                   )}
                   <h3 className="font-semibold text-foreground">{itemSelecionado.produtoNome}</h3>
                 </div>
                 {itemSelecionado.numeroSerie && (
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: '#7C3AED', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: 6, padding: '2px 8px', display: 'inline-block', marginBottom: 8 }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: 6, padding: '2px 8px', display: 'inline-block', marginBottom: 8 }}>
                     #{itemSelecionado.numeroSerie}
                   </span>
                 )}
@@ -535,7 +536,7 @@ export function ManutencaoTecnica() {
                   <Clock className="w-4 h-4 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Tempo Decorrido</p>
-                    <p className={`font-medium text-sm ${getDaysElapsed(itemSelecionado.dataEnvio) > 14 ? 'text-red-600' : 'text-foreground'}`}>
+                    <p className="font-medium text-sm" style={{ color: getDaysElapsed(itemSelecionado.dataEnvio) > 14 ? 'var(--text-red)' : 'var(--foreground)' }}>
                       {getDaysElapsed(itemSelecionado.dataEnvio)} dias
                     </p>
                   </div>
@@ -544,15 +545,15 @@ export function ManutencaoTecnica() {
                   <div className="flex items-center gap-2 p-3 rounded-lg border" style={{ background: 'rgba(34,197,94,0.05)', borderColor: 'rgba(34,197,94,0.25)' }}>
                     <CheckCircle className="w-4 h-4 text-green-500" />
                     <div>
-                      <p className="text-xs text-green-600">Retornado em</p>
-                      <p className="font-medium text-green-800 text-sm">{formatarData(itemSelecionado.dataRetorno)}</p>
+                      <p className="text-xs" style={{ color: 'var(--text-green)' }}>Retornado em</p>
+                      <p className="font-medium text-sm" style={{ color: 'var(--text-green)' }}>{formatarData(itemSelecionado.dataRetorno)}</p>
                     </div>
                   </div>
                 )}
               </div>
 
               <div className="p-3 rounded-lg" style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)' }}>
-                <p className="text-xs font-semibold text-amber-700 mb-2">Tempo em cada etapa:</p>
+                <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-amber)' }}>Tempo em cada etapa:</p>
                 <div className="space-y-1">
                   {[
                     { label: 'Envio', start: itemSelecionado.timestampEnvio, end: itemSelecionado.timestampPeritagem, active: itemSelecionado.status === 'Envio' },
@@ -560,11 +561,11 @@ export function ManutencaoTecnica() {
                     { label: 'Aprovação', start: itemSelecionado.timestampAprovacao, end: itemSelecionado.timestampExecucao, active: itemSelecionado.status === 'Aprovação' },
                     { label: 'Execução', start: itemSelecionado.timestampExecucao, end: itemSelecionado.timestampRetorno, active: itemSelecionado.status === 'Execução' },
                   ].filter(e => e.start).map(e => (
-                    <div key={e.label} className={`text-xs flex items-center gap-2 ${e.active ? 'font-semibold text-blue-700' : 'text-amber-700'}`}>
+                    <div key={e.label} className={`text-xs flex items-center gap-2 ${e.active ? 'font-semibold' : ''}`} style={{ color: e.active ? 'var(--text-blue)' : 'var(--text-amber)' }}>
                       <Clock className="w-3 h-3" />
                       <span>{e.label}:</span>
                       <span>{calcularTempoEtapa(e.start, e.end) || 'em andamento'}</span>
-                      {e.active && <span className="text-blue-500 animate-pulse">●</span>}
+                      {e.active && <span className="animate-pulse" style={{ color: 'var(--text-blue)' }}>●</span>}
                     </div>
                   ))}
                 </div>
@@ -594,7 +595,7 @@ export function ManutencaoTecnica() {
                     </SelectContent>
                   </Select>
                 ) : (
-                  <div className="flex items-center gap-2 text-green-700 rounded-lg px-4 py-3" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)' }}>
+                  <div className="flex items-center gap-2 rounded-lg px-4 py-3" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)', color: 'var(--text-green)' }}>
                     <CheckCircle className="w-5 h-5" />
                     <span className="font-semibold">Processo Concluído</span>
                   </div>

@@ -40,18 +40,18 @@ const thStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: '#4B5768',
-  background: '#F1F5FB',
+  color: 'var(--muted-foreground)',
+  background: 'var(--muted)',
   borderBottom: '1px solid rgba(11,24,38,0.08)',
   whiteSpace: 'nowrap',
 };
 
 const getStatusSerialStyle = (status: string) => {
-  if (status === 'Disponível') return { bg: 'rgba(34,197,94,0.1)', color: '#166534', border: 'rgba(34,197,94,0.3)', icon: '✅' };
-  if (status === 'Em Uso') return { bg: 'rgba(26,86,219,0.1)', color: '#1A56DB', border: 'rgba(26,86,219,0.3)', icon: '🔧' };
-  if (status === 'Manutenção') return { bg: 'rgba(249,115,22,0.1)', color: '#9A3412', border: 'rgba(249,115,22,0.3)', icon: '⚠️' };
-  if (status === 'Baixado') return { bg: 'rgba(239,68,68,0.1)', color: '#B91C1C', border: 'rgba(239,68,68,0.3)', icon: '🔴' };
-  return { bg: 'rgba(100,116,139,0.1)', color: '#4B5768', border: 'rgba(100,116,139,0.3)', icon: '•' };
+  if (status === 'Disponível') return { bg: 'rgba(34,197,94,0.1)', color: 'var(--text-green)', border: 'rgba(34,197,94,0.3)', icon: '✅' };
+  if (status === 'Em Uso') return { bg: 'rgba(26,86,219,0.1)', color: 'var(--text-blue)', border: 'rgba(26,86,219,0.3)', icon: '🔧' };
+  if (status === 'Manutenção') return { bg: 'rgba(249,115,22,0.1)', color: 'var(--text-orange)', border: 'rgba(249,115,22,0.3)', icon: '⚠️' };
+  if (status === 'Baixado') return { bg: 'rgba(239,68,68,0.1)', color: 'var(--text-red)', border: 'rgba(239,68,68,0.3)', icon: '🔴' };
+  return { bg: 'rgba(100,116,139,0.1)', color: 'var(--muted-foreground)', border: 'rgba(100,116,139,0.3)', icon: '•' };
 };
 
 export function BancoDados() {
@@ -374,7 +374,8 @@ export function BancoDados() {
             </button>
             <button
               onClick={() => { setAutenticado(false); setUsuario(''); setSenha(''); toast.success('Sessão encerrada com sucesso'); }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-600 border border-red-200 bg-white hover:bg-red-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+              style={{ color: 'var(--text-red)', background: 'var(--card)' }}
             >
               <Lock className="w-4 h-4" />
               Sair
@@ -383,8 +384,8 @@ export function BancoDados() {
         </div>
 
         <div className="rounded-xl p-4 flex items-start gap-3" style={{ background: 'rgba(26,86,219,0.05)', border: '1px solid rgba(26,86,219,0.15)' }}>
-          <Database className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#1A56DB' }} />
-          <div className="text-sm" style={{ color: '#1A56DB' }}>
+          <Database className="w-5 h-5 mt-0.5 shrink-0" style={{ color: 'var(--text-blue)' }} />
+          <div className="text-sm" style={{ color: 'var(--text-blue)' }}>
             <p className="font-semibold mb-0.5">Catálogo de Produtos Válidos</p>
             <p>Este é o banco de dados mestre que define quais produtos podem ser adicionados ao estoque. Apenas produtos cadastrados aqui podem ser usados no sistema, garantindo a integridade dos dados.</p>
           </div>
@@ -427,7 +428,7 @@ export function BancoDados() {
                 const isExpandido = produtosExpandidos.has(produto.codigoProduto);
                 const totalUnidades = produtosSerializados.length;
                 const isHovered = hoveredRow === produto.id;
-                const rowBg = isHovered ? 'rgba(26,86,219,0.03)' : rowIdx % 2 === 0 ? '#FFFFFF' : '#F8FAFD';
+                const rowBg = isHovered ? 'rgba(26,86,219,0.03)' : rowIdx % 2 === 0 ? 'var(--card)' : 'var(--surface-alt)';
 
                 return (
                   <>
@@ -452,7 +453,7 @@ export function BancoDados() {
                           borderRadius: 9999,
                           padding: '2px 10px',
                           background: produto.ativo ? 'rgba(34,197,94,0.1)' : 'rgba(100,116,139,0.1)',
-                          color: produto.ativo ? '#166534' : '#64748B',
+                          color: produto.ativo ? 'var(--text-green)' : 'var(--muted-foreground)',
                           border: `1px solid ${produto.ativo ? 'rgba(34,197,94,0.25)' : 'rgba(100,116,139,0.2)'}`,
                         }}>
                           <span aria-hidden="true">{produto.ativo ? '✅' : '⏸'}</span>
@@ -469,7 +470,7 @@ export function BancoDados() {
                           {isExpandido
                             ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
                             : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 12, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 12, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                             {produto.codigoProduto}
                           </span>
                           {totalUnidades > 0 && (
@@ -501,7 +502,8 @@ export function BancoDados() {
                           <button
                             onClick={() => handleToggleAtivo(produto.id)}
                             aria-label={`${produto.ativo ? 'Desativar' : 'Ativar'} ${produto.nome}`}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${produto.ativo ? 'text-orange-700 hover:bg-orange-50' : 'text-green-700 hover:bg-green-50'}`}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${produto.ativo ? 'hover:bg-orange-50 dark:hover:bg-orange-500/10' : 'hover:bg-green-50 dark:hover:bg-green-500/10'}`}
+                            style={{ color: produto.ativo ? 'var(--text-orange)' : 'var(--text-green)' }}
                           >
                             {produto.ativo ? 'Desativar' : 'Ativar'}
                           </button>
@@ -516,7 +518,7 @@ export function BancoDados() {
 
                     {isExpandido && totalUnidades > 0 && (
                       <tr key={`${produto.id}-expanded`}>
-                        <td colSpan={7} style={{ padding: 0, background: '#F8FAFD', borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
+                        <td colSpan={7} style={{ padding: 0, background: 'var(--surface-alt)', borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
                           <div className="px-10 py-5" style={{ borderLeft: '3px solid rgba(26,86,219,0.3)', marginLeft: 20 }}>
                             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
                               Unidades Serializadas — {produto.codigoProduto}
@@ -531,7 +533,7 @@ export function BancoDados() {
                                     style={{ border: '1px solid rgba(11,24,38,0.1)' }}
                                   >
                                     <div className="flex items-start justify-between mb-2">
-                                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: '#7C3AED', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                                         #{produtoSer.numeroSerie}
                                       </span>
                                       <span style={{ fontSize: 10, fontWeight: 600, color: statusStyle.color, background: statusStyle.bg, border: `1px solid ${statusStyle.border}`, borderRadius: 9999, padding: '2px 8px' }}>
@@ -609,7 +611,7 @@ export function BancoDados() {
                 aria-invalid={!!erros.codigoProduto}
                 aria-describedby={erros.codigoProduto ? 'bd-codigo-erro' : 'bd-codigo-hint'}
               />
-              {erros.codigoProduto && <p id="bd-codigo-erro" className="text-xs text-red-600">{erros.codigoProduto}</p>}
+              {erros.codigoProduto && <p id="bd-codigo-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{erros.codigoProduto}</p>}
               <p id="bd-codigo-hint" className="text-xs text-muted-foreground">Este código será exibido em todas as telas do sistema</p>
             </div>
 
@@ -624,7 +626,7 @@ export function BancoDados() {
                 aria-invalid={!!erros.nome}
                 aria-describedby={erros.nome ? 'bd-nome-erro' : undefined}
               />
-              {erros.nome && <p id="bd-nome-erro" className="text-xs text-red-600">{erros.nome}</p>}
+              {erros.nome && <p id="bd-nome-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{erros.nome}</p>}
             </div>
 
             <div className="space-y-2">
@@ -638,7 +640,7 @@ export function BancoDados() {
                 aria-invalid={!!erros.categoria}
                 aria-describedby={erros.categoria ? 'bd-categoria-erro' : undefined}
               />
-              {erros.categoria && <p id="bd-categoria-erro" className="text-xs text-red-600">{erros.categoria}</p>}
+              {erros.categoria && <p id="bd-categoria-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{erros.categoria}</p>}
             </div>
 
             <div className="space-y-2">
@@ -670,7 +672,7 @@ export function BancoDados() {
                   aria-invalid={!!erros.estoqueMinimo}
                   aria-describedby={erros.estoqueMinimo ? 'bd-estoque-min-erro' : undefined}
                 />
-                {erros.estoqueMinimo && <p id="bd-estoque-min-erro" className="text-xs text-red-600">{erros.estoqueMinimo}</p>}
+                {erros.estoqueMinimo && <p id="bd-estoque-min-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{erros.estoqueMinimo}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bd-estoque-max">Estoque Máximo *</Label>
@@ -685,7 +687,7 @@ export function BancoDados() {
                   aria-invalid={!!erros.estoqueMaximo}
                   aria-describedby={erros.estoqueMaximo ? 'bd-estoque-max-erro' : undefined}
                 />
-                {erros.estoqueMaximo && <p id="bd-estoque-max-erro" className="text-xs text-red-600">{erros.estoqueMaximo}</p>}
+                {erros.estoqueMaximo && <p id="bd-estoque-max-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{erros.estoqueMaximo}</p>}
               </div>
             </div>
           </div>

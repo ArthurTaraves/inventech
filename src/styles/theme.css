@@ -39,6 +39,20 @@
   --sidebar-accent-foreground: #E2EBF8;
   --sidebar-border: rgba(255, 255, 255, 0.07);
   --sidebar-ring: #2563EB;
+
+  /* Superfície para listras (zebra) de tabelas/listas — antes era hex fixo
+     e não se adaptava ao modo escuro. */
+  --surface-alt: #F8FAFD;
+
+  /* Cores de texto semânticas (código, criticidade, status) — os tons abaixo
+     foram calibrados para contraste AA sobre fundo claro. O modo escuro
+     precisa de tons mais claros/saturados dos mesmos matizes (ver .dark). */
+  --text-blue: #1A56DB;
+  --text-red: #B91C1C;
+  --text-amber: #92400E;
+  --text-green: #166534;
+  --text-violet: #6D28D9;
+  --text-orange: #9A3412;
 }
 
 .dark {
@@ -76,6 +90,16 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  --surface-alt: oklch(0.19 0 0);
+  --input-background: oklch(0.269 0 0);
+
+  --text-blue: #60A5FA;
+  --text-red: #F87171;
+  --text-amber: #FBBF24;
+  --text-green: #4ADE80;
+  --text-violet: #A78BFA;
+  --text-orange: #FB923C;
 }
 
 @theme inline {

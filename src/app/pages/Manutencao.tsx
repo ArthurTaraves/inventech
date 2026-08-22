@@ -95,7 +95,7 @@ function MaintenanceTimeline({ item }: { item: ItemManutencao }) {
                 <span aria-hidden="true">{isDone ? '✅' : step.emoji}</span>
               </div>
               <div className="mt-2 text-center px-1">
-                <p className="text-xs font-semibold" style={{ color: isCurrent ? '#1A56DB' : isDone ? '#166534' : '#94A3B8' }}>
+                <p className="text-xs font-semibold" style={{ color: isCurrent ? 'var(--text-blue)' : isDone ? 'var(--text-green)' : '#94A3B8' }}>
                   {step.label}
                 </p>
                 {isCurrent && (
@@ -237,9 +237,9 @@ export function Manutencao() {
   };
 
   const getCriticidadeStyle = (c: CriticidadeABC) => {
-    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#B91C1C', border: '2px solid rgba(239,68,68,0.35)' };
-    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#92400E', border: '2px solid rgba(245,158,11,0.35)' };
-    return { background: 'rgba(34,197,94,0.12)', color: '#166534', border: '2px solid rgba(34,197,94,0.35)' };
+    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: 'var(--text-red)', border: '2px solid rgba(239,68,68,0.35)' };
+    if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: 'var(--text-amber)', border: '2px solid rgba(245,158,11,0.35)' };
+    return { background: 'rgba(34,197,94,0.12)', color: 'var(--text-green)', border: '2px solid rgba(34,197,94,0.35)' };
   };
 
   const getCriticidadeLabel = (c: CriticidadeABC) => ({ A: 'Crítico', B: 'Médio', C: 'Baixo' }[c] || c);
@@ -386,12 +386,12 @@ export function Manutencao() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
                               {s.codigoProduto && (
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 6px' }}>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 6px' }}>
                                   {s.codigoProduto}
                                 </span>
                               )}
                               {s.numeroSerie && (
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#7C3AED', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 6px' }}>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 6px' }}>
                                   #{s.numeroSerie}
                                 </span>
                               )}
@@ -419,7 +419,7 @@ export function Manutencao() {
                       <div>
                         <div className="flex items-center gap-1.5 mb-1">
                           {produto.codigoProduto && (
-                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 4, padding: '1px 6px' }}>
+                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 4, padding: '1px 6px' }}>
                               {produto.codigoProduto}
                             </span>
                           )}
@@ -429,7 +429,7 @@ export function Manutencao() {
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-muted-foreground">Disponível</p>
-                        <p className={`text-lg font-bold ${produto.quantidade < 5 ? 'text-red-600' : 'text-foreground'}`}>{produto.quantidade} un.</p>
+                        <p className="text-lg font-bold" style={{ color: produto.quantidade < 5 ? 'var(--text-red)' : 'var(--foreground)' }}>{produto.quantidade} un.</p>
                       </div>
                     </div>
                     {serializados.length > 0 && !produtoSelecionadoInfo?.numeroSerie && (
@@ -441,7 +441,7 @@ export function Manutencao() {
                             <SelectItem value="">Não especificar</SelectItem>
                             {serializados.map(ps => (
                               <SelectItem key={ps.id} value={ps.numeroSerie}>
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: '#7C3AED' }}>#{ps.numeroSerie}</span>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: 'var(--text-violet)' }}>#{ps.numeroSerie}</span>
                                 <span className="text-xs text-muted-foreground ml-2">· {ps.localizacao} · {ps.status}</span>
                               </SelectItem>
                             ))}
@@ -452,7 +452,7 @@ export function Manutencao() {
                     {numeroSerieSelecionado && (
                       <div className="flex items-center gap-2 p-2 mt-2 rounded-lg" style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)' }}>
                         <Tag className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                        <p className="text-xs" style={{ color: '#7C3AED' }}>Unidade: <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>#{numeroSerieSelecionado}</span></p>
+                        <p className="text-xs" style={{ color: 'var(--text-violet)' }}>Unidade: <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>#{numeroSerieSelecionado}</span></p>
                       </div>
                     )}
                   </div>
@@ -488,8 +488,8 @@ export function Manutencao() {
               </div>
 
               <div className="p-3 rounded-xl flex items-start gap-2" style={{ background: 'rgba(26,86,219,0.06)', border: '1px solid rgba(26,86,219,0.15)' }}>
-                <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#1A56DB' }} aria-hidden="true" />
-                <p className="text-xs" style={{ color: '#1A56DB' }}>
+                <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: 'var(--text-blue)' }} aria-hidden="true" />
+                <p className="text-xs" style={{ color: 'var(--text-blue)' }}>
                   Ao enviar, o item sai do estoque. Ao marcar como "Retorno" na Manutenção Visual, as unidades retornam automaticamente.
                 </p>
               </div>
@@ -576,19 +576,19 @@ export function Manutencao() {
                       animation: semaforo === 'red' ? 'pulse 2s infinite' : 'none',
                     }}
                   />
-                  <span className="text-xs font-semibold" style={{ color: semaforo === 'red' ? '#B91C1C' : semaforo === 'yellow' ? '#92400E' : '#166534' }}>
+                  <span className="text-xs font-semibold" style={{ color: semaforo === 'red' ? 'var(--text-red)' : semaforo === 'yellow' ? 'var(--text-amber)' : 'var(--text-green)' }}>
                     {semaforo === 'red' ? 'Atrasado' : semaforo === 'yellow' ? 'Atenção' : 'No prazo'}
                   </span>
                 </div>
 
                 <div className="shrink-0">
                   {produto?.codigoProduto && (
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '2px 6px', display: 'block', marginBottom: 3 }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '2px 6px', display: 'block', marginBottom: 3 }}>
                       {produto.codigoProduto}
                     </span>
                   )}
                   {item.numeroSerie && (
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#7C3AED', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '2px 6px', display: 'block' }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '2px 6px', display: 'block' }}>
                       #{item.numeroSerie}
                     </span>
                   )}
@@ -596,7 +596,7 @@ export function Manutencao() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    {temInercia && <span className="text-red-700 font-semibold text-xs"><span aria-hidden="true">⚠️</span> Sem atualização</span>}
+                    {temInercia && <span className="font-semibold text-xs" style={{ color: 'var(--text-red)' }}><span aria-hidden="true">⚠️</span> Sem atualização</span>}
                     <p className="font-semibold text-foreground">{item.produtoNome}</p>
                   </div>
                   {item.responsavel && (
@@ -642,30 +642,30 @@ export function Manutencao() {
                         </div>
                         <div className="bg-card rounded-lg border border-border p-3">
                           <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><Clock className="w-3 h-3" />Retorno Previsto</p>
-                          <p className="font-semibold text-sm" style={{ color: '#1A56DB' }}>{formatarData(dataPrevista.toISOString())}</p>
+                          <p className="font-semibold text-sm" style={{ color: 'var(--text-blue)' }}>{formatarData(dataPrevista.toISOString())}</p>
                           <p className="text-xs text-muted-foreground mt-0.5">prazo de {prazoLimiteDias} dias</p>
                         </div>
-                        <div className="rounded-lg border p-3" style={{ background: atrasado ? 'rgba(239,68,68,0.05)' : dias > 7 ? 'rgba(234,179,8,0.05)' : 'white', borderColor: atrasado ? 'rgba(239,68,68,0.3)' : 'rgba(11,24,38,0.1)' }}>
+                        <div className="rounded-lg border p-3" style={{ background: atrasado ? 'rgba(239,68,68,0.05)' : dias > 7 ? 'rgba(234,179,8,0.05)' : 'var(--card)', borderColor: atrasado ? 'rgba(239,68,68,0.3)' : 'rgba(11,24,38,0.1)' }}>
                           <p className="text-xs text-muted-foreground mb-1">Dias Decorridos</p>
-                          <p className="font-semibold text-sm" style={{ color: atrasado ? '#B91C1C' : dias > 7 ? '#92400E' : '#0B1826' }}>
+                          <p className="font-semibold text-sm" style={{ color: atrasado ? 'var(--text-red)' : dias > 7 ? 'var(--text-amber)' : 'var(--foreground)' }}>
                             {dias}d <span aria-hidden="true">{atrasado ? '🔴' : dias > 7 ? '🟡' : '🟢'}</span>
                           </p>
                         </div>
                         {item.status !== 'Retorno' ? (
-                          <div className="rounded-lg border p-3" style={{ background: atrasado ? 'rgba(239,68,68,0.05)' : 'white', borderColor: atrasado ? 'rgba(239,68,68,0.3)' : 'rgba(11,24,38,0.1)' }}>
+                          <div className="rounded-lg border p-3" style={{ background: atrasado ? 'rgba(239,68,68,0.05)' : 'var(--card)', borderColor: atrasado ? 'rgba(239,68,68,0.3)' : 'rgba(11,24,38,0.1)' }}>
                             <p className="text-xs text-muted-foreground mb-1">Dias Restantes</p>
                             {atrasado ? (
-                              <p className="font-semibold text-sm text-red-700"><span aria-hidden="true">🔴</span> {Math.abs(diasRestantes!)} dias atrasado</p>
+                              <p className="font-semibold text-sm" style={{ color: 'var(--text-red)' }}><span aria-hidden="true">🔴</span> {Math.abs(diasRestantes!)} dias atrasado</p>
                             ) : (
-                              <p className="font-semibold text-sm" style={{ color: diasRestantes! <= 3 ? '#92400E' : '#0B1826' }}>
+                              <p className="font-semibold text-sm" style={{ color: diasRestantes! <= 3 ? 'var(--text-amber)' : 'var(--foreground)' }}>
                                 {diasRestantes} {diasRestantes === 1 ? 'dia' : 'dias'}
                               </p>
                             )}
                           </div>
                         ) : (
                           <div className="rounded-lg border p-3" style={{ background: 'rgba(34,197,94,0.05)', borderColor: 'rgba(34,197,94,0.25)' }}>
-                            <p className="text-xs mb-1 flex items-center gap-1" style={{ color: '#166534' }}><CheckCircle className="w-3 h-3" aria-hidden="true" />Retornado em</p>
-                            <p className="font-semibold text-sm text-green-800">{item.dataRetorno ? formatarData(item.dataRetorno) : '—'}</p>
+                            <p className="text-xs mb-1 flex items-center gap-1" style={{ color: 'var(--text-green)' }}><CheckCircle className="w-3 h-3" aria-hidden="true" />Retornado em</p>
+                            <p className="font-semibold text-sm" style={{ color: 'var(--text-green)' }}>{item.dataRetorno ? formatarData(item.dataRetorno) : '—'}</p>
                           </div>
                         )}
                       </div>
@@ -695,28 +695,28 @@ export function Manutencao() {
                       ))}
 
                       <div className="mt-3 p-3 rounded-lg" style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)' }}>
-                        <p className="text-xs font-semibold text-amber-700 mb-2">Tempo em cada etapa:</p>
+                        <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-amber)' }}>Tempo em cada etapa:</p>
                         <div className="grid grid-cols-2 gap-2">
                           {item.timestampEnvio && (
-                            <div className="text-xs text-amber-800">
+                            <div className="text-xs" style={{ color: 'var(--text-amber)' }}>
                               <span className="font-medium">Envio:</span>{' '}
                               {calcularTempoEtapa(item.timestampEnvio, item.timestampPeritagem) || 'em andamento'}
                             </div>
                           )}
                           {item.timestampPeritagem && (
-                            <div className="text-xs text-amber-800">
+                            <div className="text-xs" style={{ color: 'var(--text-amber)' }}>
                               <span className="font-medium">Peritagem:</span>{' '}
                               {calcularTempoEtapa(item.timestampPeritagem, item.timestampAprovacao) || 'em andamento'}
                             </div>
                           )}
                           {item.timestampAprovacao && (
-                            <div className="text-xs text-amber-800">
+                            <div className="text-xs" style={{ color: 'var(--text-amber)' }}>
                               <span className="font-medium">Aprovação:</span>{' '}
                               {calcularTempoEtapa(item.timestampAprovacao, item.timestampExecucao) || 'em andamento'}
                             </div>
                           )}
                           {item.timestampExecucao && (
-                            <div className="text-xs text-amber-800">
+                            <div className="text-xs" style={{ color: 'var(--text-amber)' }}>
                               <span className="font-medium">Execução:</span>{' '}
                               {calcularTempoEtapa(item.timestampExecucao, item.timestampRetorno) || 'em andamento'}
                             </div>
@@ -728,15 +728,15 @@ export function Manutencao() {
 
                   {item.observacao && (
                     <div className="p-3 bg-card border border-amber-200 rounded-lg">
-                      <p className="text-xs font-semibold text-amber-700 mb-1">Observações</p>
-                      <p className="text-sm text-amber-900">{item.observacao}</p>
+                      <p className="text-xs font-semibold mb-1" style={{ color: 'var(--text-amber)' }}>Observações</p>
+                      <p className="text-sm" style={{ color: 'var(--text-amber)' }}>{item.observacao}</p>
                     </div>
                   )}
 
                   {temInercia && (
                     <div className="p-3 rounded-lg flex items-center gap-2" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)' }}>
                       <AlertCircle className="w-4 h-4 text-red-500 shrink-0" aria-hidden="true" />
-                      <p className="text-sm text-red-800 font-medium">Sem atualização há mais de 48 horas — requer atenção imediata.</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--text-red)' }}>Sem atualização há mais de 48 horas — requer atenção imediata.</p>
                     </div>
                   )}
                 </div>

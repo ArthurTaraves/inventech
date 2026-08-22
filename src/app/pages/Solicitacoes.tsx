@@ -50,33 +50,33 @@ interface Solicitacao {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; border: string; label: string; icon: string }> = {
-  'Solicitada':           { color: '#1A56DB', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   label: 'Solicitada', icon: '📋' },
-  'Em análise':           { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   label: 'Em análise', icon: '🔍' },
-  'Aprovada':             { color: '#166534', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  label: 'Aprovada', icon: '✅' },
-  'Em separação':         { color: '#6D28D9', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', label: 'Em separação', icon: '⏳' },
-  'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  label: 'Pronta para retirada', icon: '🟠' },
-  'Entregue':             { color: '#166534', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   label: 'Entregue', icon: '✅' },
-  'Cancelada':            { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   label: 'Cancelada', icon: '🔴' },
+  'Solicitada':           { color: 'var(--text-blue)', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   label: 'Solicitada', icon: '📋' },
+  'Em análise':           { color: 'var(--text-amber)', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   label: 'Em análise', icon: '🔍' },
+  'Aprovada':             { color: 'var(--text-green)', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  label: 'Aprovada', icon: '✅' },
+  'Em separação':         { color: 'var(--text-violet)', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', label: 'Em separação', icon: '⏳' },
+  'Pronta para retirada': { color: 'var(--text-orange)', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  label: 'Pronta para retirada', icon: '🟠' },
+  'Entregue':             { color: 'var(--text-green)', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   label: 'Entregue', icon: '✅' },
+  'Cancelada':            { color: 'var(--text-red)', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   label: 'Cancelada', icon: '🔴' },
 };
 
 const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string; icon: string }> = {
-  'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
-  'Média':  { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡' },
-  'Alta':   { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴' },
+  'Baixa':  { color: 'var(--muted-foreground)', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
+  'Média':  { color: 'var(--text-amber)', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡' },
+  'Alta':   { color: 'var(--text-red)', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴' },
 };
 
 const CRITICIDADE_CONFIG: Record<'Baixa' | 'Média' | 'Alta', { color: string; bg: string; border: string; icon: string }> = {
-  'Baixa': { color: '#166534', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.25)', icon: '🟢' },
-  'Média': { color: '#92400E', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', icon: '🟡' },
-  'Alta':  { color: '#B91C1C', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', icon: '🔴' },
+  'Baixa': { color: 'var(--text-green)', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.25)', icon: '🟢' },
+  'Média': { color: 'var(--text-amber)', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', icon: '🟡' },
+  'Alta':  { color: 'var(--text-red)', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', icon: '🔴' },
 };
 
 const FLUXO: Record<StatusSolicitacao, { label: string; novoStatus: StatusSolicitacao; color: string } | null> = {
-  'Solicitada':           { label: 'Iniciar Análise',    novoStatus: 'Em análise',           color: '#92400E' },
-  'Em análise':           { label: 'Aprovar',            novoStatus: 'Aprovada',             color: '#166534' },
-  'Aprovada':             { label: 'Iniciar Separação',  novoStatus: 'Em separação',         color: '#7C3AED' },
-  'Em separação':         { label: 'Marcar como Pronto', novoStatus: 'Pronta para retirada', color: '#9A3412' },
-  'Pronta para retirada': { label: 'Confirmar Entrega',  novoStatus: 'Entregue',             color: '#166534' },
+  'Solicitada':           { label: 'Iniciar Análise',    novoStatus: 'Em análise',           color: 'var(--text-amber)' },
+  'Em análise':           { label: 'Aprovar',            novoStatus: 'Aprovada',             color: 'var(--text-green)' },
+  'Aprovada':             { label: 'Iniciar Separação',  novoStatus: 'Em separação',         color: 'var(--text-violet)' },
+  'Em separação':         { label: 'Marcar como Pronto', novoStatus: 'Pronta para retirada', color: 'var(--text-orange)' },
+  'Pronta para retirada': { label: 'Confirmar Entrega',  novoStatus: 'Entregue',             color: 'var(--text-green)' },
   'Entregue':             null,
   'Cancelada':            null,
 };
@@ -89,8 +89,8 @@ const STATUS_TODOS: StatusSolicitacao[] = [
 
 const thStyle: React.CSSProperties = {
   padding: '10px 20px', textAlign: 'left', fontSize: '11px', fontWeight: 600,
-  letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4B5768',
-  background: '#F1F5FB', borderBottom: '1px solid rgba(11,24,38,0.08)', whiteSpace: 'nowrap',
+  letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted-foreground)',
+  background: 'var(--muted)', borderBottom: '1px solid rgba(11,24,38,0.08)', whiteSpace: 'nowrap',
 };
 
 const StatusBadge = ({ status }: { status: StatusSolicitacao }) => {
@@ -338,7 +338,7 @@ export function Solicitacoes() {
               style={active ? {
                 background: '#1A56DB', color: 'white',
                 boxShadow: '0 2px 8px rgba(26,86,219,0.3)',
-              } : { color: '#4B5768' }}
+              } : { color: 'var(--muted-foreground)' }}
             >
               <Icon className="w-4 h-4" aria-hidden="true" />
               {tab.label}
@@ -395,7 +395,7 @@ export function Solicitacoes() {
                   >
                     <div className="p-5">
                       <div className="flex items-start justify-between mb-3">
-                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                           {sol.numero}
                         </span>
                         <PrioridadeBadge prioridade={sol.prioridade} />
@@ -489,12 +489,12 @@ export function Solicitacoes() {
                     const fluxo = FLUXO[sol.status];
                     const podeAvancar = !!fluxo;
                     const podeCancelar = sol.status !== 'Entregue' && sol.status !== 'Cancelada';
-                    const rowBg = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFD';
+                    const rowBg = idx % 2 === 0 ? 'var(--card)' : 'var(--surface-alt)';
                     const criticidadeSol = getCriticidadeSolicitacao(sol);
                     return (
                       <tr key={sol.id} style={{ background: rowBg, borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
                         <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
                             {sol.numero}
                           </span>
                         </td>
@@ -597,7 +597,7 @@ export function Solicitacoes() {
                     aria-invalid={!!formErros.solicitante}
                     aria-describedby={formErros.solicitante ? 'sol-solicitante-erro' : undefined}
                   />
-                  {formErros.solicitante && <p id="sol-solicitante-erro" className="text-xs text-red-600">{formErros.solicitante}</p>}
+                  {formErros.solicitante && <p id="sol-solicitante-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{formErros.solicitante}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="sol-matricula">Matrícula *</Label>
@@ -607,7 +607,7 @@ export function Solicitacoes() {
                     aria-invalid={!!formErros.matricula}
                     aria-describedby={formErros.matricula ? 'sol-matricula-erro' : undefined}
                   />
-                  {formErros.matricula && <p id="sol-matricula-erro" className="text-xs text-red-600">{formErros.matricula}</p>}
+                  {formErros.matricula && <p id="sol-matricula-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{formErros.matricula}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="sol-setor">Setor *</Label>
@@ -617,7 +617,7 @@ export function Solicitacoes() {
                     aria-invalid={!!formErros.setor}
                     aria-describedby={formErros.setor ? 'sol-setor-erro' : undefined}
                   />
-                  {formErros.setor && <p id="sol-setor-erro" className="text-xs text-red-600">{formErros.setor}</p>}
+                  {formErros.setor && <p id="sol-setor-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{formErros.setor}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="sol-data">Data Prevista de Retirada *</Label>
@@ -627,7 +627,7 @@ export function Solicitacoes() {
                     aria-invalid={!!formErros.dataPrevista}
                     aria-describedby={formErros.dataPrevista ? 'sol-data-erro' : undefined}
                   />
-                  {formErros.dataPrevista && <p id="sol-data-erro" className="text-xs text-red-600">{formErros.dataPrevista}</p>}
+                  {formErros.dataPrevista && <p id="sol-data-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{formErros.dataPrevista}</p>}
                 </div>
               </div>
             </div>
@@ -645,7 +645,7 @@ export function Solicitacoes() {
                       onClick={() => setForm({ ...form, prioridade: p })}
                       aria-pressed={selected}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                      style={selected ? { background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` } : { background: 'transparent', color: '#64748B', border: '2px solid rgba(11,24,38,0.1)' }}
+                      style={selected ? { background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` } : { background: 'transparent', color: 'var(--muted-foreground)', border: '2px solid rgba(11,24,38,0.1)' }}
                     >
                       <span aria-hidden="true">{cfg.icon}</span>
                       {p}
@@ -671,7 +671,7 @@ export function Solicitacoes() {
             {/* Itens */}
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Itens Solicitados</p>
-              {formErros.itens && <p className="text-xs text-red-600 mb-2">{formErros.itens}</p>}
+              {formErros.itens && <p className="text-xs mb-2" style={{ color: 'var(--text-red)' }}>{formErros.itens}</p>}
 
               {/* Add item row */}
               <div className="flex gap-2 mb-3">
@@ -680,7 +680,7 @@ export function Solicitacoes() {
                   <SelectContent>
                     {produtos.map(p => (
                       <SelectItem key={p.id} value={p.id}>
-                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#1A56DB', marginRight: 8 }}>{p.codigoProduto || ''}</span>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'var(--text-blue)', marginRight: 8 }}>{p.codigoProduto || ''}</span>
                         {p.nome}
                       </SelectItem>
                     ))}
@@ -698,7 +698,7 @@ export function Solicitacoes() {
                 <button
                   onClick={adicionarItem}
                   className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
-                  style={{ background: 'rgba(26,86,219,0.08)', color: '#1A56DB', border: '1px solid rgba(26,86,219,0.2)' }}
+                  style={{ background: 'rgba(26,86,219,0.08)', color: 'var(--text-blue)', border: '1px solid rgba(26,86,219,0.2)' }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(26,86,219,0.15)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'rgba(26,86,219,0.08)'; }}
                 >
@@ -719,7 +719,7 @@ export function Solicitacoes() {
                     <div key={item.produtoId} className="flex items-center justify-between bg-muted rounded-xl px-4 py-2.5">
                       <div className="flex items-center gap-3">
                         {item.codigoProduto && (
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '1px 7px' }}>
+                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '1px 7px' }}>
                             {item.codigoProduto}
                           </span>
                         )}
@@ -832,12 +832,12 @@ export function Solicitacoes() {
                       <div
                         key={item.produtoId}
                         className="rounded-xl p-4"
-                        style={{ border: '1px solid rgba(11,24,38,0.08)', background: '#FAFBFD' }}
+                        style={{ border: '1px solid rgba(11,24,38,0.08)', background: 'var(--surface-alt)' }}
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-2">
                             {item.codigoProduto && (
-                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '1px 7px' }}>
+                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '1px 7px' }}>
                                 {item.codigoProduto}
                               </span>
                             )}
@@ -847,9 +847,9 @@ export function Solicitacoes() {
 
                         <div className="grid grid-cols-3 gap-2 mb-3">
                           {[
-                            { label: 'Solicitado', value: item.quantidade, color: '#1A56DB', suffix: null as string | null },
-                            { label: 'Disponível', value: disponivel, color: '#166534', suffix: null as string | null },
-                            { label: 'Saldo após separação', value: saldo, color: saldo >= 0 ? '#334155' : '#B91C1C', suffix: saldo < 0 ? 'Insuficiente' : null },
+                            { label: 'Solicitado', value: item.quantidade, color: 'var(--text-blue)', suffix: null as string | null },
+                            { label: 'Disponível', value: disponivel, color: 'var(--text-green)', suffix: null as string | null },
+                            { label: 'Saldo após separação', value: saldo, color: saldo >= 0 ? 'var(--muted-foreground)' : 'var(--text-red)', suffix: saldo < 0 ? 'Insuficiente' : null },
                           ].map(col => (
                             <div key={col.label} className="bg-card rounded-lg p-2.5 text-center border border-border">
                               <p className="text-xs text-muted-foreground mb-0.5">{col.label}</p>
@@ -864,14 +864,14 @@ export function Solicitacoes() {
                         <div className="space-y-1.5">
                           {abaixoMinimo && (
                             <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)' }}>
-                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#92400E' }} aria-hidden="true" />
-                              <p className="text-xs font-semibold" style={{ color: '#92400E' }}>Estoque ficará abaixo do mínimo recomendado ({minimo} un.)</p>
+                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--text-amber)' }} aria-hidden="true" />
+                              <p className="text-xs font-semibold" style={{ color: 'var(--text-amber)' }}>Estoque ficará abaixo do mínimo recomendado ({minimo} un.)</p>
                             </div>
                           )}
                           {isCritico && (
                             <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
-                              <p className="text-xs font-semibold" style={{ color: '#B91C1C' }}>Item de alta criticidade</p>
+                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--text-red)' }} aria-hidden="true" />
+                              <p className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}>Item de alta criticidade</p>
                             </div>
                           )}
                         </div>
@@ -902,7 +902,8 @@ export function Solicitacoes() {
                     {podeCancelar && (
                       <button
                         onClick={() => cancelarSolicitacao(detalhe)}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors border border-red-200 text-red-600 hover:bg-red-50"
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors border border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10"
+                        style={{ color: 'var(--text-red)' }}
                       >
                         <XCircle className="w-4 h-4" />
                         Cancelar

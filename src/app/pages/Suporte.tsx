@@ -121,8 +121,8 @@ export function Suporte() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Central de Suporte</h1>
-        <p className="text-gray-600 mt-1">Abra chamados, acompanhe o status e consulte respostas rápidas</p>
+        <h1 className="text-3xl font-bold text-foreground">Central de Suporte</h1>
+        <p className="text-muted-foreground mt-1">Abra chamados, acompanhe o status e consulte respostas rápidas</p>
       </div>
 
       {/* Contact cards */}
@@ -206,7 +206,7 @@ export function Suporte() {
                       className={`p-2.5 rounded-lg border-2 text-center transition-all ${
                         formulario.tipo === key
                           ? `${cfg.bg} border-current ${cfg.color} font-semibold`
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                          : 'border-border text-muted-foreground hover:border-muted-foreground/40'
                       }`}
                     >
                       <div className="text-lg" aria-hidden="true">{cfg.emoji}</div>
@@ -232,7 +232,7 @@ export function Suporte() {
                 />
               </div>
 
-              <Button onClick={handleEnviarChamado} className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleEnviarChamado} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                 <Send className="w-4 h-4 mr-2" />Enviar Chamado
               </Button>
             </div>
@@ -257,7 +257,7 @@ export function Suporte() {
                 </div>
                 <span className="text-xs text-green-700">Todos os serviços ativos</span>
               </div>
-              <div className="text-sm text-gray-600 space-y-1">
+              <div className="text-sm text-muted-foreground space-y-1">
                 <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-600" />Última atualização: 25/06/2026</p>
                 <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-600" />Versão: 3.0.0</p>
               </div>
@@ -312,13 +312,13 @@ export function Suporte() {
               <CardTitle>Meus Chamados</CardTitle>
             </div>
             <div className="flex items-center gap-4 text-sm">
-              <span className="flex items-center gap-1 text-blue-700">
+              <span className="flex items-center gap-1" style={{ color: 'var(--text-blue)' }}>
                 <CircleDot className="w-4 h-4" />{contadores.Aberto} abertos
               </span>
-              <span className="flex items-center gap-1 text-yellow-700">
+              <span className="flex items-center gap-1" style={{ color: 'var(--text-amber)' }}>
                 <Clock className="w-4 h-4" />{contadores['Em análise']} em análise
               </span>
-              <span className="flex items-center gap-1 text-green-700">
+              <span className="flex items-center gap-1" style={{ color: 'var(--text-green)' }}>
                 <CheckCircle2 className="w-4 h-4" />{contadores.Resolvido} resolvidos
               </span>
             </div>
@@ -351,12 +351,12 @@ export function Suporte() {
         <CardContent>
           {chamados.length === 0 ? (
             <div className="text-center py-12">
-              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">Nenhum chamado registrado ainda</p>
-              <p className="text-sm text-gray-600 mt-1">Seus chamados aparecerão aqui após o envio</p>
+              <MessageSquare className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-muted-foreground">Nenhum chamado registrado ainda</p>
+              <p className="text-sm text-muted-foreground mt-1">Seus chamados aparecerão aqui após o envio</p>
             </div>
           ) : chamadosFiltrados.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 text-sm">Nenhum chamado com os filtros selecionados</div>
+            <div className="text-center py-8 text-muted-foreground text-sm">Nenhum chamado com os filtros selecionados</div>
           ) : (
             <div className="space-y-4">
               {chamadosFiltrados.map(chamado => {
@@ -415,7 +415,7 @@ export function Suporte() {
             {faqs.map((faq, idx) => (
               <AccordionItem key={idx} value={`item-${idx}`}>
                 <AccordionTrigger className="text-left">{faq.pergunta}</AccordionTrigger>
-                <AccordionContent className="text-gray-600">{faq.resposta}</AccordionContent>
+                <AccordionContent className="text-muted-foreground">{faq.resposta}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

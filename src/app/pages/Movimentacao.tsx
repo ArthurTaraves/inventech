@@ -258,12 +258,12 @@ export function Movimentacao() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               {s.codigoProduto && (
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 6px' }}>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 6px' }}>
                                   {s.codigoProduto}
                                 </span>
                               )}
                               {s.numeroSerie && (
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#7C3AED', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 6px' }}>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 6px' }}>
                                   #{s.numeroSerie}
                                 </span>
                               )}
@@ -285,7 +285,7 @@ export function Movimentacao() {
                   <div className="p-3 rounded-xl border" style={{ background: 'rgba(26,86,219,0.05)', borderColor: 'rgba(26,86,219,0.2)' }}>
                     <div className="flex items-center gap-2 mb-2">
                       {produtoAtual.codigoProduto && (
-                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 4, padding: '1px 6px' }}>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 4, padding: '1px 6px' }}>
                           {produtoAtual.codigoProduto}
                         </span>
                       )}
@@ -294,7 +294,7 @@ export function Movimentacao() {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span>Estoque atual: <strong className="text-foreground">{produtoAtual.quantidade}</strong> unidades</span>
                       {numeroSerieSelecionado && (
-                        <span style={{ color: '#7C3AED', fontWeight: 600 }}>Unidade: #{numeroSerieSelecionado}</span>
+                        <span style={{ color: 'var(--text-violet)', fontWeight: 600 }}>Unidade: #{numeroSerieSelecionado}</span>
                       )}
                     </div>
 
@@ -309,7 +309,7 @@ export function Movimentacao() {
                             <SelectItem value="">Não especificar</SelectItem>
                             {serializadosProduto.map(s => (
                               <SelectItem key={s.id} value={s.numeroSerie}>
-                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: '#7C3AED' }}>#{s.numeroSerie}</span>
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: 'var(--text-violet)' }}>#{s.numeroSerie}</span>
                                 <span className="text-xs text-muted-foreground ml-2">· {s.localizacao} · {s.status}</span>
                               </SelectItem>
                             ))}
@@ -333,11 +333,11 @@ export function Movimentacao() {
                     style={tipo === 'Entrada' ? {
                       borderColor: '#22C55E',
                       background: 'rgba(34,197,94,0.08)',
-                      color: '#166534',
+                      color: 'var(--text-green)',
                     } : {
                       borderColor: 'rgba(11,24,38,0.1)',
                       background: 'transparent',
-                      color: '#64748B',
+                      color: 'var(--muted-foreground)',
                     }}
                   >
                     <ArrowDownRight className="w-4 h-4" aria-hidden="true" />
@@ -351,11 +351,11 @@ export function Movimentacao() {
                     style={tipo === 'Saída' ? {
                       borderColor: '#EF4444',
                       background: 'rgba(239,68,68,0.08)',
-                      color: '#B91C1C',
+                      color: 'var(--text-red)',
                     } : {
                       borderColor: 'rgba(11,24,38,0.1)',
                       background: 'transparent',
-                      color: '#64748B',
+                      color: 'var(--muted-foreground)',
                     }}
                   >
                     <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
@@ -374,7 +374,7 @@ export function Movimentacao() {
                   aria-describedby={produtoAtual && tipo === 'Saída' && quantidade && parseInt(quantidade) > produtoAtual.quantidade ? 'mov-quantidade-erro' : undefined}
                 />
                 {produtoAtual && tipo === 'Saída' && quantidade && parseInt(quantidade) > produtoAtual.quantidade && (
-                  <p id="mov-quantidade-erro" className="text-xs text-red-600 font-semibold"><span aria-hidden="true">⚠️</span> Quantidade maior que o estoque disponível ({produtoAtual.quantidade})</p>
+                  <p id="mov-quantidade-erro" className="text-xs font-semibold" style={{ color: 'var(--text-red)' }}><span aria-hidden="true">⚠️</span> Quantidade maior que o estoque disponível ({produtoAtual.quantidade})</p>
                 )}
               </div>
 
@@ -454,7 +454,7 @@ export function Movimentacao() {
                         <div>
                           <div className="flex items-center gap-1.5">
                             {produto?.codigoProduto && (
-                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 5px' }}>
+                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 5px' }}>
                                 {produto.codigoProduto}
                               </span>
                             )}

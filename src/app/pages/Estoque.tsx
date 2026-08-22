@@ -41,17 +41,17 @@ const thStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: '#4B5768',
-  background: '#F1F5FB',
+  color: 'var(--muted-foreground)',
+  background: 'var(--muted)',
   borderBottom: '1px solid rgba(11,24,38,0.08)',
   whiteSpace: 'nowrap',
 };
 
 const CritBadge = ({ c }: { c: Criticidade }) => {
   const cfg: Record<Criticidade, { bg: string; color: string; border: string; label: string; icon: string }> = {
-    Alta: { bg: 'rgba(239,68,68,0.1)', color: '#B91C1C', border: 'rgba(239,68,68,0.3)', label: 'Alta', icon: '🔴' },
-    Média: { bg: 'rgba(245,158,11,0.1)', color: '#92400E', border: 'rgba(245,158,11,0.3)', label: 'Média', icon: '🟡' },
-    Baixa: { bg: 'rgba(34,197,94,0.1)', color: '#166534', border: 'rgba(34,197,94,0.3)', label: 'Baixa', icon: '🟢' },
+    Alta: { bg: 'rgba(239,68,68,0.1)', color: 'var(--text-red)', border: 'rgba(239,68,68,0.3)', label: 'Alta', icon: '🔴' },
+    Média: { bg: 'rgba(245,158,11,0.1)', color: 'var(--text-amber)', border: 'rgba(245,158,11,0.3)', label: 'Média', icon: '🟡' },
+    Baixa: { bg: 'rgba(34,197,94,0.1)', color: 'var(--text-green)', border: 'rgba(34,197,94,0.3)', label: 'Baixa', icon: '🟢' },
   };
   const s = cfg[c] || cfg['Baixa'];
   return (
@@ -66,9 +66,9 @@ const CritBadge = ({ c }: { c: Criticidade }) => {
 // "Atenção" = já está acima do mínimo, mas dentro de uma folga de 20% dele —
 // um alerta antecipado antes de cruzar o limite.
 const getSituacaoEstoque = (quantidade: number, minimo: number) => {
-  if (quantidade < minimo) return { label: 'Reposição Necessária', color: '#B91C1C', icon: '🔴' };
-  if (minimo > 0 && quantidade <= minimo * 1.2) return { label: 'Atenção', color: '#92400E', icon: '🟡' };
-  return { label: 'Normal', color: '#166534', icon: '🟢' };
+  if (quantidade < minimo) return { label: 'Reposição Necessária', color: 'var(--text-red)', icon: '🔴' };
+  if (minimo > 0 && quantidade <= minimo * 1.2) return { label: 'Atenção', color: 'var(--text-amber)', icon: '🟡' };
+  return { label: 'Normal', color: 'var(--text-green)', icon: '🟢' };
 };
 
 export function Estoque() {
@@ -324,8 +324,8 @@ export function Estoque() {
 
       {/* Info banner */}
       <div className="mb-6 rounded-xl border p-4 flex items-start gap-3" style={{ background: 'rgba(26,86,219,0.05)', borderColor: 'rgba(26,86,219,0.2)' }}>
-        <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#1A56DB' }} />
-        <div className="text-sm" style={{ color: '#1A56DB' }}>
+        <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: 'var(--text-blue)' }} />
+        <div className="text-sm" style={{ color: 'var(--text-blue)' }}>
           <p className="font-semibold mb-0.5">Produtos validados pela Área Administrativa</p>
           <p>Para registrar entradas ou saídas, acesse a aba <strong>Movimentação</strong>. Esta tela é para consulta e gerenciamento.</p>
         </div>
@@ -360,7 +360,7 @@ export function Estoque() {
                 const catInfo = produtosCatalogoProdutos.find(p => p.nome === produto.nome);
                 const estoqueMinimoRow = catInfo?.estoqueMinimo ?? 0;
                 const isHovered = hoveredRow === produto.id;
-                const rowBg = isHovered ? 'rgba(26,86,219,0.04)' : rowIdx % 2 === 0 ? '#FFFFFF' : '#F8FAFD';
+                const rowBg = isHovered ? 'rgba(26,86,219,0.04)' : rowIdx % 2 === 0 ? 'var(--card)' : 'var(--surface-alt)';
                 return (
                   <tr
                     key={produto.id}
@@ -370,7 +370,7 @@ export function Estoque() {
                   >
                     <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                       {produto.codigoProduto ? (
-                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, fontSize: 12, color: '#1A56DB', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px', display: 'inline-block' }}>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, fontSize: 12, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px', display: 'inline-block' }}>
                           {produto.codigoProduto}
                         </span>
                       ) : <span className="text-muted-foreground text-xs">—</span>}
@@ -384,7 +384,7 @@ export function Estoque() {
                       </span>
                     </td>
                     <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
-                      <div className={`font-bold text-sm ${produto.quantidade < estoqueMinimoRow ? 'text-red-600' : 'text-foreground'}`}>
+                      <div className="font-bold text-sm" style={{ color: produto.quantidade < estoqueMinimoRow ? 'var(--text-red)' : 'var(--foreground)' }}>
                         {produto.quantidade}
                         {produto.quantidade < estoqueMinimoRow && (
                           <span className="ml-1.5 text-xs font-semibold">
@@ -500,7 +500,7 @@ export function Estoque() {
                             : <ArrowUpRight className="w-4 h-4 text-red-500" />}
                         </div>
                         <div>
-                          <p className={`font-semibold text-sm ${mov.tipo === 'Entrada' ? 'text-green-800' : 'text-red-800'}`}>
+                          <p className="font-semibold text-sm" style={{ color: mov.tipo === 'Entrada' ? 'var(--text-green)' : 'var(--text-red)' }}>
                             {mov.tipo}
                           </p>
                           <p className="text-lg font-bold text-foreground">{mov.quantidade} unidade(s)</p>
@@ -555,7 +555,7 @@ export function Estoque() {
               <div className="space-y-4 py-2">
                 <div className="p-4 rounded-xl border" style={{ background: 'rgba(26,86,219,0.05)', borderColor: 'rgba(26,86,219,0.15)' }}>
                   {produtoDetalhes.codigoProduto && (
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 12, color: '#1A56DB', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 6, padding: '2px 8px', display: 'inline-block', marginBottom: 8 }}>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 12, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.25)', borderRadius: 6, padding: '2px 8px', display: 'inline-block', marginBottom: 8 }}>
                       {produtoDetalhes.codigoProduto}
                     </div>
                   )}
@@ -566,11 +566,11 @@ export function Estoque() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-muted/50 rounded-lg border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Quantidade em estoque</p>
-                    <p className={`text-2xl font-bold ${produtoDetalhes.quantidade < estoqueMinimoModal ? 'text-red-600' : 'text-foreground'}`}>
+                    <p className="text-2xl font-bold" style={{ color: produtoDetalhes.quantidade < estoqueMinimoModal ? 'var(--text-red)' : 'var(--foreground)' }}>
                       {produtoDetalhes.quantidade}
                     </p>
                     {produtoDetalhes.quantidade < estoqueMinimoModal && (
-                      <p className="text-xs font-semibold text-red-600 mt-1">
+                      <p className="text-xs font-semibold mt-1" style={{ color: 'var(--text-red)' }}>
                         <span aria-hidden="true">⚠️</span> Abaixo do mínimo
                       </p>
                     )}
@@ -625,7 +625,7 @@ export function Estoque() {
                     <div className="max-h-40 overflow-y-auto space-y-1">
                       {serializados.map(s => (
                         <div key={s.id} className="flex items-center justify-between px-3 py-2 bg-purple-50 border border-purple-100 rounded-lg">
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: '#7C3AED' }}>#{s.numeroSerie}</span>
+                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-violet)' }}>#{s.numeroSerie}</span>
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-muted-foreground">{s.localizacao}</span>
                             <span className={`text-xs px-2 py-0.5 rounded ${s.status === 'Disponível' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{s.status}</span>

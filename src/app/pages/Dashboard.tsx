@@ -14,7 +14,7 @@ const SemaforoIndicator = ({ status, contexto = 'prazo' }: { status: 'green' | '
   return (
     <div className="flex items-center gap-1.5">
       <div className="w-2.5 h-2.5 rounded-full" style={{ background: colors[status], boxShadow: status === 'red' ? `0 0 6px ${colors.red}` : 'none' }} aria-hidden="true" />
-      <span className="text-xs font-medium" style={{ color: status === 'yellow' ? '#92400E' : status === 'red' ? '#B91C1C' : '#166534' }}>{labels[status]}</span>
+      <span className="text-xs font-medium" style={{ color: status === 'yellow' ? 'var(--text-amber)' : status === 'red' ? 'var(--text-red)' : 'var(--text-green)' }}>{labels[status]}</span>
     </div>
   );
 };
@@ -74,9 +74,9 @@ export function Dashboard() {
 
   // "Situação" de cada produto: Normal / Atenção (dentro de 20% acima do mínimo) / Abaixo do mínimo.
   const getSituacaoEstoque = (quantidade: number, minimo: number) => {
-    if (quantidade < minimo) return { key: 'abaixo', label: 'Abaixo do mínimo', color: '#B91C1C', icon: '🔴' } as const;
-    if (minimo > 0 && quantidade <= minimo * 1.2) return { key: 'atencao', label: 'Atenção', color: '#92400E', icon: '🟡' } as const;
-    return { key: 'normal', label: 'Normal', color: '#166534', icon: '🟢' } as const;
+    if (quantidade < minimo) return { key: 'abaixo', label: 'Abaixo do mínimo', color: 'var(--text-red)', icon: '🔴' } as const;
+    if (minimo > 0 && quantidade <= minimo * 1.2) return { key: 'atencao', label: 'Atenção', color: 'var(--text-amber)', icon: '🟡' } as const;
+    return { key: 'normal', label: 'Normal', color: 'var(--text-green)', icon: '🟢' } as const;
   };
   const situacaoBuckets = produtos.reduce(
     (acc, p) => {
@@ -219,11 +219,11 @@ export function Dashboard() {
           </div>
           <div className="px-5 pb-4">
             <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{itensEstoqueBaixo}</div>
-            <p className="text-xs font-semibold mt-1" style={{ color: '#92400E' }}>
+            <p className="text-xs font-semibold mt-1" style={{ color: 'var(--text-amber)' }}>
               <span aria-hidden="true">⚠</span> {itensEstoqueBaixo === 1 ? 'item abaixo do mínimo' : 'itens abaixo do mínimo'}
             </p>
             {itensCriticosAbaixoDoMinimoTodos.length > 0 && (
-              <p className="text-xs font-semibold mt-0.5" style={{ color: '#B91C1C' }}>
+              <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--text-red)' }}>
                 <span aria-hidden="true">🔴</span> {itensCriticosAbaixoDoMinimoTodos.length} {itensCriticosAbaixoDoMinimoTodos.length === 1 ? 'crítico precisa' : 'críticos precisam'} de reposição
               </p>
             )}
@@ -241,12 +241,12 @@ export function Dashboard() {
       {/* Alerta de risco operacional — item crítico sem estoque seguro */}
       {itensCriticosAbaixoDoMinimoTodos.length > 0 && (
         <div className="mb-8 rounded-xl border-2 px-5 py-4 flex items-start gap-3" style={{ borderColor: 'rgba(220,38,38,0.35)', background: 'rgba(220,38,38,0.06)' }}>
-          <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" style={{ color: '#B91C1C' }} aria-hidden="true" />
+          <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" style={{ color: 'var(--text-red)' }} aria-hidden="true" />
           <div>
-            <p className="font-bold text-sm" style={{ color: '#B91C1C' }}>
+            <p className="font-bold text-sm" style={{ color: 'var(--text-red)' }}>
               <span aria-hidden="true">🔴</span> Item Crítico sem Estoque Seguro
             </p>
-            <p className="text-xs mt-0.5" style={{ color: '#B91C1C' }}>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-red)' }}>
               {itensCriticosAbaixoDoMinimoTodos.length} {itensCriticosAbaixoDoMinimoTodos.length === 1 ? 'produto de criticidade Alta está' : 'produtos de criticidade Alta estão'} abaixo do estoque mínimo — <span aria-hidden="true">⚠</span> risco de compra emergencial.{' '}
               <button type="button" onClick={() => setDetalheEstoqueOpen(true)} className="underline font-semibold">Ver detalhes</button>
             </p>
@@ -288,7 +288,7 @@ export function Dashboard() {
                       )}
                       <span className="text-sm font-medium text-foreground truncate">{p.nome}</span>
                       {critico && (
-                        <span className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0" style={{ color: '#B91C1C', background: 'rgba(220,38,38,0.1)' }}>
+                        <span className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0" style={{ color: 'var(--text-red)', background: 'rgba(220,38,38,0.1)' }}>
                           <span aria-hidden="true">🔴</span> Crítico
                         </span>
                       )}
@@ -296,7 +296,7 @@ export function Dashboard() {
                     <div className="flex items-center gap-3 text-xs shrink-0">
                       <span className="text-muted-foreground">Atual: <strong className="text-foreground">{p.quantidade}</strong></span>
                       <span className="text-muted-foreground">Mínimo: <strong className="text-foreground">{minimo}</strong></span>
-                      <span className="font-bold" style={{ color: '#B91C1C' }}>Necessidade: +{necessidade}</span>
+                      <span className="font-bold" style={{ color: 'var(--text-red)' }}>Necessidade: +{necessidade}</span>
                     </div>
                   </div>
                 );
@@ -333,15 +333,15 @@ export function Dashboard() {
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1"><span aria-hidden="true">🟢</span> Normal</p>
-              <p className="text-2xl font-bold" style={{ color: '#166534' }}>{situacaoBuckets.normal}</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-green)' }}>{situacaoBuckets.normal}</p>
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1"><span aria-hidden="true">🟡</span> Atenção</p>
-              <p className="text-2xl font-bold" style={{ color: '#92400E' }}>{situacaoBuckets.atencao}</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-amber)' }}>{situacaoBuckets.atencao}</p>
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1"><span aria-hidden="true">🔴</span> Abaixo do mínimo</p>
-              <p className="text-2xl font-bold" style={{ color: '#B91C1C' }}>{situacaoBuckets.abaixo}</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-red)' }}>{situacaoBuckets.abaixo}</p>
             </div>
           </div>
         </div>
@@ -355,14 +355,14 @@ export function Dashboard() {
             <p className="text-xs text-muted-foreground mt-0.5">Com base no estoque atual — sem contador acumulado ou histórico inventado</p>
           </div>
           <div className="p-2 rounded-lg" style={{ background: 'rgba(26,86,219,0.1)' }}>
-            <CheckCircle2 className="w-4 h-4" style={{ color: '#1A56DB' }} aria-hidden="true" />
+            <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--text-blue)' }} aria-hidden="true" />
           </div>
         </div>
         <div className="p-6 space-y-3">
           <div className="flex items-start gap-3 p-4 rounded-lg border" style={{ background: 'rgba(217,119,6,0.05)', borderColor: 'rgba(217,119,6,0.2)' }}>
-            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#92400E' }} aria-hidden="true" />
+            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: 'var(--text-amber)' }} aria-hidden="true" />
             <div>
-              <p className="text-sm font-bold" style={{ color: '#92400E' }}>
+              <p className="text-sm font-bold" style={{ color: 'var(--text-amber)' }}>
                 {itensRiscoAntecipado.length} {itensRiscoAntecipado.length === 1 ? 'item identificado' : 'itens identificados'} em risco antes da falta
                 {itensCriticosRiscoAntecipado.length > 0 && ` — ${itensCriticosRiscoAntecipado.length} ${itensCriticosRiscoAntecipado.length === 1 ? 'é crítico' : 'são críticos'}`}
               </p>
@@ -376,12 +376,12 @@ export function Dashboard() {
             borderColor: itensRupturaTotal.length > 0 ? 'rgba(220,38,38,0.2)' : 'rgba(34,197,94,0.2)',
           }}>
             {itensRupturaTotal.length > 0 ? (
-              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#B91C1C' }} aria-hidden="true" />
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: 'var(--text-red)' }} aria-hidden="true" />
             ) : (
-              <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#166534' }} aria-hidden="true" />
+              <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: 'var(--text-green)' }} aria-hidden="true" />
             )}
             <div>
-              <p className="text-sm font-bold" style={{ color: itensRupturaTotal.length > 0 ? '#B91C1C' : '#166534' }}>
+              <p className="text-sm font-bold" style={{ color: itensRupturaTotal.length > 0 ? 'var(--text-red)' : 'var(--text-green)' }}>
                 {itensRupturaTotal.length} {itensRupturaTotal.length === 1 ? 'item já em ruptura' : 'itens já em ruptura'} (quantidade zerada)
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -421,14 +421,14 @@ export function Dashboard() {
           {totalPrioridades === 0 ? (
             <div className="px-6 py-10 text-center bg-card">
               <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-2" />
-              <p className="text-green-700 font-semibold">Tudo sob controle!</p>
+              <p className="font-semibold" style={{ color: 'var(--text-green)' }}>Tudo sob controle!</p>
               <p className="text-xs text-muted-foreground mt-1">Nenhum alerta crítico no momento</p>
             </div>
           ) : (
             <div className="bg-card divide-y divide-border">
               {itensCriticosEstoqueBaixo.length > 0 && (
                 <div className="px-6 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5 text-red-600">
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5" style={{ color: 'var(--text-red)' }}>
                     <span className="w-2 h-2 bg-red-500 rounded-full inline-block" />
                     Estoque Crítico Baixo
                   </p>
@@ -444,7 +444,7 @@ export function Dashboard() {
                         </div>
                         <div className="flex items-center gap-2">
                           <SemaforoIndicator status="red" contexto="estoque" />
-                          <span className="text-sm font-bold text-red-600">{p.quantidade} un.</span>
+                          <span className="text-sm font-bold" style={{ color: 'var(--text-red)' }}>{p.quantidade} un.</span>
                         </div>
                       </div>
                     ))}
@@ -454,7 +454,7 @@ export function Dashboard() {
 
               {itensAtrasados.length > 0 && (
                 <div className="px-6 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5 text-red-600">
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5" style={{ color: 'var(--text-red)' }}>
                     <span className="w-2 h-2 bg-red-500 rounded-full inline-block animate-pulse" />
                     Manutenções Atrasadas (+14 dias)
                   </p>
@@ -475,7 +475,7 @@ export function Dashboard() {
                           </div>
                           <div className="flex items-center gap-2">
                             <SemaforoIndicator status="red" />
-                            <span className="text-sm font-bold text-red-600">{dias} dias</span>
+                            <span className="text-sm font-bold" style={{ color: 'var(--text-red)' }}>{dias} dias</span>
                           </div>
                         </div>
                       );
@@ -486,7 +486,7 @@ export function Dashboard() {
 
               {itensComInercia.length > 0 && (
                 <div className="px-6 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5 text-amber-700">
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5" style={{ color: 'var(--text-amber)' }}>
                     <span className="w-2 h-2 bg-amber-500 rounded-full inline-block" />
                     Sem Atualização +48h
                   </p>
@@ -525,11 +525,11 @@ export function Dashboard() {
             {mttr.totalItens > 0 ? (
               <div className="space-y-4">
                 <div className="flex items-baseline gap-2">
-                  <div className="text-4xl font-bold" style={{ color: '#1A56DB', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{mttr.dias}</div>
+                  <div className="text-4xl font-bold" style={{ color: 'var(--text-blue)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{mttr.dias}</div>
                   <div className="text-xl font-semibold text-muted-foreground">dias</div>
                   {mttr.horas > 0 && (
                     <>
-                      <div className="text-2xl font-bold ml-2" style={{ color: '#1A56DB' }}>{mttr.horas}</div>
+                      <div className="text-2xl font-bold ml-2" style={{ color: 'var(--text-blue)' }}>{mttr.horas}</div>
                       <div className="text-lg font-semibold text-muted-foreground">h</div>
                     </>
                   )}
@@ -544,7 +544,7 @@ export function Dashboard() {
                 </div>
                 {mttr.dias > 7 && (
                   <div className="p-3 rounded-lg border" style={{ background: 'rgba(245,158,11,0.07)', borderColor: 'rgba(245,158,11,0.25)' }}>
-                    <p className="text-xs text-amber-700">⚠️ MTTR acima de 7 dias — considere revisar o processo</p>
+                    <p className="text-xs" style={{ color: 'var(--text-amber)' }}>⚠️ MTTR acima de 7 dias — considere revisar o processo</p>
                   </div>
                 )}
               </div>
@@ -721,7 +721,7 @@ export function Dashboard() {
                     )}
                     <span className="text-sm font-medium text-foreground truncate">{p.nome}</span>
                     {critico && (
-                      <span className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0" style={{ color: '#B91C1C', background: 'rgba(220,38,38,0.1)' }}>
+                      <span className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0" style={{ color: 'var(--text-red)', background: 'rgba(220,38,38,0.1)' }}>
                         <span aria-hidden="true">🔴</span> Crítico
                       </span>
                     )}
@@ -729,7 +729,7 @@ export function Dashboard() {
                   <div className="flex items-center gap-3 text-xs shrink-0">
                     <span className="text-muted-foreground">Atual: <strong className="text-foreground">{p.quantidade}</strong></span>
                     <span className="text-muted-foreground">Mínimo: <strong className="text-foreground">{minimo}</strong></span>
-                    <span className="font-bold" style={{ color: '#B91C1C' }}>Necessidade: +{necessidade}</span>
+                    <span className="font-bold" style={{ color: 'var(--text-red)' }}>Necessidade: +{necessidade}</span>
                   </div>
                 </div>
               );
