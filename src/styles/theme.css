@@ -179,3 +179,69 @@
     line-height: 1.5;
   }
 }
+
+/* ── Acessibilidade: foco visível global ──────────────────────────────── */
+/* Fica fora de @layer para vencer utilitários do Tailwind (ex.: outline-none)
+   em qualquer botão, link, input, select ou card que não tenha um estilo de
+   foco próprio definido. */
+:focus-visible {
+  outline: 2px solid #1A56DB;
+  outline-offset: 2px;
+}
+
+/* ── Acessibilidade: tamanho de fonte ─────────────────────────────────── */
+:root.a11y-text-grande {
+  --font-size: 16px;
+}
+:root.a11y-text-extra-grande {
+  --font-size: 19px;
+}
+
+/* ── Acessibilidade: alto contraste ───────────────────────────────────── */
+:root.a11y-alto-contraste {
+  --foreground: #000000;
+  --background: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --muted-foreground: #1f2937;
+  --border: rgba(0, 0, 0, 0.45);
+  --input-background: #ffffff;
+}
+:root.a11y-alto-contraste.dark {
+  --foreground: #ffffff;
+  --background: #000000;
+  --card: #000000;
+  --card-foreground: #ffffff;
+  --popover: #000000;
+  --popover-foreground: #ffffff;
+  --muted-foreground: #e5e7eb;
+  --border: rgba(255, 255, 255, 0.55);
+  --input-background: #000000;
+}
+:root.a11y-alto-contraste :focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* ── Acessibilidade: reduzir movimento ─────────────────────────────────── */
+:root.a11y-reduzir-movimento *,
+:root.a11y-reduzir-movimento *::before,
+:root.a11y-reduzir-movimento *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

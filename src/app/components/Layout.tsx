@@ -1,6 +1,8 @@
+import { useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
 import { LayoutDashboard, Package, Wrench, ArrowLeftRight, Eye, HelpCircle, Database, ClipboardList, LayoutGrid } from 'lucide-react';
 import { Toaster } from '../components/ui/sonner';
+import { AccessibilityMenu } from './AccessibilityMenu';
 
 const NAV_GROUPS = [
   {
@@ -31,11 +33,30 @@ const NAV_GROUPS = [
 
 export function Layout() {
   const location = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+  const isFirstRender = useRef(true);
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Move o foco para o conteúdo da nova tela a cada troca de rota (SPA),
+  // sem roubar o foco no primeiro carregamento da página.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    mainRef.current?.focus();
+  }, [location.pathname]);
+
   return (
     <div className="flex h-screen bg-background">
+      <a
+        href="#conteudo-principal"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2.5 focus:rounded-lg focus:text-sm focus:font-semibold"
+        style={{ background: '#1A56DB', color: 'white' }}
+      >
+        Pular para o conteúdo
+      </a>
       <Toaster />
       {/* Sidebar */}
       <aside
@@ -55,7 +76,7 @@ export function Layout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 overflow-y-auto">
+        <nav className="flex-1 px-3 py-4 overflow-y-auto" aria-label="Navegação principal">
           {NAV_GROUPS.map((group) => (
             <div key={group.label} className="mb-5">
               <p className="px-3 mb-2 text-xs font-semibold tracking-widest" style={{ color: 'var(--sidebar-foreground)', opacity: 0.45 }}>
@@ -69,6 +90,7 @@ export function Layout() {
                     <li key={item.path}>
                       <Link
                         to={item.path}
+                        aria-current={active ? 'page' : undefined}
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm"
                         style={active ? {
                           background: 'var(--sidebar-primary)',
@@ -92,7 +114,7 @@ export function Layout() {
                           }
                         }}
                       >
-                        <Icon className="w-4 h-4 shrink-0" />
+                        <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
                         <span>{item.label}</span>
                       </Link>
                     </li>
@@ -106,7 +128,7 @@ export function Layout() {
         {/* Footer */}
         <div className="px-5 py-4" style={{ borderTop: '1px solid var(--sidebar-border)' }}>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" aria-hidden="true" />
             <span className="text-xs" style={{ color: 'var(--sidebar-foreground)', opacity: 0.6 }}>
               Sistema Operacional
             </span>
@@ -118,9 +140,11 @@ export function Layout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main id="conteudo-principal" ref={mainRef} tabIndex={-1} className="flex-1 overflow-auto outline-none">
         <Outlet />
       </main>
+
+      <AccessibilityMenu />
     </div>
   );
 }
