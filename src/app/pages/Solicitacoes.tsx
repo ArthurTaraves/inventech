@@ -56,19 +56,19 @@ const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; bord
   'Em separação':         { color: '#6D28D9', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', label: 'Em separação', icon: '⏳' },
   'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  label: 'Pronta para retirada', icon: '🟠' },
   'Entregue':             { color: '#166534', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   label: 'Entregue', icon: '✅' },
-  'Cancelada':            { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   label: 'Cancelada', icon: '🔴' },
+  'Cancelada':            { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   label: 'Cancelada', icon: '🔴' },
 };
 
 const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string; icon: string }> = {
   'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
   'Média':  { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡' },
-  'Alta':   { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴' },
+  'Alta':   { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴' },
 };
 
 const CRITICIDADE_CONFIG: Record<'Baixa' | 'Média' | 'Alta', { color: string; bg: string; border: string; icon: string }> = {
   'Baixa': { color: '#166534', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.25)', icon: '🟢' },
   'Média': { color: '#92400E', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', icon: '🟡' },
-  'Alta':  { color: '#DC2626', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', icon: '🔴' },
+  'Alta':  { color: '#B91C1C', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', icon: '🔴' },
 };
 
 const FLUXO: Record<StatusSolicitacao, { label: string; novoStatus: StatusSolicitacao; color: string } | null> = {
@@ -870,8 +870,8 @@ export function Solicitacoes() {
                           )}
                           {isCritico && (
                             <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
-                              <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>Item de alta criticidade</p>
+                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
+                              <p className="text-xs font-semibold" style={{ color: '#B91C1C' }}>Item de alta criticidade</p>
                             </div>
                           )}
                         </div>

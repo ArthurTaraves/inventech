@@ -237,7 +237,7 @@ export function Manutencao() {
   };
 
   const getCriticidadeStyle = (c: CriticidadeABC) => {
-    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#DC2626', border: '2px solid rgba(239,68,68,0.35)' };
+    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#B91C1C', border: '2px solid rgba(239,68,68,0.35)' };
     if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#92400E', border: '2px solid rgba(245,158,11,0.35)' };
     return { background: 'rgba(34,197,94,0.12)', color: '#166534', border: '2px solid rgba(34,197,94,0.35)' };
   };

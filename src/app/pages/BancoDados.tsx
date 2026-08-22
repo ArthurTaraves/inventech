@@ -50,7 +50,7 @@ const getStatusSerialStyle = (status: string) => {
   if (status === 'Disponível') return { bg: 'rgba(34,197,94,0.1)', color: '#166534', border: 'rgba(34,197,94,0.3)', icon: '✅' };
   if (status === 'Em Uso') return { bg: 'rgba(26,86,219,0.1)', color: '#1A56DB', border: 'rgba(26,86,219,0.3)', icon: '🔧' };
   if (status === 'Manutenção') return { bg: 'rgba(249,115,22,0.1)', color: '#9A3412', border: 'rgba(249,115,22,0.3)', icon: '⚠️' };
-  if (status === 'Baixado') return { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)', icon: '🔴' };
+  if (status === 'Baixado') return { bg: 'rgba(239,68,68,0.1)', color: '#B91C1C', border: 'rgba(239,68,68,0.3)', icon: '🔴' };
   return { bg: 'rgba(100,116,139,0.1)', color: '#4B5768', border: 'rgba(100,116,139,0.3)', icon: '•' };
 };
 

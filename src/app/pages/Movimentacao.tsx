@@ -351,7 +351,7 @@ export function Movimentacao() {
                     style={tipo === 'Saída' ? {
                       borderColor: '#EF4444',
                       background: 'rgba(239,68,68,0.08)',
-                      color: '#DC2626',
+                      color: '#B91C1C',
                     } : {
                       borderColor: 'rgba(11,24,38,0.1)',
                       background: 'transparent',

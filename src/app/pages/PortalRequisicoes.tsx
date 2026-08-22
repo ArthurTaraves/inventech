@@ -53,17 +53,17 @@ const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; bord
   'Em separação':         { color: '#6D28D9', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', portalLabel: 'Separando materiais',  icon: '⏳' },
   'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  portalLabel: 'Pronta para retirada', icon: '🟠' },
   'Entregue':             { color: '#166534', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   portalLabel: 'Entregue',             icon: '✅' },
-  'Cancelada':            { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   portalLabel: 'Cancelada',            icon: '🔴' },
+  'Cancelada':            { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   portalLabel: 'Cancelada',            icon: '🔴' },
 };
 
 const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string; icon: string }> = {
   'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
   'Média':  { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡'   },
-  'Alta':   { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴'   },
+  'Alta':   { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴'   },
 };
 
 const CRIT_CONFIG: Record<string, { color: string; bg: string; border: string; icon: string }> = {
-  'Alta':  { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)', icon: '🔴'   },
+  'Alta':  { color: '#B91C1C', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)', icon: '🔴'   },
   'Média': { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)', icon: '🟡'   },
   'Baixa': { color: '#166534', bg: 'rgba(22,163,74,0.1)',   border: 'rgba(22,163,74,0.25)', icon: '🟢'   },
 };
@@ -600,8 +600,8 @@ export function PortalRequisicoes() {
                       {selectedProduct.criticidade === 'Alta' && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
-                          <p className="text-sm font-semibold" style={{ color: '#DC2626' }}>Item de alta criticidade — manuseio com atenção</p>
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
+                          <p className="text-sm font-semibold" style={{ color: '#B91C1C' }}>Item de alta criticidade — manuseio com atenção</p>
                         </div>
                       )}
                       {disponivel > 0 && disponivel <= estoqueMinimo && (
@@ -614,8 +614,8 @@ export function PortalRequisicoes() {
                       {disponivel === 0 && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
-                          <p className="text-sm font-semibold" style={{ color: '#DC2626' }}>Sem estoque disponível no momento</p>
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
+                          <p className="text-sm font-semibold" style={{ color: '#B91C1C' }}>Sem estoque disponível no momento</p>
                         </div>
                       )}
 
@@ -1039,7 +1039,7 @@ export function PortalRequisicoes() {
                                 </button>
                                 <button onClick={() => rejeitarSolicitacao(sol)}
                                   className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                  style={{ color: '#DC2626', background: 'rgba(220,38,38,0.1)' }}>
+                                  style={{ color: '#B91C1C', background: 'rgba(220,38,38,0.1)' }}>
                                   Rejeitar
                                 </button>
                               </>
@@ -1229,15 +1229,15 @@ export function PortalRequisicoes() {
                             {info.criticidade === 'Alta' && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
-                                <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>Item de alta criticidade</p>
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
+                                <p className="text-xs font-semibold" style={{ color: '#B91C1C' }}>Item de alta criticidade</p>
                               </div>
                             )}
                             {info.saldo < 0 && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
-                                <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>Quantidade solicitada supera o estoque disponível</p>
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#B91C1C' }} aria-hidden="true" />
+                                <p className="text-xs font-semibold" style={{ color: '#B91C1C' }}>Quantidade solicitada supera o estoque disponível</p>
                               </div>
                             )}
                           </div>

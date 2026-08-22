@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Package, Wrench, AlertTriangle, TrendingUp, ArrowUpRight, ArrowDownRight, Clock, BarChart3, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
 import { bancoDadosStore } from '../data/bancoDadosStore';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog';
 
 const SemaforoIndicator = ({ status, contexto = 'prazo' }: { status: 'green' | 'yellow' | 'red'; contexto?: 'prazo' | 'estoque' }) => {
   const colors = { green: '#22C55E', yellow: '#EAB308', red: '#EF4444' };
@@ -44,6 +46,7 @@ export function Dashboard() {
   const { produtos, movimentacoes, itensManutencao } = useAlmoxarifado();
   const produtosCatalogo = bancoDadosStore.getProdutos();
   const catalogMap = new Map(produtosCatalogo.map(c => [c.codigoProduto, c]));
+  const [detalheEstoqueOpen, setDetalheEstoqueOpen] = useState(false);
 
   // Estoque mínimo é individual por produto (cadastrado na Área Administrativa) —
   // nunca um limite fixo. Mesma fonte de dados usada em Estoque, Portal de
@@ -53,8 +56,30 @@ export function Dashboard() {
 
   const totalItens = produtos.reduce((acc, p) => acc + p.quantidade, 0);
   const itensEmManutencao = itensManutencao.filter(item => item.status !== 'Retorno').length;
-  const itensEstoqueBaixo = produtos.filter(p => p.quantidade < getEstoqueMinimo(p)).length;
   const itensAltaCriticidade = produtos.filter(p => p.criticidade === 'Alta').length;
+
+  // Reposição de estoque — sempre comparando com o estoqueMinimo individual do produto.
+  const itensAbaixoDoMinimoTodos = produtos
+    .filter(p => p.quantidade < getEstoqueMinimo(p))
+    .sort((a, b) => (a.quantidade - getEstoqueMinimo(a)) - (b.quantidade - getEstoqueMinimo(b)));
+  const itensEstoqueBaixo = itensAbaixoDoMinimoTodos.length;
+  const itensCriticosAbaixoDoMinimoTodos = itensAbaixoDoMinimoTodos.filter(p => p.criticidade === 'Alta');
+
+  // "Situação" de cada produto: Normal / Atenção (dentro de 20% acima do mínimo) / Abaixo do mínimo.
+  const getSituacaoEstoque = (quantidade: number, minimo: number) => {
+    if (quantidade < minimo) return { key: 'abaixo', label: 'Abaixo do mínimo', color: '#B91C1C', icon: '🔴' } as const;
+    if (minimo > 0 && quantidade <= minimo * 1.2) return { key: 'atencao', label: 'Atenção', color: '#92400E', icon: '🟡' } as const;
+    return { key: 'normal', label: 'Normal', color: '#166534', icon: '🟢' } as const;
+  };
+  const situacaoBuckets = produtos.reduce(
+    (acc, p) => {
+      const s = getSituacaoEstoque(p.quantidade, getEstoqueMinimo(p)).key;
+      acc[s]++;
+      return acc;
+    },
+    { normal: 0, atencao: 0, abaixo: 0 } as Record<'normal' | 'atencao' | 'abaixo', number>
+  );
+  const totalSituacao = situacaoBuckets.normal + situacaoBuckets.atencao + situacaoBuckets.abaixo;
 
   const ultimasMovimentacoes = [...movimentacoes]
     .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
@@ -104,8 +129,7 @@ export function Dashboard() {
   const volumeCategoria = calcularVolumeCategoria();
   const maxVolume = Math.max(...volumeCategoria.map(v => v.quantidade), 1);
 
-  const itensCriticosEstoqueBaixo = produtos
-    .filter(p => p.criticidade === 'Alta' && p.quantidade < getEstoqueMinimo(p))
+  const itensCriticosEstoqueBaixo = [...itensCriticosAbaixoDoMinimoTodos]
     .sort((a, b) => a.quantidade - b.quantidade)
     .slice(0, 3);
 
@@ -173,13 +197,31 @@ export function Dashboard() {
           accent="#F59E0B"
           icon={<Wrench className="w-4 h-4" />}
         />
-        <KpiCard
-          label="Estoque Baixo"
-          value={itensEstoqueBaixo}
-          sub="produtos abaixo do mínimo cadastrado"
-          accent="#EF4444"
-          icon={<AlertTriangle className="w-4 h-4" />}
-        />
+        <button
+          type="button"
+          onClick={() => setDetalheEstoqueOpen(true)}
+          aria-haspopup="dialog"
+          className="text-left bg-card rounded-xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow w-full"
+          style={{ borderLeft: '4px solid #EF4444' }}
+        >
+          <div className="px-5 pt-4 pb-2 flex items-center justify-between">
+            <span className="text-sm font-medium text-muted-foreground">Estoque Abaixo do Mínimo</span>
+            <div className="p-2 rounded-lg" style={{ background: '#EF444418' }}>
+              <div style={{ color: '#EF4444' }}><AlertTriangle className="w-4 h-4" aria-hidden="true" /></div>
+            </div>
+          </div>
+          <div className="px-5 pb-4">
+            <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{itensEstoqueBaixo}</div>
+            <p className="text-xs font-semibold mt-1" style={{ color: '#92400E' }}>
+              <span aria-hidden="true">⚠</span> {itensEstoqueBaixo === 1 ? 'item abaixo do mínimo' : 'itens abaixo do mínimo'}
+            </p>
+            {itensCriticosAbaixoDoMinimoTodos.length > 0 && (
+              <p className="text-xs font-semibold mt-0.5" style={{ color: '#B91C1C' }}>
+                <span aria-hidden="true">🔴</span> {itensCriticosAbaixoDoMinimoTodos.length} {itensCriticosAbaixoDoMinimoTodos.length === 1 ? 'crítico precisa' : 'críticos precisam'} de reposição
+              </p>
+            )}
+          </div>
+        </button>
         <KpiCard
           label="Alta Criticidade"
           value={itensAltaCriticidade}
@@ -187,6 +229,115 @@ export function Dashboard() {
           accent="#8B5CF6"
           icon={<TrendingUp className="w-4 h-4" />}
         />
+      </div>
+
+      {/* Alerta de risco operacional — item crítico sem estoque seguro */}
+      {itensCriticosAbaixoDoMinimoTodos.length > 0 && (
+        <div className="mb-8 rounded-xl border-2 px-5 py-4 flex items-start gap-3" style={{ borderColor: 'rgba(220,38,38,0.35)', background: 'rgba(220,38,38,0.06)' }}>
+          <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" style={{ color: '#B91C1C' }} aria-hidden="true" />
+          <div>
+            <p className="font-bold text-sm" style={{ color: '#B91C1C' }}>
+              <span aria-hidden="true">🔴</span> Item Crítico sem Estoque Seguro
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: '#B91C1C' }}>
+              {itensCriticosAbaixoDoMinimoTodos.length} {itensCriticosAbaixoDoMinimoTodos.length === 1 ? 'produto de criticidade Alta está' : 'produtos de criticidade Alta estão'} abaixo do estoque mínimo — <span aria-hidden="true">⚠</span> risco de compra emergencial.{' '}
+              <button type="button" onClick={() => setDetalheEstoqueOpen(true)} className="underline font-semibold">Ver detalhes</button>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Reposições recomendadas */}
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden mb-8">
+        <div className="px-6 pt-5 pb-4 border-b border-border flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Reposições Recomendadas</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Produtos com quantidade atual abaixo do estoque mínimo cadastrado</p>
+          </div>
+          <div className="p-2 rounded-lg" style={{ background: 'rgba(239,68,68,0.1)' }}>
+            <Package className="w-4 h-4" style={{ color: '#EF4444' }} aria-hidden="true" />
+          </div>
+        </div>
+        <div className="p-6">
+          {itensAbaixoDoMinimoTodos.length === 0 ? (
+            <div className="text-center py-8">
+              <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-2" aria-hidden="true" />
+              <p className="text-muted-foreground text-sm">Nenhuma reposição necessária no momento</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {itensAbaixoDoMinimoTodos.slice(0, 6).map(p => {
+                const minimo = getEstoqueMinimo(p);
+                const necessidade = minimo - p.quantidade;
+                const critico = p.criticidade === 'Alta';
+                return (
+                  <div key={p.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border flex-wrap" style={{
+                    background: critico ? 'rgba(239,68,68,0.04)' : 'rgba(245,158,11,0.04)',
+                    borderColor: critico ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)',
+                  }}>
+                    <div className="flex items-center gap-2 min-w-0">
+                      {p.codigoProduto && (
+                        <span className="font-mono text-xs font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 shrink-0">{p.codigoProduto}</span>
+                      )}
+                      <span className="text-sm font-medium text-foreground truncate">{p.nome}</span>
+                      {critico && (
+                        <span className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0" style={{ color: '#B91C1C', background: 'rgba(220,38,38,0.1)' }}>
+                          <span aria-hidden="true">🔴</span> Crítico
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 text-xs shrink-0">
+                      <span className="text-muted-foreground">Atual: <strong className="text-foreground">{p.quantidade}</strong></span>
+                      <span className="text-muted-foreground">Mínimo: <strong className="text-foreground">{minimo}</strong></span>
+                      <span className="font-bold" style={{ color: '#B91C1C' }}>Necessidade: +{necessidade}</span>
+                    </div>
+                  </div>
+                );
+              })}
+              {itensAbaixoDoMinimoTodos.length > 6 && (
+                <p className="text-xs text-muted-foreground text-center pt-2">
+                  +{itensAbaixoDoMinimoTodos.length - 6} {itensAbaixoDoMinimoTodos.length - 6 === 1 ? 'outro item' : 'outros itens'} —{' '}
+                  <button type="button" onClick={() => setDetalheEstoqueOpen(true)} className="underline font-semibold">ver todos</button>
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Gráfico: itens por situação de estoque */}
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden mb-8">
+        <div className="px-6 pt-5 pb-4 border-b border-border">
+          <h2 className="text-sm font-semibold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Itens por Situação de Estoque</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Comparado ao estoque mínimo cadastrado de cada produto</p>
+        </div>
+        <div className="p-6">
+          {totalSituacao > 0 && (
+            <div
+              className="w-full h-3 rounded-full overflow-hidden flex mb-5"
+              role="img"
+              aria-label={`${situacaoBuckets.normal} normais, ${situacaoBuckets.atencao} em atenção, ${situacaoBuckets.abaixo} abaixo do mínimo`}
+            >
+              <div style={{ width: `${(situacaoBuckets.normal / totalSituacao) * 100}%`, background: '#22C55E' }} />
+              <div style={{ width: `${(situacaoBuckets.atencao / totalSituacao) * 100}%`, background: '#EAB308' }} />
+              <div style={{ width: `${(situacaoBuckets.abaixo / totalSituacao) * 100}%`, background: '#EF4444' }} />
+            </div>
+          )}
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1"><span aria-hidden="true">🟢</span> Normal</p>
+              <p className="text-2xl font-bold" style={{ color: '#166534' }}>{situacaoBuckets.normal}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1"><span aria-hidden="true">🟡</span> Atenção</p>
+              <p className="text-2xl font-bold" style={{ color: '#92400E' }}>{situacaoBuckets.atencao}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1"><span aria-hidden="true">🔴</span> Abaixo do mínimo</p>
+              <p className="text-2xl font-bold" style={{ color: '#B91C1C' }}>{situacaoBuckets.abaixo}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Priority panel */}
@@ -487,6 +638,51 @@ export function Dashboard() {
           ))}
         </div>
       </div>
+
+      {/* Detalhe: Estoque Abaixo do Mínimo */}
+      <Dialog open={detalheEstoqueOpen} onOpenChange={setDetalheEstoqueOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Estoque Abaixo do Mínimo</DialogTitle>
+            <DialogDescription>Produtos com quantidade atual abaixo do estoque mínimo individual cadastrado na Área Administrativa</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            {itensAbaixoDoMinimoTodos.length === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-2" aria-hidden="true" />
+                <p className="text-muted-foreground text-sm">Nenhum item abaixo do mínimo no momento</p>
+              </div>
+            ) : itensAbaixoDoMinimoTodos.map(p => {
+              const minimo = getEstoqueMinimo(p);
+              const necessidade = minimo - p.quantidade;
+              const critico = p.criticidade === 'Alta';
+              return (
+                <div key={p.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border flex-wrap" style={{
+                  background: critico ? 'rgba(239,68,68,0.04)' : 'rgba(245,158,11,0.04)',
+                  borderColor: critico ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)',
+                }}>
+                  <div className="flex items-center gap-2 min-w-0">
+                    {p.codigoProduto && (
+                      <span className="font-mono text-xs font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 shrink-0">{p.codigoProduto}</span>
+                    )}
+                    <span className="text-sm font-medium text-foreground truncate">{p.nome}</span>
+                    {critico && (
+                      <span className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0" style={{ color: '#B91C1C', background: 'rgba(220,38,38,0.1)' }}>
+                        <span aria-hidden="true">🔴</span> Crítico
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 text-xs shrink-0">
+                    <span className="text-muted-foreground">Atual: <strong className="text-foreground">{p.quantidade}</strong></span>
+                    <span className="text-muted-foreground">Mínimo: <strong className="text-foreground">{minimo}</strong></span>
+                    <span className="font-bold" style={{ color: '#B91C1C' }}>Necessidade: +{necessidade}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

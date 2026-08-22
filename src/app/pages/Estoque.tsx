@@ -49,7 +49,7 @@ const thStyle: React.CSSProperties = {
 
 const CritBadge = ({ c }: { c: Criticidade }) => {
   const cfg: Record<Criticidade, { bg: string; color: string; border: string; label: string; icon: string }> = {
-    Alta: { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)', label: 'Alta', icon: '🔴' },
+    Alta: { bg: 'rgba(239,68,68,0.1)', color: '#B91C1C', border: 'rgba(239,68,68,0.3)', label: 'Alta', icon: '🔴' },
     Média: { bg: 'rgba(245,158,11,0.1)', color: '#92400E', border: 'rgba(245,158,11,0.3)', label: 'Média', icon: '🟡' },
     Baixa: { bg: 'rgba(34,197,94,0.1)', color: '#166534', border: 'rgba(34,197,94,0.3)', label: 'Baixa', icon: '🟢' },
   };
@@ -60,6 +60,15 @@ const CritBadge = ({ c }: { c: Criticidade }) => {
       {s.label}
     </span>
   );
+};
+
+// Classificação de situação do estoque em relação ao mínimo cadastrado.
+// "Atenção" = já está acima do mínimo, mas dentro de uma folga de 20% dele —
+// um alerta antecipado antes de cruzar o limite.
+const getSituacaoEstoque = (quantidade: number, minimo: number) => {
+  if (quantidade < minimo) return { label: 'Reposição Necessária', color: '#B91C1C', icon: '🔴' };
+  if (minimo > 0 && quantidade <= minimo * 1.2) return { label: 'Atenção', color: '#92400E', icon: '🟡' };
+  return { label: 'Normal', color: '#166534', icon: '🟢' };
 };
 
 export function Estoque() {
@@ -349,6 +358,7 @@ export function Estoque() {
             <tbody>
               {produtosFiltrados.map((produto, rowIdx) => {
                 const catInfo = produtosCatalogoProdutos.find(p => p.nome === produto.nome);
+                const estoqueMinimoRow = catInfo?.estoqueMinimo ?? 0;
                 const isHovered = hoveredRow === produto.id;
                 const rowBg = isHovered ? 'rgba(26,86,219,0.04)' : rowIdx % 2 === 0 ? '#FFFFFF' : '#F8FAFD';
                 return (
@@ -374,11 +384,11 @@ export function Estoque() {
                       </span>
                     </td>
                     <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
-                      <div className={`font-bold text-sm ${produto.quantidade < 10 ? 'text-red-600' : 'text-foreground'}`}>
+                      <div className={`font-bold text-sm ${produto.quantidade < estoqueMinimoRow ? 'text-red-600' : 'text-foreground'}`}>
                         {produto.quantidade}
-                        {produto.quantidade < 10 && (
+                        {produto.quantidade < estoqueMinimoRow && (
                           <span className="ml-1.5 text-xs font-semibold">
-                            <span aria-hidden="true">⚠️</span> Estoque baixo
+                            <span aria-hidden="true">⚠️</span> Abaixo do mínimo
                           </span>
                         )}
                       </div>
@@ -536,6 +546,8 @@ export function Estoque() {
           </DialogHeader>
           {produtoDetalhes && (() => {
             const catInfo = produtosCatalogoProdutos.find(p => p.nome === produtoDetalhes.nome);
+            const estoqueMinimoModal = catInfo?.estoqueMinimo ?? 0;
+            const situacao = catInfo ? getSituacaoEstoque(produtoDetalhes.quantidade, estoqueMinimoModal) : null;
             const serializados = produtoDetalhes.codigoProduto
               ? bancoDadosStore.getProdutosSerializadosPorCodigo(produtoDetalhes.codigoProduto)
               : [];
@@ -554,12 +566,12 @@ export function Estoque() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-muted/50 rounded-lg border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Quantidade em estoque</p>
-                    <p className={`text-2xl font-bold ${produtoDetalhes.quantidade < 10 ? 'text-red-600' : 'text-foreground'}`}>
+                    <p className={`text-2xl font-bold ${produtoDetalhes.quantidade < estoqueMinimoModal ? 'text-red-600' : 'text-foreground'}`}>
                       {produtoDetalhes.quantidade}
                     </p>
-                    {produtoDetalhes.quantidade < 10 && (
+                    {produtoDetalhes.quantidade < estoqueMinimoModal && (
                       <p className="text-xs font-semibold text-red-600 mt-1">
-                        <span aria-hidden="true">⚠️</span> Estoque próximo do mínimo
+                        <span aria-hidden="true">⚠️</span> Abaixo do mínimo
                       </p>
                     )}
                   </div>
@@ -571,12 +583,21 @@ export function Estoque() {
 
                 {catInfo && (
                   <div className="p-3 bg-muted/50 rounded-lg border border-border">
-                    <p className="text-xs text-muted-foreground mb-2">Limites de estoque</p>
-                    <div className="flex gap-4 text-sm">
+                    <p className="text-xs text-muted-foreground mb-2">Estoque atual x limites cadastrados</p>
+                    <div className="flex gap-4 text-sm mb-3">
+                      <div><span className="text-muted-foreground">Atual:</span> <span className="font-semibold text-foreground">{produtoDetalhes.quantidade}</span></div>
                       <div><span className="text-muted-foreground">Mínimo:</span> <span className="font-semibold text-foreground">{catInfo.estoqueMinimo}</span></div>
                       <div><span className="text-muted-foreground">Máximo:</span> <span className="font-semibold text-foreground">{catInfo.estoqueMaximo}</span></div>
                       <div><span className="text-muted-foreground">Unidade:</span> <span className="font-semibold text-foreground">{catInfo.unidadeMedida}</span></div>
                     </div>
+                    {situacao && (
+                      <div className="flex items-center gap-2 pt-2 border-t border-border">
+                        <span className="text-xs text-muted-foreground">Situação:</span>
+                        <span className="text-sm font-bold" style={{ color: situacao.color }}>
+                          <span aria-hidden="true">{situacao.icon}</span> {situacao.label}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 
