@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Plus, Search, Eye, CheckCircle, XCircle, Package, AlertTriangle, ChevronDown,
-  ClipboardList, Building2, Calendar, User, Hash, MessageSquare, Layers, Truck,
+  ClipboardList, Building2, Calendar, User, Hash, MessageSquare, Truck,
 } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -71,20 +71,6 @@ const CRITICIDADE_CONFIG: Record<'Baixa' | 'Média' | 'Alta', { color: string; b
   'Alta':  { color: 'var(--text-red)', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', icon: '🔴' },
 };
 
-const FLUXO: Record<StatusSolicitacao, { label: string; novoStatus: StatusSolicitacao; color: string } | null> = {
-  'Solicitada':           { label: 'Iniciar Análise',    novoStatus: 'Em análise',           color: 'var(--text-amber)' },
-  'Em análise':           { label: 'Aprovar',            novoStatus: 'Aprovada',             color: 'var(--text-green)' },
-  'Aprovada':             { label: 'Iniciar Separação',  novoStatus: 'Em separação',         color: 'var(--text-violet)' },
-  'Em separação':         { label: 'Marcar como Pronto', novoStatus: 'Pronta para retirada', color: 'var(--text-orange)' },
-  'Pronta para retirada': { label: 'Confirmar Entrega',  novoStatus: 'Entregue',             color: 'var(--text-green)' },
-  'Entregue':             null,
-  'Cancelada':            null,
-};
-
-const STATUS_TODOS: StatusSolicitacao[] = [
-  'Solicitada', 'Em análise', 'Aprovada', 'Em separação', 'Pronta para retirada', 'Entregue', 'Cancelada',
-];
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const thStyle: React.CSSProperties = {
@@ -145,6 +131,73 @@ const gerarNumero = (existentes: Solicitacao[]) => {
   return `SOL-${String(max + 1).padStart(3, '0')}`;
 };
 
+// Dados de demonstração — solicitantes e produtos coerentes com os mocks já
+// usados em Dashboard/Estoque/Manutenção (mockData.ts). Carregados só quando
+// não há nada salvo em localStorage ainda (primeiro acesso).
+export const solicitacoesIniciais: Solicitacao[] = [
+  {
+    id: '1',
+    numero: 'SOL-001',
+    solicitante: 'João Silva',
+    matricula: '12345',
+    setor: 'Manutenção',
+    dataPrevista: '2026-08-26',
+    prioridade: 'Alta',
+    observacao: 'Necessário para manutenção corretiva na linha 2.',
+    itens: [{ produtoId: '2', produtoNome: 'Esmerilhadeira 4"', codigoProduto: 'ELE-002', quantidade: 2 }],
+    status: 'Em análise',
+    dataCriacao: '2026-08-19T09:15:00',
+    ultimaAtualizacao: '2026-08-20T14:00:00',
+  },
+  {
+    id: '2',
+    numero: 'SOL-002',
+    solicitante: 'Maria Santos',
+    matricula: '54321',
+    setor: 'Produção',
+    dataPrevista: '2026-08-27',
+    prioridade: 'Média',
+    observacao: 'Reposição de ferramentas do kit de produção.',
+    itens: [
+      { produtoId: '4', produtoNome: 'Furadeira', codigoProduto: 'ELE-005', quantidade: 1 },
+      { produtoId: '5', produtoNome: 'Parafusadeira', codigoProduto: 'ELE-008', quantidade: 3 },
+    ],
+    status: 'Aprovada',
+    dataCriacao: '2026-08-18T11:00:00',
+    ultimaAtualizacao: '2026-08-21T09:30:00',
+  },
+  {
+    id: '3',
+    numero: 'SOL-003',
+    solicitante: 'Pedro Costa',
+    matricula: '11111',
+    setor: 'Segurança do Trabalho',
+    dataPrevista: '2026-08-23',
+    prioridade: 'Alta',
+    observacao: 'Reposição de EPIs para a brigada de emergência.',
+    itens: [{ produtoId: '8', produtoNome: 'Máscara de Fuga', codigoProduto: 'SEG-001', quantidade: 5 }],
+    status: 'Pronta para retirada',
+    dataCriacao: '2026-08-17T08:45:00',
+    ultimaAtualizacao: '2026-08-22T07:50:00',
+  },
+  {
+    id: '4',
+    numero: 'SOL-004',
+    solicitante: 'Ana Oliveira',
+    matricula: '22222',
+    setor: 'Logística',
+    dataPrevista: '2026-09-01',
+    prioridade: 'Baixa',
+    itens: [
+      { produtoId: '10', produtoNome: 'Chave Combinada', codigoProduto: 'MAN-002', quantidade: 4 },
+      { produtoId: '9', produtoNome: 'Marreta', codigoProduto: 'MAN-001', quantidade: 1 },
+    ],
+    status: 'Solicitada',
+    dataCriacao: '2026-08-21T16:20:00',
+    ultimaAtualizacao: '2026-08-21T16:20:00',
+  },
+];
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Solicitacoes() {
@@ -153,14 +206,12 @@ export function Solicitacoes() {
 
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>(() => {
     const saved = localStorage.getItem('almoxarifado_solicitacoes');
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : solicitacoesIniciais;
   });
 
   useEffect(() => {
     localStorage.setItem('almoxarifado_solicitacoes', JSON.stringify(solicitacoes));
   }, [solicitacoes]);
-
-  const [activeTab, setActiveTab] = useState<'solicitante' | 'central'>('solicitante');
 
   // ── Nova Solicitação modal ──
   const [isNovaOpen, setIsNovaOpen] = useState(false);
@@ -173,29 +224,8 @@ export function Solicitacoes() {
   // ── Detail modal ──
   const [detalhe, setDetalhe] = useState<Solicitacao | null>(null);
 
-  // ── Filters (central) ──
-  const [filtroStatus, setFiltroStatus] = useState('');
-  const [filtroSetor, setFiltroSetor] = useState('');
-  const [filtroPrioridade, setFiltroPrioridade] = useState('');
-  const [buscaCentral, setBuscaCentral] = useState('');
-
   // ── Search (solicitante) ──
   const [buscaSolicitante, setBuscaSolicitante] = useState('');
-
-  // ── Actions ──
-  const avancarStatus = (sol: Solicitacao, novoStatus: StatusSolicitacao) => {
-    const updated = { ...sol, status: novoStatus, ultimaAtualizacao: new Date().toISOString() };
-    setSolicitacoes(prev => prev.map(s => s.id === sol.id ? updated : s));
-    if (detalhe?.id === sol.id) setDetalhe(updated);
-    toast.success(`Status atualizado para "${novoStatus}"`);
-  };
-
-  const cancelarSolicitacao = (sol: Solicitacao) => {
-    const updated = { ...sol, status: 'Cancelada' as StatusSolicitacao, ultimaAtualizacao: new Date().toISOString() };
-    setSolicitacoes(prev => prev.map(s => s.id === sol.id ? updated : s));
-    if (detalhe?.id === sol.id) setDetalhe(updated);
-    toast.success('Solicitação cancelada');
-  };
 
   const CAMPO_LABEL_SOLICITACAO: Record<string, string> = {
     solicitante: 'Solicitante',
@@ -293,18 +323,6 @@ export function Solicitacoes() {
     return true;
   });
 
-  const setoresUnicos = [...new Set(solicitacoes.map(s => s.setor).filter(Boolean))];
-
-  const centralFiltradas = solicitacoes.filter(s => {
-    if (filtroStatus && s.status !== filtroStatus) return false;
-    if (filtroSetor && s.setor !== filtroSetor) return false;
-    if (filtroPrioridade && s.prioridade !== filtroPrioridade) return false;
-    if (buscaCentral && !s.numero.toLowerCase().includes(buscaCentral.toLowerCase()) &&
-        !s.solicitante.toLowerCase().includes(buscaCentral.toLowerCase()) &&
-        !s.setor.toLowerCase().includes(buscaCentral.toLowerCase())) return false;
-    return true;
-  });
-
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '—';
     try { return new Intl.DateTimeFormat('pt-BR').format(new Date(dateStr)); } catch { return dateStr; }
@@ -322,249 +340,73 @@ export function Solicitacoes() {
         </p>
       </div>
 
-      {/* Tab bar */}
-      <div className="flex gap-1 mb-6 bg-muted rounded-xl p-1 w-fit">
-        {[
-          { key: 'solicitante', label: 'Solicitações', icon: ClipboardList },
-          { key: 'central', label: 'Central de Solicitações', icon: Layers },
-        ].map(tab => {
-          const Icon = tab.icon;
-          const active = activeTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as 'solicitante' | 'central')}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
-              style={active ? {
-                background: '#1A56DB', color: 'white',
-                boxShadow: '0 2px 8px rgba(26,86,219,0.3)',
-              } : { color: 'var(--muted-foreground)' }}
-            >
-              <Icon className="w-4 h-4" aria-hidden="true" />
-              {tab.label}
-            </button>
-          );
-        })}
+      <div className="flex items-center justify-between mb-5">
+        <div className="relative w-72">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+          <Input
+            aria-label="Buscar solicitações por número ou solicitante"
+            placeholder="Buscar por número ou solicitante..."
+            value={buscaSolicitante}
+            onChange={e => setBuscaSolicitante(e.target.value)}
+            className="pl-10 rounded-xl"
+          />
+        </div>
+        <button
+          onClick={() => setIsNovaOpen(true)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
+          style={{ background: 'linear-gradient(135deg, #1A56DB, #2563EB)', boxShadow: '0 4px 12px rgba(26,86,219,0.3)' }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 16px rgba(26,86,219,0.45)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(26,86,219,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+        >
+          <Plus className="w-4 h-4" />
+          Nova Solicitação
+        </button>
       </div>
 
-      {/* ══ SOLICITANTE TAB ══════════════════════════════════════════════════════ */}
-      {activeTab === 'solicitante' && (
-        <div>
-          <div className="flex items-center justify-between mb-5">
-            <div className="relative w-72">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-              <Input
-                aria-label="Buscar solicitações por número ou solicitante"
-                placeholder="Buscar por número ou solicitante..."
-                value={buscaSolicitante}
-                onChange={e => setBuscaSolicitante(e.target.value)}
-                className="pl-10 rounded-xl"
-              />
-            </div>
-            <button
-              onClick={() => setIsNovaOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
-              style={{ background: 'linear-gradient(135deg, #1A56DB, #2563EB)', boxShadow: '0 4px 12px rgba(26,86,219,0.3)' }}
-              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 16px rgba(26,86,219,0.45)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(26,86,219,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
-            >
-              <Plus className="w-4 h-4" />
-              Nova Solicitação
-            </button>
-          </div>
-
-          {solicitacoesFiltradas.length === 0 ? (
-            <div className="bg-card rounded-xl border border-border flex flex-col items-center justify-center py-20 shadow-sm">
-              <ClipboardList className="w-14 h-14 text-muted-foreground/25 mb-3" />
-              <p className="text-muted-foreground font-medium">Nenhuma solicitação encontrada</p>
-              <p className="text-sm text-muted-foreground mt-1">Crie sua primeira solicitação clicando em "Nova Solicitação"</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {solicitacoesFiltradas.map(sol => {
-                const cfg = STATUS_CONFIG[sol.status];
-                const criticidadeSol = getCriticidadeSolicitacao(sol);
-                return (
-                  <button
-                    key={sol.id}
-                    type="button"
-                    className="text-left bg-card rounded-xl border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer w-full"
-                    style={{ borderTop: `3px solid ${cfg.color}` }}
-                    onClick={() => setDetalhe(sol)}
-                    aria-label={`Ver detalhes da solicitação ${sol.numero} de ${sol.solicitante}`}
-                  >
-                    <div className="p-5">
-                      <div className="flex items-start justify-between mb-3">
-                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
-                          {sol.numero}
-                        </span>
-                        <PrioridadeBadge prioridade={sol.prioridade} />
-                      </div>
-
-                      <p className="font-semibold text-foreground text-sm mb-0.5">{sol.solicitante}</p>
-                      <p className="text-xs text-muted-foreground mb-3">{sol.setor}</p>
-
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
-                        <span className="flex items-center gap-1"><Package className="w-3.5 h-3.5" aria-hidden="true" /> {sol.itens.length} {sol.itens.length === 1 ? 'item' : 'itens'}</span>
-                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" aria-hidden="true" /> {formatDate(sol.dataPrevista)}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <StatusBadge status={sol.status} />
-                        {criticidadeSol && <CriticidadeBadge criticidade={criticidadeSol} />}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+      {solicitacoesFiltradas.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border flex flex-col items-center justify-center py-20 shadow-sm">
+          <ClipboardList className="w-14 h-14 text-muted-foreground/25 mb-3" />
+          <p className="text-muted-foreground font-medium">Nenhuma solicitação encontrada</p>
+          <p className="text-sm text-muted-foreground mt-1">Crie sua primeira solicitação clicando em "Nova Solicitação"</p>
         </div>
-      )}
+      ) : (
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {solicitacoesFiltradas.map(sol => {
+            const cfg = STATUS_CONFIG[sol.status];
+            const criticidadeSol = getCriticidadeSolicitacao(sol);
+            return (
+              <button
+                key={sol.id}
+                type="button"
+                className="text-left bg-card rounded-xl border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer w-full"
+                style={{ borderTop: `3px solid ${cfg.color}` }}
+                onClick={() => setDetalhe(sol)}
+                aria-label={`Ver detalhes da solicitação ${sol.numero} de ${sol.solicitante}`}
+              >
+                <div className="p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
+                      {sol.numero}
+                    </span>
+                    <PrioridadeBadge prioridade={sol.prioridade} />
+                  </div>
 
-      {/* ══ CENTRAL TAB ══════════════════════════════════════════════════════════ */}
-      {activeTab === 'central' && (
-        <div>
-          <div className="mb-5">
-            <h2 className="text-lg font-bold text-foreground mb-0.5" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Central de Solicitações</h2>
-            <p className="text-sm text-muted-foreground">Acompanhamento e preparação de materiais solicitados.</p>
-          </div>
+                  <p className="font-semibold text-foreground text-sm mb-0.5">{sol.solicitante}</p>
+                  <p className="text-xs text-muted-foreground mb-3">{sol.setor}</p>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-5">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-              <Input aria-label="Buscar na central de solicitações" placeholder="Buscar..." value={buscaCentral} onChange={e => setBuscaCentral(e.target.value)} className="pl-9 rounded-xl w-52" />
-            </div>
-            <Select value={filtroStatus || '__all__'} onValueChange={v => setFiltroStatus(v === '__all__' ? '' : v)}>
-              <SelectTrigger aria-label="Filtrar por status" className="rounded-xl w-44"><SelectValue placeholder="Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">Todos os status</SelectItem>
-                {STATUS_TODOS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select value={filtroSetor || '__all__'} onValueChange={v => setFiltroSetor(v === '__all__' ? '' : v)}>
-              <SelectTrigger aria-label="Filtrar por setor" className="rounded-xl w-44"><SelectValue placeholder="Setor" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">Todos os setores</SelectItem>
-                {setoresUnicos.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select value={filtroPrioridade || '__all__'} onValueChange={v => setFiltroPrioridade(v === '__all__' ? '' : v)}>
-              <SelectTrigger aria-label="Filtrar por prioridade" className="rounded-xl w-40"><SelectValue placeholder="Prioridade" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">Todas</SelectItem>
-                <SelectItem value="Alta">Alta</SelectItem>
-                <SelectItem value="Média">Média</SelectItem>
-                <SelectItem value="Baixa">Baixa</SelectItem>
-              </SelectContent>
-            </Select>
-            {(filtroStatus || filtroSetor || filtroPrioridade || buscaCentral) && (
-              <button onClick={() => { setFiltroStatus(''); setFiltroSetor(''); setFiltroPrioridade(''); setBuscaCentral(''); }}
-                className="px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                Limpar filtros
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+                    <span className="flex items-center gap-1"><Package className="w-3.5 h-3.5" aria-hidden="true" /> {sol.itens.length} {sol.itens.length === 1 ? 'item' : 'itens'}</span>
+                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" aria-hidden="true" /> {formatDate(sol.dataPrevista)}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <StatusBadge status={sol.status} />
+                    {criticidadeSol && <CriticidadeBadge criticidade={criticidadeSol} />}
+                  </div>
+                </div>
               </button>
-            )}
-          </div>
-
-          {/* Table */}
-          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th scope="col" style={thStyle}>Número</th>
-                    <th scope="col" style={thStyle}>Solicitante</th>
-                    <th scope="col" style={thStyle}>Setor</th>
-                    <th scope="col" style={thStyle}>Itens</th>
-                    <th scope="col" style={thStyle}>Data Prevista</th>
-                    <th scope="col" style={thStyle}>Prioridade</th>
-                    <th scope="col" style={thStyle}>Criticidade</th>
-                    <th scope="col" style={thStyle}>Status</th>
-                    <th scope="col" style={thStyle}>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {centralFiltradas.map((sol, idx) => {
-                    const fluxo = FLUXO[sol.status];
-                    const podeAvancar = !!fluxo;
-                    const podeCancelar = sol.status !== 'Entregue' && sol.status !== 'Cancelada';
-                    const rowBg = idx % 2 === 0 ? 'var(--card)' : 'var(--surface-alt)';
-                    const criticidadeSol = getCriticidadeSolicitacao(sol);
-                    return (
-                      <tr key={sol.id} style={{ background: rowBg, borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
-                        <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
-                            {sol.numero}
-                          </span>
-                        </td>
-                        <td style={{ padding: '14px 20px' }}>
-                          <p className="font-semibold text-sm text-foreground">{sol.solicitante}</p>
-                          <p className="text-xs text-muted-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#{sol.matricula}</p>
-                        </td>
-                        <td style={{ padding: '14px 20px' }}>
-                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">{sol.setor}</span>
-                        </td>
-                        <td style={{ padding: '14px 20px' }}>
-                          <span className="text-sm font-medium text-foreground">{sol.itens.length} {sol.itens.length === 1 ? 'item' : 'itens'}</span>
-                        </td>
-                        <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
-                          <span className="text-sm text-foreground">{formatDate(sol.dataPrevista)}</span>
-                        </td>
-                        <td style={{ padding: '14px 20px' }}>
-                          <PrioridadeBadge prioridade={sol.prioridade} />
-                        </td>
-                        <td style={{ padding: '14px 20px' }}>
-                          <CriticidadeBadge criticidade={criticidadeSol} />
-                        </td>
-                        <td style={{ padding: '14px 20px' }}>
-                          <StatusBadge status={sol.status} />
-                        </td>
-                        <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={() => setDetalhe(sol)}
-                              aria-label={`Visualizar solicitação ${sol.numero}`}
-                              className="p-1.5 rounded-lg text-blue-500 hover:text-blue-700 hover:bg-blue-50 transition-colors"
-                              title="Visualizar"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            {podeAvancar && (
-                              <button
-                                onClick={() => avancarStatus(sol, fluxo!.novoStatus)}
-                                className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: fluxo!.color, background: `${fluxo!.color}15` }}
-                                title={fluxo!.label}
-                              >
-                                {fluxo!.label}
-                              </button>
-                            )}
-                            {podeCancelar && (
-                              <button
-                                onClick={() => cancelarSolicitacao(sol)}
-                                aria-label={`Cancelar solicitação ${sol.numero}`}
-                                className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                title="Cancelar solicitação"
-                              >
-                                <XCircle className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            {centralFiltradas.length === 0 && (
-              <div className="text-center py-16">
-                <Layers className="w-12 h-12 text-muted-foreground/25 mx-auto mb-3" />
-                <p className="text-muted-foreground text-sm">Nenhuma solicitação encontrada</p>
-              </div>
-            )}
-          </div>
+            );
+          })}
         </div>
       )}
 
@@ -881,37 +723,6 @@ export function Solicitacoes() {
                 </div>
               </div>
 
-              {/* Actions in detail modal (for central tab users) */}
-              {(() => {
-                const fluxo = FLUXO[detalhe.status];
-                const podeAvancar = !!fluxo;
-                const podeCancelar = detalhe.status !== 'Entregue' && detalhe.status !== 'Cancelada';
-                if (!podeAvancar && !podeCancelar) return null;
-                return (
-                  <div className="flex gap-2 pt-2 border-t border-border">
-                    {podeAvancar && (
-                      <button
-                        onClick={() => avancarStatus(detalhe, fluxo!.novoStatus)}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white flex-1 justify-center transition-all"
-                        style={{ background: `linear-gradient(135deg, ${fluxo!.color}, ${fluxo!.color}cc)`, boxShadow: `0 4px 12px ${fluxo!.color}40` }}
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                        {fluxo!.label}
-                      </button>
-                    )}
-                    {podeCancelar && (
-                      <button
-                        onClick={() => cancelarSolicitacao(detalhe)}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors border border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10"
-                        style={{ color: 'var(--text-red)' }}
-                      >
-                        <XCircle className="w-4 h-4" />
-                        Cancelar
-                      </button>
-                    )}
-                  </div>
-                );
-              })()}
             </div>
           </DialogContent>
         )}

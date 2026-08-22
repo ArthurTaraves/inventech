@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
 import { bancoDadosStore } from '../data/bancoDadosStore';
 import type { Produto } from '../data/mockData';
+import { solicitacoesIniciais } from './Solicitacoes';
 
 // ─── Types (mirrors Solicitacoes.tsx for shared localStorage) ─────────────────
 
@@ -181,8 +182,8 @@ export function PortalRequisicoes() {
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>(() => {
     try {
       const s = localStorage.getItem('almoxarifado_solicitacoes');
-      return s ? JSON.parse(s) : [];
-    } catch { return []; }
+      return s ? JSON.parse(s) : solicitacoesIniciais;
+    } catch { return solicitacoesIniciais; }
   });
 
   useEffect(() => {
