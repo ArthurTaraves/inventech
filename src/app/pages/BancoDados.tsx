@@ -47,11 +47,11 @@ const thStyle: React.CSSProperties = {
 };
 
 const getStatusSerialStyle = (status: string) => {
-  if (status === 'Disponível') return { bg: 'rgba(34,197,94,0.1)', color: '#16A34A', border: 'rgba(34,197,94,0.3)' };
-  if (status === 'Em Uso') return { bg: 'rgba(26,86,219,0.1)', color: '#1A56DB', border: 'rgba(26,86,219,0.3)' };
-  if (status === 'Manutenção') return { bg: 'rgba(249,115,22,0.1)', color: '#EA580C', border: 'rgba(249,115,22,0.3)' };
-  if (status === 'Baixado') return { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)' };
-  return { bg: 'rgba(100,116,139,0.1)', color: '#64748B', border: 'rgba(100,116,139,0.3)' };
+  if (status === 'Disponível') return { bg: 'rgba(34,197,94,0.1)', color: '#15803D', border: 'rgba(34,197,94,0.3)', icon: '✅' };
+  if (status === 'Em Uso') return { bg: 'rgba(26,86,219,0.1)', color: '#1A56DB', border: 'rgba(26,86,219,0.3)', icon: '🔧' };
+  if (status === 'Manutenção') return { bg: 'rgba(249,115,22,0.1)', color: '#9A3412', border: 'rgba(249,115,22,0.3)', icon: '⚠️' };
+  if (status === 'Baixado') return { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)', icon: '🔴' };
+  return { bg: 'rgba(100,116,139,0.1)', color: '#64748B', border: 'rgba(100,116,139,0.3)', icon: '•' };
 };
 
 export function BancoDados() {
@@ -145,7 +145,7 @@ export function BancoDados() {
     if (produtoExistente) novosErros.nome = 'Já existe um produto com este nome';
 
     setErros(novosErros);
-    return Object.keys(novosErros).length === 0;
+    return novosErros;
   };
 
   const resetFormulario = () => {
@@ -175,9 +175,19 @@ export function BancoDados() {
     setIsDialogOpen(true);
   };
 
+  const CAMPO_LABEL: Record<string, string> = {
+    codigoProduto: 'Código do Produto',
+    nome: 'Nome do Produto',
+    categoria: 'Categoria',
+    estoqueMinimo: 'Estoque Mínimo',
+    estoqueMaximo: 'Estoque Máximo',
+  };
+
   const handleSalvar = () => {
-    if (!validarFormulario()) {
-      toast.error('Por favor, corrija os erros no formulário');
+    const novosErros = validarFormulario();
+    if (Object.keys(novosErros).length > 0) {
+      const camposComErro = Object.keys(novosErros).map(k => CAMPO_LABEL[k] || k);
+      toast.error(`Corrija o(s) campo(s): ${camposComErro.join(', ')}.`);
       return;
     }
 
@@ -270,9 +280,11 @@ export function BancoDados() {
 
           <div className="space-y-4 mt-6">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Usuário</label>
+              <label htmlFor="bd-usuario" className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Usuário</label>
               <input
+                id="bd-usuario"
                 type="text"
+                autoFocus
                 value={usuario}
                 onChange={e => setUsuario(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleLogin(); }}
@@ -284,9 +296,10 @@ export function BancoDados() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Senha</label>
+              <label htmlFor="bd-senha" className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(184,200,217,0.6)' }}>Senha</label>
               <div className="relative">
                 <input
+                  id="bd-senha"
                   type={mostrarSenha ? 'text' : 'password'}
                   value={senha}
                   onChange={e => setSenha(e.target.value)}
@@ -300,6 +313,8 @@ export function BancoDados() {
                 <button
                   type="button"
                   onClick={() => setMostrarSenha(!mostrarSenha)}
+                  aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                  aria-pressed={mostrarSenha}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
                 >
                   {mostrarSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -379,9 +394,10 @@ export function BancoDados() {
       {/* Search */}
       <div className="mb-5">
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <Input
             type="text"
+            aria-label="Buscar produto no catálogo"
             placeholder="Buscar produto ou categoria..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
@@ -396,13 +412,13 @@ export function BancoDados() {
           <table className="w-full">
             <thead>
               <tr>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Código ID</th>
-                <th style={thStyle}>Nome do Produto</th>
-                <th style={thStyle}>Categoria</th>
-                <th style={thStyle}>Unidade</th>
-                <th style={thStyle}>Estoque Mín/Máx</th>
-                <th style={thStyle}>Ações</th>
+                <th scope="col" style={thStyle}>Status</th>
+                <th scope="col" style={thStyle}>Código ID</th>
+                <th scope="col" style={thStyle}>Nome do Produto</th>
+                <th scope="col" style={thStyle}>Categoria</th>
+                <th scope="col" style={thStyle}>Unidade</th>
+                <th scope="col" style={thStyle}>Estoque Mín/Máx</th>
+                <th scope="col" style={thStyle}>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -436,16 +452,18 @@ export function BancoDados() {
                           borderRadius: 9999,
                           padding: '2px 10px',
                           background: produto.ativo ? 'rgba(34,197,94,0.1)' : 'rgba(100,116,139,0.1)',
-                          color: produto.ativo ? '#16A34A' : '#64748B',
+                          color: produto.ativo ? '#15803D' : '#64748B',
                           border: `1px solid ${produto.ativo ? 'rgba(34,197,94,0.25)' : 'rgba(100,116,139,0.2)'}`,
                         }}>
-                          <span style={{ width: 6, height: 6, borderRadius: '50%', background: produto.ativo ? '#22C55E' : '#94A3B8', display: 'inline-block' }} />
+                          <span aria-hidden="true">{produto.ativo ? '✅' : '⏸'}</span>
                           {produto.ativo ? 'Ativo' : 'Inativo'}
                         </span>
                       </td>
                       <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                         <button
                           onClick={() => toggleProdutoExpandido(produto.codigoProduto)}
+                          aria-expanded={isExpandido}
+                          aria-label={`${isExpandido ? 'Recolher' : 'Expandir'} unidades serializadas de ${produto.nome}`}
                           className="flex items-center gap-2 hover:bg-blue-50 px-2 py-1 rounded-lg transition-colors"
                         >
                           {isExpandido
@@ -476,16 +494,19 @@ export function BancoDados() {
                       <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                         <div className="flex items-center gap-1">
                           <button onClick={() => abrirDialogEditar(produto)}
+                            aria-label={`Editar ${produto.nome}`}
                             className="p-1.5 rounded-lg text-blue-500 hover:text-blue-700 hover:bg-blue-50 transition-colors" title="Editar">
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleToggleAtivo(produto.id)}
+                            aria-label={`${produto.ativo ? 'Desativar' : 'Ativar'} ${produto.nome}`}
                             className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${produto.ativo ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'}`}
                           >
                             {produto.ativo ? 'Desativar' : 'Ativar'}
                           </button>
                           <button onClick={() => setProdutoParaDeletar(produto.id)}
+                            aria-label={`Excluir ${produto.nome} do catálogo`}
                             className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Excluir">
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -514,7 +535,7 @@ export function BancoDados() {
                                         #{produtoSer.numeroSerie}
                                       </span>
                                       <span style={{ fontSize: 10, fontWeight: 600, color: statusStyle.color, background: statusStyle.bg, border: `1px solid ${statusStyle.border}`, borderRadius: 9999, padding: '2px 8px' }}>
-                                        {produtoSer.status}
+                                        <span aria-hidden="true">{statusStyle.icon}</span> {produtoSer.status}
                                       </span>
                                     </div>
                                     <div className="text-xs text-muted-foreground space-y-1 mt-2">
@@ -575,48 +596,58 @@ export function BancoDados() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Código do Produto (ID) *</Label>
+              <Label htmlFor="bd-codigo">Código do Produto (ID) *</Label>
               <Input
+                id="bd-codigo"
+                autoFocus
                 value={formulario.codigoProduto}
                 onChange={(e) => setFormulario({ ...formulario, codigoProduto: e.target.value.toUpperCase() })}
                 placeholder="Ex: FER-001, EQP-005"
                 className={`rounded-xl ${erros.codigoProduto ? 'border-red-500' : ''}`}
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 maxLength={20}
+                aria-invalid={!!erros.codigoProduto}
+                aria-describedby={erros.codigoProduto ? 'bd-codigo-erro' : 'bd-codigo-hint'}
               />
-              {erros.codigoProduto && <p className="text-xs text-red-600">{erros.codigoProduto}</p>}
-              <p className="text-xs text-muted-foreground">Este código será exibido em todas as telas do sistema</p>
+              {erros.codigoProduto && <p id="bd-codigo-erro" className="text-xs text-red-600">{erros.codigoProduto}</p>}
+              <p id="bd-codigo-hint" className="text-xs text-muted-foreground">Este código será exibido em todas as telas do sistema</p>
             </div>
 
             <div className="space-y-2">
-              <Label>Nome do Produto *</Label>
+              <Label htmlFor="bd-nome">Nome do Produto *</Label>
               <Input
+                id="bd-nome"
                 value={formulario.nome}
                 onChange={(e) => setFormulario({ ...formulario, nome: e.target.value })}
                 placeholder="Ex: Furadeira Elétrica"
                 className={`rounded-xl ${erros.nome ? 'border-red-500' : ''}`}
+                aria-invalid={!!erros.nome}
+                aria-describedby={erros.nome ? 'bd-nome-erro' : undefined}
               />
-              {erros.nome && <p className="text-xs text-red-600">{erros.nome}</p>}
+              {erros.nome && <p id="bd-nome-erro" className="text-xs text-red-600">{erros.nome}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label>Categoria *</Label>
+              <Label htmlFor="bd-categoria">Categoria *</Label>
               <Input
+                id="bd-categoria"
                 value={formulario.categoria}
                 onChange={(e) => setFormulario({ ...formulario, categoria: e.target.value })}
                 placeholder="Ex: Ferramentas Elétricas"
                 className={`rounded-xl ${erros.categoria ? 'border-red-500' : ''}`}
+                aria-invalid={!!erros.categoria}
+                aria-describedby={erros.categoria ? 'bd-categoria-erro' : undefined}
               />
-              {erros.categoria && <p className="text-xs text-red-600">{erros.categoria}</p>}
+              {erros.categoria && <p id="bd-categoria-erro" className="text-xs text-red-600">{erros.categoria}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label>Unidade de Medida *</Label>
+              <Label htmlFor="bd-unidade">Unidade de Medida *</Label>
               <Select
                 value={formulario.unidadeMedida}
                 onValueChange={(value) => setFormulario({ ...formulario, unidadeMedida: value })}
               >
-                <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="bd-unidade" className="rounded-xl"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {unidadesMedida.map((un) => (
                     <SelectItem key={un} value={un}>{un}</SelectItem>
@@ -627,28 +658,34 @@ export function BancoDados() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Estoque Mínimo *</Label>
+                <Label htmlFor="bd-estoque-min">Estoque Mínimo *</Label>
                 <Input
+                  id="bd-estoque-min"
                   type="number"
                   min="0"
                   value={formulario.estoqueMinimo}
                   onChange={(e) => setFormulario({ ...formulario, estoqueMinimo: e.target.value })}
                   placeholder="0"
                   className={`rounded-xl ${erros.estoqueMinimo ? 'border-red-500' : ''}`}
+                  aria-invalid={!!erros.estoqueMinimo}
+                  aria-describedby={erros.estoqueMinimo ? 'bd-estoque-min-erro' : undefined}
                 />
-                {erros.estoqueMinimo && <p className="text-xs text-red-600">{erros.estoqueMinimo}</p>}
+                {erros.estoqueMinimo && <p id="bd-estoque-min-erro" className="text-xs text-red-600">{erros.estoqueMinimo}</p>}
               </div>
               <div className="space-y-2">
-                <Label>Estoque Máximo *</Label>
+                <Label htmlFor="bd-estoque-max">Estoque Máximo *</Label>
                 <Input
+                  id="bd-estoque-max"
                   type="number"
                   min="0"
                   value={formulario.estoqueMaximo}
                   onChange={(e) => setFormulario({ ...formulario, estoqueMaximo: e.target.value })}
                   placeholder="0"
                   className={`rounded-xl ${erros.estoqueMaximo ? 'border-red-500' : ''}`}
+                  aria-invalid={!!erros.estoqueMaximo}
+                  aria-describedby={erros.estoqueMaximo ? 'bd-estoque-max-erro' : undefined}
                 />
-                {erros.estoqueMaximo && <p className="text-xs text-red-600">{erros.estoqueMaximo}</p>}
+                {erros.estoqueMaximo && <p id="bd-estoque-max-erro" className="text-xs text-red-600">{erros.estoqueMaximo}</p>}
               </div>
             </div>
           </div>
