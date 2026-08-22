@@ -49,27 +49,33 @@ interface Solicitacao {
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; border: string; label: string }> = {
-  'Solicitada':           { color: '#1A56DB', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   label: 'Solicitada' },
-  'Em análise':           { color: '#D97706', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   label: 'Em análise' },
-  'Aprovada':             { color: '#10B981', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  label: 'Aprovada' },
-  'Em separação':         { color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', label: 'Em separação' },
-  'Pronta para retirada': { color: '#EA580C', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  label: 'Pronta para retirada' },
-  'Entregue':             { color: '#15803D', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   label: 'Entregue' },
-  'Cancelada':            { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   label: 'Cancelada' },
+const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; border: string; label: string; icon: string }> = {
+  'Solicitada':           { color: '#1A56DB', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   label: 'Solicitada', icon: '📋' },
+  'Em análise':           { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   label: 'Em análise', icon: '🔍' },
+  'Aprovada':             { color: '#15803D', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  label: 'Aprovada', icon: '✅' },
+  'Em separação':         { color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', label: 'Em separação', icon: '⏳' },
+  'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  label: 'Pronta para retirada', icon: '🟠' },
+  'Entregue':             { color: '#15803D', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   label: 'Entregue', icon: '✅' },
+  'Cancelada':            { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   label: 'Cancelada', icon: '🔴' },
 };
 
-const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string }> = {
-  'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)' },
-  'Média':  { color: '#D97706', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)' },
-  'Alta':   { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)' },
+const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string; icon: string }> = {
+  'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
+  'Média':  { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡' },
+  'Alta':   { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴' },
+};
+
+const CRITICIDADE_CONFIG: Record<'Baixa' | 'Média' | 'Alta', { color: string; bg: string; border: string; icon: string }> = {
+  'Baixa': { color: '#15803D', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.25)', icon: '🟢' },
+  'Média': { color: '#92400E', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', icon: '🟡' },
+  'Alta':  { color: '#DC2626', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', icon: '🔴' },
 };
 
 const FLUXO: Record<StatusSolicitacao, { label: string; novoStatus: StatusSolicitacao; color: string } | null> = {
-  'Solicitada':           { label: 'Iniciar Análise',    novoStatus: 'Em análise',           color: '#D97706' },
-  'Em análise':           { label: 'Aprovar',            novoStatus: 'Aprovada',             color: '#10B981' },
+  'Solicitada':           { label: 'Iniciar Análise',    novoStatus: 'Em análise',           color: '#92400E' },
+  'Em análise':           { label: 'Aprovar',            novoStatus: 'Aprovada',             color: '#15803D' },
   'Aprovada':             { label: 'Iniciar Separação',  novoStatus: 'Em separação',         color: '#7C3AED' },
-  'Em separação':         { label: 'Marcar como Pronto', novoStatus: 'Pronta para retirada', color: '#EA580C' },
+  'Em separação':         { label: 'Marcar como Pronto', novoStatus: 'Pronta para retirada', color: '#9A3412' },
   'Pronta para retirada': { label: 'Confirmar Entrega',  novoStatus: 'Entregue',             color: '#15803D' },
   'Entregue':             null,
   'Cancelada':            null,
@@ -96,7 +102,7 @@ const StatusBadge = ({ status }: { status: StatusSolicitacao }) => {
       color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
       whiteSpace: 'nowrap',
     }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.color, display: 'inline-block' }} />
+      <span aria-hidden="true">{cfg.icon}</span>
       {cfg.label}
     </span>
   );
@@ -107,9 +113,26 @@ const PrioridadeBadge = ({ prioridade }: { prioridade: PrioridadeSolicitacao }) 
   return (
     <span style={{
       fontSize: 11, fontWeight: 700, borderRadius: 6,
-      padding: '2px 8px', color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
+      padding: '2px 8px', display: 'inline-flex', alignItems: 'center', gap: 4,
+      color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
     }}>
+      <span aria-hidden="true">{cfg.icon}</span>
       {prioridade}
+    </span>
+  );
+};
+
+const CriticidadeBadge = ({ criticidade }: { criticidade?: 'Baixa' | 'Média' | 'Alta' }) => {
+  if (!criticidade) return <span className="text-xs text-muted-foreground">—</span>;
+  const cfg = CRITICIDADE_CONFIG[criticidade];
+  return (
+    <span style={{
+      fontSize: 11, fontWeight: 700, borderRadius: 6,
+      padding: '2px 8px', display: 'inline-flex', alignItems: 'center', gap: 4,
+      color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
+    }}>
+      <span aria-hidden="true">{cfg.icon}</span>
+      {criticidade}
     </span>
   );
 };
@@ -174,19 +197,32 @@ export function Solicitacoes() {
     toast.success('Solicitação cancelada');
   };
 
+  const CAMPO_LABEL_SOLICITACAO: Record<string, string> = {
+    solicitante: 'Solicitante',
+    matricula: 'Matrícula',
+    setor: 'Setor',
+    dataPrevista: 'Data Prevista de Retirada',
+    itens: 'Itens Solicitados',
+  };
+
   const validarForm = () => {
     const erros: Record<string, string> = {};
-    if (!form.solicitante.trim()) erros.solicitante = 'Campo obrigatório';
-    if (!form.matricula.trim()) erros.matricula = 'Campo obrigatório';
-    if (!form.setor.trim()) erros.setor = 'Campo obrigatório';
-    if (!form.dataPrevista) erros.dataPrevista = 'Campo obrigatório';
-    if (itensForm.length === 0) erros.itens = 'Adicione pelo menos um item';
+    if (!form.solicitante.trim()) erros.solicitante = 'Informe o nome do solicitante.';
+    if (!form.matricula.trim()) erros.matricula = 'Informe a matrícula.';
+    if (!form.setor.trim()) erros.setor = 'Informe o setor.';
+    if (!form.dataPrevista) erros.dataPrevista = 'Informe a data prevista de retirada.';
+    if (itensForm.length === 0) erros.itens = 'Adicione pelo menos um item.';
     setFormErros(erros);
-    return Object.keys(erros).length === 0;
+    return erros;
   };
 
   const enviarSolicitacao = () => {
-    if (!validarForm()) { toast.error('Preencha todos os campos obrigatórios'); return; }
+    const erros = validarForm();
+    if (Object.keys(erros).length > 0) {
+      const campos = Object.keys(erros).map(k => CAMPO_LABEL_SOLICITACAO[k] || k);
+      toast.error(`Corrija o(s) campo(s): ${campos.join(', ')}.`);
+      return;
+    }
     const nova: Solicitacao = {
       id: String(Date.now()),
       numero: gerarNumero(solicitacoes),
@@ -225,6 +261,18 @@ export function Solicitacoes() {
 
   const removerItem = (produtoId: string) => {
     setItensForm(prev => prev.filter(i => i.produtoId !== produtoId));
+  };
+
+  // ── Maior criticidade entre os itens da solicitação (para exibição rápida) ──
+  const getCriticidadeSolicitacao = (sol: Solicitacao): 'Baixa' | 'Média' | 'Alta' | undefined => {
+    const ordem: Record<string, number> = { Alta: 3, Média: 2, Baixa: 1 };
+    let maior: 'Baixa' | 'Média' | 'Alta' | undefined;
+    sol.itens.forEach(item => {
+      const produtoEstoque = produtos.find(p => p.id === item.produtoId || p.nome === item.produtoNome);
+      const c = produtoEstoque?.criticidade as 'Baixa' | 'Média' | 'Alta' | undefined;
+      if (c && (!maior || ordem[c] > ordem[maior])) maior = c;
+    });
+    return maior;
   };
 
   // ── Stock availability for detail modal ──
@@ -304,8 +352,9 @@ export function Solicitacoes() {
         <div>
           <div className="flex items-center justify-between mb-5">
             <div className="relative w-72">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
               <Input
+                aria-label="Buscar solicitações por número ou solicitante"
                 placeholder="Buscar por número ou solicitante..."
                 value={buscaSolicitante}
                 onChange={e => setBuscaSolicitante(e.target.value)}
@@ -334,13 +383,15 @@ export function Solicitacoes() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {solicitacoesFiltradas.map(sol => {
                 const cfg = STATUS_CONFIG[sol.status];
-                const priCfg = PRIORIDADE_CONFIG[sol.prioridade];
+                const criticidadeSol = getCriticidadeSolicitacao(sol);
                 return (
-                  <div
+                  <button
                     key={sol.id}
-                    className="bg-card rounded-xl border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                    type="button"
+                    className="text-left bg-card rounded-xl border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer w-full"
                     style={{ borderTop: `3px solid ${cfg.color}` }}
                     onClick={() => setDetalhe(sol)}
+                    aria-label={`Ver detalhes da solicitação ${sol.numero} de ${sol.solicitante}`}
                   >
                     <div className="p-5">
                       <div className="flex items-start justify-between mb-3">
@@ -354,13 +405,16 @@ export function Solicitacoes() {
                       <p className="text-xs text-muted-foreground mb-3">{sol.setor}</p>
 
                       <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
-                        <span className="flex items-center gap-1"><Package className="w-3.5 h-3.5" /> {sol.itens.length} {sol.itens.length === 1 ? 'item' : 'itens'}</span>
-                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {formatDate(sol.dataPrevista)}</span>
+                        <span className="flex items-center gap-1"><Package className="w-3.5 h-3.5" aria-hidden="true" /> {sol.itens.length} {sol.itens.length === 1 ? 'item' : 'itens'}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" aria-hidden="true" /> {formatDate(sol.dataPrevista)}</span>
                       </div>
 
-                      <StatusBadge status={sol.status} />
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <StatusBadge status={sol.status} />
+                        {criticidadeSol && <CriticidadeBadge criticidade={criticidadeSol} />}
+                      </div>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -379,25 +433,25 @@ export function Solicitacoes() {
           {/* Filters */}
           <div className="flex flex-wrap gap-3 mb-5">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Buscar..." value={buscaCentral} onChange={e => setBuscaCentral(e.target.value)} className="pl-9 rounded-xl w-52" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              <Input aria-label="Buscar na central de solicitações" placeholder="Buscar..." value={buscaCentral} onChange={e => setBuscaCentral(e.target.value)} className="pl-9 rounded-xl w-52" />
             </div>
             <Select value={filtroStatus || '__all__'} onValueChange={v => setFiltroStatus(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="rounded-xl w-44"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por status" className="rounded-xl w-44"><SelectValue placeholder="Status" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todos os status</SelectItem>
                 {STATUS_TODOS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={filtroSetor || '__all__'} onValueChange={v => setFiltroSetor(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="rounded-xl w-44"><SelectValue placeholder="Setor" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por setor" className="rounded-xl w-44"><SelectValue placeholder="Setor" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todos os setores</SelectItem>
                 {setoresUnicos.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={filtroPrioridade || '__all__'} onValueChange={v => setFiltroPrioridade(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="rounded-xl w-40"><SelectValue placeholder="Prioridade" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por prioridade" className="rounded-xl w-40"><SelectValue placeholder="Prioridade" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todas</SelectItem>
                 <SelectItem value="Alta">Alta</SelectItem>
@@ -419,14 +473,15 @@ export function Solicitacoes() {
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th style={thStyle}>Número</th>
-                    <th style={thStyle}>Solicitante</th>
-                    <th style={thStyle}>Setor</th>
-                    <th style={thStyle}>Itens</th>
-                    <th style={thStyle}>Data Prevista</th>
-                    <th style={thStyle}>Prioridade</th>
-                    <th style={thStyle}>Status</th>
-                    <th style={thStyle}>Ações</th>
+                    <th scope="col" style={thStyle}>Número</th>
+                    <th scope="col" style={thStyle}>Solicitante</th>
+                    <th scope="col" style={thStyle}>Setor</th>
+                    <th scope="col" style={thStyle}>Itens</th>
+                    <th scope="col" style={thStyle}>Data Prevista</th>
+                    <th scope="col" style={thStyle}>Prioridade</th>
+                    <th scope="col" style={thStyle}>Criticidade</th>
+                    <th scope="col" style={thStyle}>Status</th>
+                    <th scope="col" style={thStyle}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -435,6 +490,7 @@ export function Solicitacoes() {
                     const podeAvancar = !!fluxo;
                     const podeCancelar = sol.status !== 'Entregue' && sol.status !== 'Cancelada';
                     const rowBg = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFD';
+                    const criticidadeSol = getCriticidadeSolicitacao(sol);
                     return (
                       <tr key={sol.id} style={{ background: rowBg, borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
                         <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
@@ -459,12 +515,16 @@ export function Solicitacoes() {
                           <PrioridadeBadge prioridade={sol.prioridade} />
                         </td>
                         <td style={{ padding: '14px 20px' }}>
+                          <CriticidadeBadge criticidade={criticidadeSol} />
+                        </td>
+                        <td style={{ padding: '14px 20px' }}>
                           <StatusBadge status={sol.status} />
                         </td>
                         <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                           <div className="flex items-center gap-1">
                             <button
                               onClick={() => setDetalhe(sol)}
+                              aria-label={`Visualizar solicitação ${sol.numero}`}
                               className="p-1.5 rounded-lg text-blue-500 hover:text-blue-700 hover:bg-blue-50 transition-colors"
                               title="Visualizar"
                             >
@@ -483,6 +543,7 @@ export function Solicitacoes() {
                             {podeCancelar && (
                               <button
                                 onClick={() => cancelarSolicitacao(sol)}
+                                aria-label={`Cancelar solicitação ${sol.numero}`}
                                 className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                                 title="Cancelar solicitação"
                               >
@@ -528,32 +589,53 @@ export function Solicitacoes() {
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Dados do Solicitante</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label>Solicitante *</Label>
-                  <Input value={form.solicitante} onChange={e => setForm({ ...form, solicitante: e.target.value })} placeholder="Nome completo" className={`rounded-xl ${formErros.solicitante ? 'border-red-500' : ''}`} />
-                  {formErros.solicitante && <p className="text-xs text-red-600">{formErros.solicitante}</p>}
+                  <Label htmlFor="sol-solicitante">Solicitante *</Label>
+                  <Input
+                    id="sol-solicitante"
+                    autoFocus
+                    value={form.solicitante} onChange={e => setForm({ ...form, solicitante: e.target.value })} placeholder="Nome completo" className={`rounded-xl ${formErros.solicitante ? 'border-red-500' : ''}`}
+                    aria-invalid={!!formErros.solicitante}
+                    aria-describedby={formErros.solicitante ? 'sol-solicitante-erro' : undefined}
+                  />
+                  {formErros.solicitante && <p id="sol-solicitante-erro" className="text-xs text-red-600">{formErros.solicitante}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Matrícula *</Label>
-                  <Input value={form.matricula} onChange={e => setForm({ ...form, matricula: e.target.value })} placeholder="Nº matrícula" className={`rounded-xl ${formErros.matricula ? 'border-red-500' : ''}`} style={{ fontFamily: "'JetBrains Mono', monospace" }} />
-                  {formErros.matricula && <p className="text-xs text-red-600">{formErros.matricula}</p>}
+                  <Label htmlFor="sol-matricula">Matrícula *</Label>
+                  <Input
+                    id="sol-matricula"
+                    value={form.matricula} onChange={e => setForm({ ...form, matricula: e.target.value })} placeholder="Nº matrícula" className={`rounded-xl ${formErros.matricula ? 'border-red-500' : ''}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    aria-invalid={!!formErros.matricula}
+                    aria-describedby={formErros.matricula ? 'sol-matricula-erro' : undefined}
+                  />
+                  {formErros.matricula && <p id="sol-matricula-erro" className="text-xs text-red-600">{formErros.matricula}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Setor *</Label>
-                  <Input value={form.setor} onChange={e => setForm({ ...form, setor: e.target.value })} placeholder="Ex: Manutenção, Produção..." className={`rounded-xl ${formErros.setor ? 'border-red-500' : ''}`} />
-                  {formErros.setor && <p className="text-xs text-red-600">{formErros.setor}</p>}
+                  <Label htmlFor="sol-setor">Setor *</Label>
+                  <Input
+                    id="sol-setor"
+                    value={form.setor} onChange={e => setForm({ ...form, setor: e.target.value })} placeholder="Ex: Manutenção, Produção..." className={`rounded-xl ${formErros.setor ? 'border-red-500' : ''}`}
+                    aria-invalid={!!formErros.setor}
+                    aria-describedby={formErros.setor ? 'sol-setor-erro' : undefined}
+                  />
+                  {formErros.setor && <p id="sol-setor-erro" className="text-xs text-red-600">{formErros.setor}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Data Prevista de Retirada *</Label>
-                  <Input type="date" value={form.dataPrevista} onChange={e => setForm({ ...form, dataPrevista: e.target.value })} className={`rounded-xl ${formErros.dataPrevista ? 'border-red-500' : ''}`} />
-                  {formErros.dataPrevista && <p className="text-xs text-red-600">{formErros.dataPrevista}</p>}
+                  <Label htmlFor="sol-data">Data Prevista de Retirada *</Label>
+                  <Input
+                    id="sol-data"
+                    type="date" value={form.dataPrevista} onChange={e => setForm({ ...form, dataPrevista: e.target.value })} className={`rounded-xl ${formErros.dataPrevista ? 'border-red-500' : ''}`}
+                    aria-invalid={!!formErros.dataPrevista}
+                    aria-describedby={formErros.dataPrevista ? 'sol-data-erro' : undefined}
+                  />
+                  {formErros.dataPrevista && <p id="sol-data-erro" className="text-xs text-red-600">{formErros.dataPrevista}</p>}
                 </div>
               </div>
             </div>
 
             {/* Prioridade */}
             <div className="space-y-1.5">
-              <Label>Prioridade</Label>
-              <div className="flex gap-2">
+              <Label id="sol-prioridade-label">Prioridade</Label>
+              <div className="flex gap-2" role="group" aria-labelledby="sol-prioridade-label">
                 {(['Baixa', 'Média', 'Alta'] as PrioridadeSolicitacao[]).map(p => {
                   const cfg = PRIORIDADE_CONFIG[p];
                   const selected = form.prioridade === p;
@@ -561,9 +643,11 @@ export function Solicitacoes() {
                     <button
                       key={p}
                       onClick={() => setForm({ ...form, prioridade: p })}
-                      className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                      aria-pressed={selected}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
                       style={selected ? { background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` } : { background: 'transparent', color: '#64748B', border: '2px solid rgba(11,24,38,0.1)' }}
                     >
+                      <span aria-hidden="true">{cfg.icon}</span>
                       {p}
                     </button>
                   );
@@ -573,8 +657,9 @@ export function Solicitacoes() {
 
             {/* Observação */}
             <div className="space-y-1.5">
-              <Label>Observação</Label>
+              <Label htmlFor="sol-observacao">Observação</Label>
               <textarea
+                id="sol-observacao"
                 value={form.observacao}
                 onChange={e => setForm({ ...form, observacao: e.target.value })}
                 placeholder="Informações adicionais sobre a solicitação..."
@@ -591,7 +676,7 @@ export function Solicitacoes() {
               {/* Add item row */}
               <div className="flex gap-2 mb-3">
                 <Select value={novoItemProdutoId} onValueChange={setNovoItemProdutoId}>
-                  <SelectTrigger className="rounded-xl flex-1"><SelectValue placeholder="Selecione um produto..." /></SelectTrigger>
+                  <SelectTrigger aria-label="Selecione um produto para adicionar" className="rounded-xl flex-1"><SelectValue placeholder="Selecione um produto..." /></SelectTrigger>
                   <SelectContent>
                     {produtos.map(p => (
                       <SelectItem key={p.id} value={p.id}>
@@ -604,6 +689,7 @@ export function Solicitacoes() {
                 <Input
                   type="number"
                   min={1}
+                  aria-label="Quantidade do item"
                   value={novoItemQtd}
                   onChange={e => setNovoItemQtd(parseInt(e.target.value) || 1)}
                   className="w-20 rounded-xl"
@@ -641,7 +727,7 @@ export function Solicitacoes() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-sm font-bold text-foreground">{item.quantidade} un.</span>
-                        <button onClick={() => removerItem(item.produtoId)} className="p-1 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors">
+                        <button onClick={() => removerItem(item.produtoId)} aria-label={`Remover ${item.produtoNome} da solicitação`} className="p-1 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors">
                           <XCircle className="w-4 h-4" />
                         </button>
                       </div>
@@ -681,7 +767,7 @@ export function Solicitacoes() {
                 </div>
                 <p className="text-blue-300 text-sm mt-1">Detalhe da solicitação</p>
               </div>
-              <DialogTitle className="sr-only">Detalhes da Solicitação</DialogTitle>
+              <DialogTitle className="sr-only">Detalhes da Solicitação {detalhe.numero}</DialogTitle>
               <DialogDescription className="sr-only">Informações completas da solicitação</DialogDescription>
             </DialogHeader>
 
@@ -698,7 +784,7 @@ export function Solicitacoes() {
                   return (
                     <div key={row.label} className="bg-muted rounded-xl p-3">
                       <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-                        <Icon className="w-3.5 h-3.5" />
+                        <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                         <span className="text-xs font-semibold uppercase tracking-wider">{row.label}</span>
                       </div>
                       <p className="text-sm font-semibold text-foreground" style={row.mono ? { fontFamily: "'JetBrains Mono', monospace" } : {}}>
@@ -713,6 +799,10 @@ export function Solicitacoes() {
                 <div className="bg-muted rounded-xl p-3 flex-1">
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Prioridade</p>
                   <PrioridadeBadge prioridade={detalhe.prioridade} />
+                </div>
+                <div className="bg-muted rounded-xl p-3 flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Criticidade</p>
+                  <CriticidadeBadge criticidade={getCriticidadeSolicitacao(detalhe)} />
                 </div>
                 <div className="bg-muted rounded-xl p-3 flex-1">
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Criado em</p>
@@ -757,13 +847,16 @@ export function Solicitacoes() {
 
                         <div className="grid grid-cols-3 gap-2 mb-3">
                           {[
-                            { label: 'Solicitado', value: item.quantidade, color: '#1A56DB' },
-                            { label: 'Disponível', value: disponivel, color: '#10B981' },
-                            { label: 'Saldo após separação', value: saldo, color: saldo >= 0 ? '#64748B' : '#DC2626' },
+                            { label: 'Solicitado', value: item.quantidade, color: '#1A56DB', suffix: null as string | null },
+                            { label: 'Disponível', value: disponivel, color: '#15803D', suffix: null as string | null },
+                            { label: 'Saldo após separação', value: saldo, color: saldo >= 0 ? '#334155' : '#DC2626', suffix: saldo < 0 ? 'Insuficiente' : null },
                           ].map(col => (
                             <div key={col.label} className="bg-card rounded-lg p-2.5 text-center border border-border">
                               <p className="text-xs text-muted-foreground mb-0.5">{col.label}</p>
                               <p className="text-lg font-bold" style={{ color: col.color }}>{col.value}</p>
+                              {col.suffix && (
+                                <p className="text-xs font-semibold" style={{ color: col.color }}><span aria-hidden="true">⚠</span> {col.suffix}</p>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -771,13 +864,13 @@ export function Solicitacoes() {
                         <div className="space-y-1.5">
                           {abaixoMinimo && (
                             <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)' }}>
-                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#CA8A04' }} />
-                              <p className="text-xs font-semibold" style={{ color: '#CA8A04' }}>Estoque ficará abaixo do mínimo recomendado ({minimo} un.)</p>
+                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#92400E' }} aria-hidden="true" />
+                              <p className="text-xs font-semibold" style={{ color: '#92400E' }}>Estoque ficará abaixo do mínimo recomendado ({minimo} un.)</p>
                             </div>
                           )}
                           {isCritico && (
                             <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} />
+                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
                               <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>Item de alta criticidade</p>
                             </div>
                           )}
