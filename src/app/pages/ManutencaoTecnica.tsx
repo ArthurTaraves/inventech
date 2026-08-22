@@ -54,7 +54,7 @@ const KANBAN_COLUMNS: {
     label: 'Ag. Aprovação',
     emoji: '✅',
     headerBg: 'rgba(139,92,246,0.12)',
-    headerText: '#7C3AED',
+    headerText: '#6D28D9',
     accent: '#7C3AED',
     cardBorderActive: 'rgba(139,92,246,0.4)',
   },
@@ -72,7 +72,7 @@ const KANBAN_COLUMNS: {
     label: 'Concluído',
     emoji: '🚚',
     headerBg: 'rgba(34,197,94,0.12)',
-    headerText: '#15803D',
+    headerText: '#166534',
     accent: '#22C55E',
     cardBorderActive: 'rgba(34,197,94,0.4)',
   },
@@ -110,9 +110,9 @@ export function ManutencaoTecnica() {
   };
 
   const getCriticidadeStyle = (c: CriticidadeABC) => {
-    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#DC2626', border: '2px solid rgba(239,68,68,0.4)' };
+    if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#B91C1C', border: '2px solid rgba(239,68,68,0.4)' };
     if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#92400E', border: '2px solid rgba(245,158,11,0.4)' };
-    return { background: 'rgba(34,197,94,0.12)', color: '#15803D', border: '2px solid rgba(34,197,94,0.4)' };
+    return { background: 'rgba(34,197,94,0.12)', color: '#166534', border: '2px solid rgba(34,197,94,0.4)' };
   };
 
   const getCriticidadeLabel = (c: CriticidadeABC) => ({ A: 'Crítico', B: 'Médio', C: 'Baixo' }[c]);
@@ -376,7 +376,7 @@ export function ManutencaoTecnica() {
               <Calendar className="w-3 h-3" aria-hidden="true" />{formatarData(item.dataEnvio)}
             </p>
             {item.status !== 'Retorno' && (
-              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? '#DC2626' : dias > 7 ? '#92400E' : '#15803D' }}>
+              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? '#DC2626' : dias > 7 ? '#92400E' : '#166534' }}>
                 <span className="w-2 h-2 rounded-full inline-block" style={{ background: semaforoColor }} aria-hidden="true" />
                 {dias}d · {semaforoLabel}
               </span>
@@ -385,7 +385,7 @@ export function ManutencaoTecnica() {
         </div>
 
         {temInercia && (
-          <div className="mt-2 text-xs rounded-lg px-2 py-1" style={{ color: '#DC2626', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+          <div className="mt-2 text-xs rounded-lg px-2 py-1" style={{ color: '#B91C1C', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
             <span aria-hidden="true">⚠️</span> +48h sem atualização
           </div>
         )}
@@ -403,9 +403,9 @@ export function ManutencaoTecnica() {
         <Button
           onClick={() => { setAutenticado(false); setUsuario(''); setSenha(''); toast.success('Logout realizado'); }}
           variant="outline"
-          className="text-red-600 border-red-200 hover:bg-red-50"
+          className="text-red-700 border-red-200 bg-white hover:bg-red-50"
         >
-          <Lock className="w-4 h-4 mr-2" />Sair
+          <Lock className="w-4 h-4 mr-2" aria-hidden="true" />Sair
         </Button>
       </div>
 

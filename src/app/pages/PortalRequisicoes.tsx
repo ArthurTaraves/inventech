@@ -49,10 +49,10 @@ interface Solicitacao {
 const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; border: string; portalLabel: string; icon: string }> = {
   'Solicitada':           { color: '#1A56DB', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   portalLabel: 'Solicitada',           icon: '📋' },
   'Em análise':           { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   portalLabel: 'Em análise',           icon: '🔍' },
-  'Aprovada':             { color: '#15803D', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  portalLabel: 'Aprovada',             icon: '✅' },
-  'Em separação':         { color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', portalLabel: 'Separando materiais',  icon: '⏳' },
+  'Aprovada':             { color: '#166534', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  portalLabel: 'Aprovada',             icon: '✅' },
+  'Em separação':         { color: '#6D28D9', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', portalLabel: 'Separando materiais',  icon: '⏳' },
   'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  portalLabel: 'Pronta para retirada', icon: '🟠' },
-  'Entregue':             { color: '#15803D', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   portalLabel: 'Entregue',             icon: '✅' },
+  'Entregue':             { color: '#166534', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   portalLabel: 'Entregue',             icon: '✅' },
   'Cancelada':            { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   portalLabel: 'Cancelada',            icon: '🔴' },
 };
 
@@ -65,7 +65,7 @@ const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: stri
 const CRIT_CONFIG: Record<string, { color: string; bg: string; border: string; icon: string }> = {
   'Alta':  { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)', icon: '🔴'   },
   'Média': { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)', icon: '🟡'   },
-  'Baixa': { color: '#15803D', bg: 'rgba(22,163,74,0.1)',   border: 'rgba(22,163,74,0.25)', icon: '🟢'   },
+  'Baixa': { color: '#166534', bg: 'rgba(22,163,74,0.1)',   border: 'rgba(22,163,74,0.25)', icon: '🟢'   },
 };
 
 const STATUS_TODOS: StatusSolicitacao[] = [
@@ -74,7 +74,7 @@ const STATUS_TODOS: StatusSolicitacao[] = [
 
 const thStyle: React.CSSProperties = {
   padding: '10px 20px', textAlign: 'left', fontSize: '11px', fontWeight: 600,
-  letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748B',
+  letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4B5768',
   background: '#F1F5FB', borderBottom: '1px solid rgba(11,24,38,0.08)', whiteSpace: 'nowrap',
 };
 
@@ -409,9 +409,9 @@ export function PortalRequisicoes() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all relative"
               style={active ? {
                 background: '#1A56DB', color: 'white', boxShadow: '0 2px 8px rgba(26,86,219,0.3)',
-              } : { color: '#64748B' }}
+              } : { color: '#4B5768' }}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4" aria-hidden="true" />
               {tab.label}
               {tab.badge !== null && tab.badge !== undefined && tab.badge > 0 && (
                 <span style={{
@@ -543,7 +543,7 @@ export function PortalRequisicoes() {
                 const critCfg = CRIT_CONFIG[selectedProduct.criticidade] ?? CRIT_CONFIG['Baixa'];
                 const disponivel = selectedProduct.quantidade;
                 const estoqueMinimo = cat?.estoqueMinimo ?? 0;
-                const availColor = disponivel === 0 ? '#DC2626' : disponivel < estoqueMinimo ? '#92400E' : '#15803D';
+                const availColor = disponivel === 0 ? '#DC2626' : disponivel < estoqueMinimo ? '#92400E' : '#166534';
                 return (
                   <div className="rounded-2xl overflow-hidden" style={{ border: '2px solid rgba(26,86,219,0.2)', background: 'rgba(26,86,219,0.02)' }}>
                     {/* Product header */}
@@ -675,7 +675,7 @@ export function PortalRequisicoes() {
                 <div className="py-10 text-center">
                   <ShoppingCart className="w-10 h-10 text-muted-foreground/25 mx-auto mb-2" />
                   <p className="text-muted-foreground">Nenhum item adicionado</p>
-                  <p className="text-sm text-muted-foreground/70 mt-0.5">Pesquise um produto acima para adicionar</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Pesquise um produto acima para adicionar</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -793,7 +793,7 @@ export function PortalRequisicoes() {
                         className="flex-1 py-3 rounded-xl text-base font-bold transition-all"
                         style={selected
                           ? { background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` }
-                          : { background: 'transparent', color: '#94A3B8', border: '2px solid rgba(11,24,38,0.1)' }}
+                          : { background: 'transparent', color: '#4B5768', border: '2px solid rgba(11,24,38,0.1)' }}
                       >
                         <span aria-hidden="true">{cfg.icon}</span> {p}
                       </button>
@@ -1034,7 +1034,7 @@ export function PortalRequisicoes() {
                               <>
                                 <button onClick={() => avancarStatus(sol, 'Aprovada', 'Solicitação aprovada')}
                                   className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                  style={{ color: '#15803D', background: 'rgba(16,185,129,0.1)' }}>
+                                  style={{ color: '#166534', background: 'rgba(16,185,129,0.1)' }}>
                                   Aprovar
                                 </button>
                                 <button onClick={() => rejeitarSolicitacao(sol)}
@@ -1061,7 +1061,7 @@ export function PortalRequisicoes() {
                             {sol.status === 'Pronta para retirada' && (
                               <button onClick={() => avancarStatus(sol, 'Entregue', 'Entrega confirmada')}
                                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: '#15803D', background: 'rgba(21,128,61,0.1)' }}>
+                                style={{ color: '#166534', background: 'rgba(21,128,61,0.1)' }}>
                                 Confirmar Entrega
                               </button>
                             )}
@@ -1188,7 +1188,7 @@ export function PortalRequisicoes() {
                           <div className="grid grid-cols-3 gap-3 mb-3">
                             {[
                               { label: 'Solicitado', value: item.quantidade, color: '#1A56DB' },
-                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? '#15803D' : '#DC2626' },
+                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? '#166534' : '#DC2626' },
                               { label: 'Saldo',       value: info.saldo,       color: info.saldo >= 0 ? '#64748B' : '#DC2626' },
                             ].map(col => (
                               <div key={col.label} className="bg-card rounded-lg px-3 py-2.5 text-center border border-border">
@@ -1265,7 +1265,7 @@ export function PortalRequisicoes() {
                     {s === 'Em análise' && (<>
                       <button onClick={() => avancarStatus(detalhe, 'Aprovada', 'Solicitação aprovada')}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
-                        style={{ background: '#15803D', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
+                        style={{ background: '#166534', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
                         <CheckCircle className="w-4 h-4" aria-hidden="true" /> Aprovar
                       </button>
                       <button onClick={() => rejeitarSolicitacao(detalhe)}
@@ -1290,7 +1290,7 @@ export function PortalRequisicoes() {
                     {s === 'Pronta para retirada' && (
                       <button onClick={() => avancarStatus(detalhe, 'Entregue', 'Entrega confirmada')}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
-                        style={{ background: '#15803D', boxShadow: '0 4px 12px rgba(21,128,61,0.3)' }}>
+                        style={{ background: '#166534', boxShadow: '0 4px 12px rgba(21,128,61,0.3)' }}>
                         <Truck className="w-4 h-4" aria-hidden="true" /> Confirmar Entrega
                       </button>
                     )}

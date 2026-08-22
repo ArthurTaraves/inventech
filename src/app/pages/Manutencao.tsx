@@ -95,7 +95,7 @@ function MaintenanceTimeline({ item }: { item: ItemManutencao }) {
                 <span aria-hidden="true">{isDone ? '✅' : step.emoji}</span>
               </div>
               <div className="mt-2 text-center px-1">
-                <p className="text-xs font-semibold" style={{ color: isCurrent ? '#1A56DB' : isDone ? '#15803D' : '#94A3B8' }}>
+                <p className="text-xs font-semibold" style={{ color: isCurrent ? '#1A56DB' : isDone ? '#166534' : '#94A3B8' }}>
                   {step.label}
                 </p>
                 {isCurrent && (
@@ -239,7 +239,7 @@ export function Manutencao() {
   const getCriticidadeStyle = (c: CriticidadeABC) => {
     if (c === 'A') return { background: 'rgba(239,68,68,0.12)', color: '#DC2626', border: '2px solid rgba(239,68,68,0.35)' };
     if (c === 'B') return { background: 'rgba(245,158,11,0.12)', color: '#92400E', border: '2px solid rgba(245,158,11,0.35)' };
-    return { background: 'rgba(34,197,94,0.12)', color: '#15803D', border: '2px solid rgba(34,197,94,0.35)' };
+    return { background: 'rgba(34,197,94,0.12)', color: '#166534', border: '2px solid rgba(34,197,94,0.35)' };
   };
 
   const getCriticidadeLabel = (c: CriticidadeABC) => ({ A: 'Crítico', B: 'Médio', C: 'Baixo' }[c] || c);
@@ -518,7 +518,7 @@ export function Manutencao() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground/70 mt-2">O status é atualizado pela equipe técnica na aba "Manutenção Visual".</p>
+        <p className="text-xs text-muted-foreground mt-2">O status é atualizado pela equipe técnica na aba "Manutenção Visual".</p>
       </div>
 
       {/* Search */}
@@ -565,7 +565,6 @@ export function Manutencao() {
                 className="w-full flex items-center gap-4 px-5 py-4 cursor-pointer transition-colors hover:bg-muted/40 text-left"
                 onClick={() => setExpandedId(isExpanded ? null : item.id)}
                 aria-expanded={isExpanded}
-                aria-label={`${item.produtoNome} — ${isExpanded ? 'recolher' : 'expandir'} linha do tempo e histórico`}
               >
                 <div className="flex items-center gap-1.5 shrink-0">
                   <div
@@ -577,7 +576,7 @@ export function Manutencao() {
                       animation: semaforo === 'red' ? 'pulse 2s infinite' : 'none',
                     }}
                   />
-                  <span className="text-xs font-semibold" style={{ color: semaforo === 'red' ? '#DC2626' : semaforo === 'yellow' ? '#92400E' : '#15803D' }}>
+                  <span className="text-xs font-semibold" style={{ color: semaforo === 'red' ? '#DC2626' : semaforo === 'yellow' ? '#92400E' : '#166534' }}>
                     {semaforo === 'red' ? 'Atrasado' : semaforo === 'yellow' ? 'Atenção' : 'No prazo'}
                   </span>
                 </div>
@@ -665,7 +664,7 @@ export function Manutencao() {
                           </div>
                         ) : (
                           <div className="rounded-lg border p-3" style={{ background: 'rgba(34,197,94,0.05)', borderColor: 'rgba(34,197,94,0.25)' }}>
-                            <p className="text-xs mb-1 flex items-center gap-1" style={{ color: '#15803D' }}><CheckCircle className="w-3 h-3" aria-hidden="true" />Retornado em</p>
+                            <p className="text-xs mb-1 flex items-center gap-1" style={{ color: '#166534' }}><CheckCircle className="w-3 h-3" aria-hidden="true" />Retornado em</p>
                             <p className="font-semibold text-sm text-green-800">{item.dataRetorno ? formatarData(item.dataRetorno) : '—'}</p>
                           </div>
                         )}

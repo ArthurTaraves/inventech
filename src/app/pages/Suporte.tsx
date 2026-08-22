@@ -122,7 +122,7 @@ export function Suporte() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Central de Suporte</h1>
-        <p className="text-gray-500 mt-1">Abra chamados, acompanhe o status e consulte respostas rápidas</p>
+        <p className="text-gray-600 mt-1">Abra chamados, acompanhe o status e consulte respostas rápidas</p>
       </div>
 
       {/* Contact cards */}

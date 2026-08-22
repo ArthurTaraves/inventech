@@ -41,7 +41,7 @@ const thStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: '#64748B',
+  color: '#4B5768',
   background: '#F1F5FB',
   borderBottom: '1px solid rgba(11,24,38,0.08)',
   whiteSpace: 'nowrap',
@@ -51,7 +51,7 @@ const CritBadge = ({ c }: { c: Criticidade }) => {
   const cfg: Record<Criticidade, { bg: string; color: string; border: string; label: string; icon: string }> = {
     Alta: { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)', label: 'Alta', icon: '🔴' },
     Média: { bg: 'rgba(245,158,11,0.1)', color: '#92400E', border: 'rgba(245,158,11,0.3)', label: 'Média', icon: '🟡' },
-    Baixa: { bg: 'rgba(34,197,94,0.1)', color: '#15803D', border: 'rgba(34,197,94,0.3)', label: 'Baixa', icon: '🟢' },
+    Baixa: { bg: 'rgba(34,197,94,0.1)', color: '#166534', border: 'rgba(34,197,94,0.3)', label: 'Baixa', icon: '🟢' },
   };
   const s = cfg[c] || cfg['Baixa'];
   return (
@@ -318,7 +318,7 @@ export function Estoque() {
         <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#1A56DB' }} />
         <div className="text-sm" style={{ color: '#1A56DB' }}>
           <p className="font-semibold mb-0.5">Produtos validados pela Área Administrativa</p>
-          <p className="opacity-80">Para registrar entradas ou saídas, acesse a aba <strong>Movimentação</strong>. Esta tela é para consulta e gerenciamento.</p>
+          <p>Para registrar entradas ou saídas, acesse a aba <strong>Movimentação</strong>. Esta tela é para consulta e gerenciamento.</p>
         </div>
       </div>
 

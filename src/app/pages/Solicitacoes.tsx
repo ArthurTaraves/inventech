@@ -52,10 +52,10 @@ interface Solicitacao {
 const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; border: string; label: string; icon: string }> = {
   'Solicitada':           { color: '#1A56DB', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   label: 'Solicitada', icon: '📋' },
   'Em análise':           { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   label: 'Em análise', icon: '🔍' },
-  'Aprovada':             { color: '#15803D', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  label: 'Aprovada', icon: '✅' },
-  'Em separação':         { color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', label: 'Em separação', icon: '⏳' },
+  'Aprovada':             { color: '#166534', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  label: 'Aprovada', icon: '✅' },
+  'Em separação':         { color: '#6D28D9', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', label: 'Em separação', icon: '⏳' },
   'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  label: 'Pronta para retirada', icon: '🟠' },
-  'Entregue':             { color: '#15803D', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   label: 'Entregue', icon: '✅' },
+  'Entregue':             { color: '#166534', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   label: 'Entregue', icon: '✅' },
   'Cancelada':            { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   label: 'Cancelada', icon: '🔴' },
 };
 
@@ -66,17 +66,17 @@ const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: stri
 };
 
 const CRITICIDADE_CONFIG: Record<'Baixa' | 'Média' | 'Alta', { color: string; bg: string; border: string; icon: string }> = {
-  'Baixa': { color: '#15803D', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.25)', icon: '🟢' },
+  'Baixa': { color: '#166534', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.25)', icon: '🟢' },
   'Média': { color: '#92400E', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', icon: '🟡' },
   'Alta':  { color: '#DC2626', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', icon: '🔴' },
 };
 
 const FLUXO: Record<StatusSolicitacao, { label: string; novoStatus: StatusSolicitacao; color: string } | null> = {
   'Solicitada':           { label: 'Iniciar Análise',    novoStatus: 'Em análise',           color: '#92400E' },
-  'Em análise':           { label: 'Aprovar',            novoStatus: 'Aprovada',             color: '#15803D' },
+  'Em análise':           { label: 'Aprovar',            novoStatus: 'Aprovada',             color: '#166534' },
   'Aprovada':             { label: 'Iniciar Separação',  novoStatus: 'Em separação',         color: '#7C3AED' },
   'Em separação':         { label: 'Marcar como Pronto', novoStatus: 'Pronta para retirada', color: '#9A3412' },
-  'Pronta para retirada': { label: 'Confirmar Entrega',  novoStatus: 'Entregue',             color: '#15803D' },
+  'Pronta para retirada': { label: 'Confirmar Entrega',  novoStatus: 'Entregue',             color: '#166534' },
   'Entregue':             null,
   'Cancelada':            null,
 };
@@ -89,7 +89,7 @@ const STATUS_TODOS: StatusSolicitacao[] = [
 
 const thStyle: React.CSSProperties = {
   padding: '10px 20px', textAlign: 'left', fontSize: '11px', fontWeight: 600,
-  letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748B',
+  letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4B5768',
   background: '#F1F5FB', borderBottom: '1px solid rgba(11,24,38,0.08)', whiteSpace: 'nowrap',
 };
 
@@ -338,9 +338,9 @@ export function Solicitacoes() {
               style={active ? {
                 background: '#1A56DB', color: 'white',
                 boxShadow: '0 2px 8px rgba(26,86,219,0.3)',
-              } : { color: '#64748B' }}
+              } : { color: '#4B5768' }}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4" aria-hidden="true" />
               {tab.label}
             </button>
           );
@@ -377,7 +377,7 @@ export function Solicitacoes() {
             <div className="bg-card rounded-xl border border-border flex flex-col items-center justify-center py-20 shadow-sm">
               <ClipboardList className="w-14 h-14 text-muted-foreground/25 mb-3" />
               <p className="text-muted-foreground font-medium">Nenhuma solicitação encontrada</p>
-              <p className="text-sm text-muted-foreground/70 mt-1">Crie sua primeira solicitação clicando em "Nova Solicitação"</p>
+              <p className="text-sm text-muted-foreground mt-1">Crie sua primeira solicitação clicando em "Nova Solicitação"</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -848,7 +848,7 @@ export function Solicitacoes() {
                         <div className="grid grid-cols-3 gap-2 mb-3">
                           {[
                             { label: 'Solicitado', value: item.quantidade, color: '#1A56DB', suffix: null as string | null },
-                            { label: 'Disponível', value: disponivel, color: '#15803D', suffix: null as string | null },
+                            { label: 'Disponível', value: disponivel, color: '#166534', suffix: null as string | null },
                             { label: 'Saldo após separação', value: saldo, color: saldo >= 0 ? '#334155' : '#DC2626', suffix: saldo < 0 ? 'Insuficiente' : null },
                           ].map(col => (
                             <div key={col.label} className="bg-card rounded-lg p-2.5 text-center border border-border">

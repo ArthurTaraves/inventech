@@ -79,7 +79,7 @@ export function Layout() {
         <nav className="flex-1 px-3 py-4 overflow-y-auto" aria-label="Navegação principal">
           {NAV_GROUPS.map((group) => (
             <div key={group.label} className="mb-5">
-              <p className="px-3 mb-2 text-xs font-semibold tracking-widest" style={{ color: 'var(--sidebar-foreground)', opacity: 0.45 }}>
+              <p className="px-3 mb-2 text-xs font-semibold tracking-widest" style={{ color: 'var(--sidebar-foreground)', opacity: 0.7 }}>
                 {group.label}
               </p>
               <ul className="space-y-0.5">
@@ -129,11 +129,11 @@ export function Layout() {
         <div className="px-5 py-4" style={{ borderTop: '1px solid var(--sidebar-border)' }}>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" aria-hidden="true" />
-            <span className="text-xs" style={{ color: 'var(--sidebar-foreground)', opacity: 0.6 }}>
+            <span className="text-xs" style={{ color: 'var(--sidebar-foreground)', opacity: 0.75 }}>
               Sistema Operacional
             </span>
           </div>
-          <p className="text-xs mt-1" style={{ color: 'var(--sidebar-foreground)', opacity: 0.35 }}>
+          <p className="text-xs mt-1" style={{ color: 'var(--sidebar-foreground)', opacity: 0.7 }}>
             © 2026 InvenTech Industrial
           </p>
         </div>

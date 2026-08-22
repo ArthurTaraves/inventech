@@ -40,18 +40,18 @@ const thStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: '#64748B',
+  color: '#4B5768',
   background: '#F1F5FB',
   borderBottom: '1px solid rgba(11,24,38,0.08)',
   whiteSpace: 'nowrap',
 };
 
 const getStatusSerialStyle = (status: string) => {
-  if (status === 'Disponível') return { bg: 'rgba(34,197,94,0.1)', color: '#15803D', border: 'rgba(34,197,94,0.3)', icon: '✅' };
+  if (status === 'Disponível') return { bg: 'rgba(34,197,94,0.1)', color: '#166534', border: 'rgba(34,197,94,0.3)', icon: '✅' };
   if (status === 'Em Uso') return { bg: 'rgba(26,86,219,0.1)', color: '#1A56DB', border: 'rgba(26,86,219,0.3)', icon: '🔧' };
   if (status === 'Manutenção') return { bg: 'rgba(249,115,22,0.1)', color: '#9A3412', border: 'rgba(249,115,22,0.3)', icon: '⚠️' };
   if (status === 'Baixado') return { bg: 'rgba(239,68,68,0.1)', color: '#DC2626', border: 'rgba(239,68,68,0.3)', icon: '🔴' };
-  return { bg: 'rgba(100,116,139,0.1)', color: '#64748B', border: 'rgba(100,116,139,0.3)', icon: '•' };
+  return { bg: 'rgba(100,116,139,0.1)', color: '#4B5768', border: 'rgba(100,116,139,0.3)', icon: '•' };
 };
 
 export function BancoDados() {
@@ -386,7 +386,7 @@ export function BancoDados() {
           <Database className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#1A56DB' }} />
           <div className="text-sm" style={{ color: '#1A56DB' }}>
             <p className="font-semibold mb-0.5">Catálogo de Produtos Válidos</p>
-            <p className="opacity-80">Este é o banco de dados mestre que define quais produtos podem ser adicionados ao estoque. Apenas produtos cadastrados aqui podem ser usados no sistema, garantindo a integridade dos dados.</p>
+            <p>Este é o banco de dados mestre que define quais produtos podem ser adicionados ao estoque. Apenas produtos cadastrados aqui podem ser usados no sistema, garantindo a integridade dos dados.</p>
           </div>
         </div>
       </div>
@@ -452,7 +452,7 @@ export function BancoDados() {
                           borderRadius: 9999,
                           padding: '2px 10px',
                           background: produto.ativo ? 'rgba(34,197,94,0.1)' : 'rgba(100,116,139,0.1)',
-                          color: produto.ativo ? '#15803D' : '#64748B',
+                          color: produto.ativo ? '#166534' : '#64748B',
                           border: `1px solid ${produto.ativo ? 'rgba(34,197,94,0.25)' : 'rgba(100,116,139,0.2)'}`,
                         }}>
                           <span aria-hidden="true">{produto.ativo ? '✅' : '⏸'}</span>
@@ -501,7 +501,7 @@ export function BancoDados() {
                           <button
                             onClick={() => handleToggleAtivo(produto.id)}
                             aria-label={`${produto.ativo ? 'Desativar' : 'Ativar'} ${produto.nome}`}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${produto.ativo ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'}`}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${produto.ativo ? 'text-orange-700 hover:bg-orange-50' : 'text-green-700 hover:bg-green-50'}`}
                           >
                             {produto.ativo ? 'Desativar' : 'Ativar'}
                           </button>

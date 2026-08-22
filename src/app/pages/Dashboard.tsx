@@ -274,7 +274,7 @@ export function Dashboard() {
 
               {itensComInercia.length > 0 && (
                 <div className="px-6 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5 text-amber-600">
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5 text-amber-700">
                     <span className="w-2 h-2 bg-amber-500 rounded-full inline-block" />
                     Sem Atualização +48h
                   </p>
