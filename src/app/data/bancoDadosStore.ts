@@ -211,5 +211,14 @@ export const bancoDadosStore = {
   // Obter quantidade de unidades de um produto
   getQuantidadeUnidades: (codigoProduto: string) => {
     return produtosSerializados.filter(p => p.codigoProduto === codigoProduto).length;
-  }
+  },
+
+  // Localizações únicas de um produto, derivadas das unidades serializadas
+  // (fonte única de verdade — evita divergência com o campo produto.localizacoes)
+  getLocalizacoesUnicasPorCodigo: (codigoProduto: string): string[] => {
+    const locais = produtosSerializados
+      .filter(p => p.codigoProduto === codigoProduto)
+      .map(p => p.localizacao);
+    return Array.from(new Set(locais)).sort();
+  },
 };

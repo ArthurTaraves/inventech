@@ -7,6 +7,23 @@ import {
   type Movimentacao,
   type ItemManutencao
 } from '../data/mockData';
+import { bancoDadosStore } from '../data/bancoDadosStore';
+
+// bancoDadosStore (unidades serializadas) é a fonte única de verdade para
+// localização. Usado só na migração abaixo — não sobrescreve edições manuais
+// de localização feitas pelo usuário após a migração já ter rodado.
+function sincronizarLocalizacoes(produto: Produto): Produto {
+  if (!produto.codigoProduto) return produto;
+  const locaisDoCatalogo = bancoDadosStore.getLocalizacoesUnicasPorCodigo(produto.codigoProduto);
+  return locaisDoCatalogo.length > 0
+    ? { ...produto, localizacoes: locaisDoCatalogo }
+    : produto;
+}
+
+// Migração de localização é aplicada uma única vez por navegador: limpa
+// dados de localização antigos/divergentes salvos em sessões anteriores,
+// sem apagar edições manuais feitas pelo usuário depois disso.
+const LOCALIZACOES_MIGRADAS_KEY = 'almoxarifado_localizacoes_migradas_v1';
 
 interface AlmoxarifadoContextType {
   produtos: Produto[];
@@ -44,7 +61,7 @@ export function AlmoxarifadoProvider({ children }: { children: ReactNode }) {
     if (saved) {
       const parsedData = JSON.parse(saved);
       // Migração automática: converter produtos antigos para novo formato
-      return parsedData.map((produto: any) => ({
+      let produtosCarregados: Produto[] = parsedData.map((produto: any) => ({
         ...produto,
         // Se tiver localizacao (singular), converter para localizacoes (array)
         localizacoes: produto.localizacoes
@@ -53,8 +70,18 @@ export function AlmoxarifadoProvider({ children }: { children: ReactNode }) {
         // Garantir que codigoProduto existe
         codigoProduto: produto.codigoProduto || undefined,
       }));
+
+      // Limpeza pontual (uma vez só): corrige localizações salvas antes da
+      // correção do mock, sem sobrescrever edições manuais futuras.
+      if (localStorage.getItem(LOCALIZACOES_MIGRADAS_KEY) !== '1') {
+        produtosCarregados = produtosCarregados.map(sincronizarLocalizacoes);
+        localStorage.setItem(LOCALIZACOES_MIGRADAS_KEY, '1');
+      }
+
+      return produtosCarregados;
     }
-    return produtosIniciais;
+    localStorage.setItem(LOCALIZACOES_MIGRADAS_KEY, '1');
+    return produtosIniciais.map(sincronizarLocalizacoes);
   });
 
   const [movimentacoes, setMovimentacoesState] = useState<Movimentacao[]>(() => {

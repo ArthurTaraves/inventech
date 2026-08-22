@@ -551,6 +551,16 @@ export function Estoque() {
             const serializados = produtoDetalhes.codigoProduto
               ? bancoDadosStore.getProdutosSerializadosPorCodigo(produtoDetalhes.codigoProduto)
               : [];
+            // Fonte única de verdade: localizações vêm das unidades serializadas
+            // (bancoDadosStore), evitando divergência com o campo produto.localizacoes
+            // salvo separadamente no localStorage. Cai no campo antigo só quando o
+            // produto não tem unidades serializadas cadastradas (ex: item manual).
+            const localizacoesDoCatalogo = produtoDetalhes.codigoProduto
+              ? bancoDadosStore.getLocalizacoesUnicasPorCodigo(produtoDetalhes.codigoProduto)
+              : [];
+            const localizacoesParaExibir = localizacoesDoCatalogo.length > 0
+              ? localizacoesDoCatalogo
+              : (produtoDetalhes.localizacoes ?? []);
             return (
               <div className="space-y-4 py-2">
                 <div className="p-4 rounded-xl border" style={{ background: 'rgba(26,86,219,0.05)', borderColor: 'rgba(26,86,219,0.15)' }}>
@@ -604,7 +614,7 @@ export function Estoque() {
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">Localizações</p>
                   <div className="flex flex-wrap gap-2">
-                    {produtoDetalhes.localizacoes?.map((loc, i) => {
+                    {localizacoesParaExibir.map((loc, i) => {
                       const parts = loc.split('-');
                       return (
                         <div key={i} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs">
