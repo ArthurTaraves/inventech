@@ -330,6 +330,7 @@ export function Solicitacoes() {
 
   return (
     <div className="p-8">
+      <div className="max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -370,7 +371,7 @@ export function Solicitacoes() {
           <p className="text-sm text-muted-foreground mt-1">Crie sua primeira solicitação clicando em "Nova Solicitação"</p>
         </div>
       ) : (
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {solicitacoesFiltradas.map(sol => {
             const cfg = STATUS_CONFIG[sol.status];
             const criticidadeSol = getCriticidadeSolicitacao(sol);
@@ -409,6 +410,7 @@ export function Solicitacoes() {
           })}
         </div>
       )}
+      </div>
 
       {/* ══ NOVA SOLICITAÇÃO MODAL ════════════════════════════════════════════════ */}
       <Dialog open={isNovaOpen} onOpenChange={open => { setIsNovaOpen(open); if (!open) { setForm({ solicitante: '', matricula: '', setor: '', dataPrevista: '', prioridade: 'Média', observacao: '' }); setItensForm([]); setFormErros({}); } }}>

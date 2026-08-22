@@ -514,6 +514,7 @@ export function PortalRequisicoes() {
 
   return (
     <div className="p-8">
+      <div className={activeTab === 'central' ? '' : 'max-w-3xl mx-auto'}>
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -568,7 +569,7 @@ export function PortalRequisicoes() {
 
       {/* ══ NOVA SOLICITAÇÃO ═══════════════════════════════════════════════════ */}
       {activeTab === 'nova' && (
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="space-y-6">
 
           {/* Product search */}
           <div className="bg-card rounded-2xl border border-border shadow-sm overflow-visible">
@@ -968,7 +969,7 @@ export function PortalRequisicoes() {
 
       {/* ══ MINHAS SOLICITAÇÕES ════════════════════════════════════════════════ */}
       {activeTab === 'minhas' && (
-        <div className="max-w-3xl mx-auto">
+        <div>
           <div className="flex items-center justify-between mb-5">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -1041,6 +1042,7 @@ export function PortalRequisicoes() {
           )}
         </div>
       )}
+      </div>
 
       {/* ══ CENTRAL DO ALMOXARIFADO ════════════════════════════════════════════ */}
       {activeTab === 'central' && (
