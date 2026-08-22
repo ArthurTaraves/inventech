@@ -48,24 +48,24 @@ interface Solicitacao {
 
 const STATUS_CONFIG: Record<StatusSolicitacao, { color: string; bg: string; border: string; portalLabel: string; icon: string }> = {
   'Solicitada':           { color: '#1A56DB', bg: 'rgba(26,86,219,0.1)',   border: 'rgba(26,86,219,0.25)',   portalLabel: 'Solicitada',           icon: '📋' },
-  'Em análise':           { color: '#D97706', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   portalLabel: 'Em análise',           icon: '🔍' },
-  'Aprovada':             { color: '#10B981', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  portalLabel: 'Aprovada',             icon: '✅' },
-  'Em separação':         { color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', portalLabel: 'Separando materiais',  icon: '📦' },
-  'Pronta para retirada': { color: '#EA580C', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  portalLabel: 'Pronta para retirada', icon: '🟠' },
-  'Entregue':             { color: '#15803D', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   portalLabel: 'Entregue',             icon: '🟢' },
+  'Em análise':           { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)',   portalLabel: 'Em análise',           icon: '🔍' },
+  'Aprovada':             { color: '#15803D', bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.25)',  portalLabel: 'Aprovada',             icon: '✅' },
+  'Em separação':         { color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.25)', portalLabel: 'Separando materiais',  icon: '⏳' },
+  'Pronta para retirada': { color: '#9A3412', bg: 'rgba(234,88,12,0.1)',  border: 'rgba(234,88,12,0.25)',  portalLabel: 'Pronta para retirada', icon: '🟠' },
+  'Entregue':             { color: '#15803D', bg: 'rgba(21,128,61,0.1)',   border: 'rgba(21,128,61,0.25)',   portalLabel: 'Entregue',             icon: '✅' },
   'Cancelada':            { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)',   portalLabel: 'Cancelada',            icon: '🔴' },
 };
 
-const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string }> = {
-  'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)' },
-  'Média':  { color: '#D97706', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)'   },
-  'Alta':   { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)'   },
+const PRIORIDADE_CONFIG: Record<PrioridadeSolicitacao, { color: string; bg: string; border: string; icon: string }> = {
+  'Baixa':  { color: '#64748B', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', icon: '🟢' },
+  'Média':  { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.2)', icon: '🟡'   },
+  'Alta':   { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.2)', icon: '🔴'   },
 };
 
-const CRIT_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
-  'Alta':  { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)'   },
-  'Média': { color: '#D97706', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)'   },
-  'Baixa': { color: '#16A34A', bg: 'rgba(22,163,74,0.1)',   border: 'rgba(22,163,74,0.25)'   },
+const CRIT_CONFIG: Record<string, { color: string; bg: string; border: string; icon: string }> = {
+  'Alta':  { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   border: 'rgba(220,38,38,0.25)', icon: '🔴'   },
+  'Média': { color: '#92400E', bg: 'rgba(217,119,6,0.1)',   border: 'rgba(217,119,6,0.25)', icon: '🟡'   },
+  'Baixa': { color: '#15803D', bg: 'rgba(22,163,74,0.1)',   border: 'rgba(22,163,74,0.25)', icon: '🟢'   },
 };
 
 const STATUS_TODOS: StatusSolicitacao[] = [
@@ -109,7 +109,7 @@ const StatusBadge = ({ status, usePortalLabel = false }: { status: StatusSolicit
       display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
       color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
     }}>
-      <span style={{ width: 7, height: 7, borderRadius: '50%', background: cfg.color, display: 'inline-block', flexShrink: 0 }} />
+      <span aria-hidden="true">{cfg.icon}</span>
       {label}
     </span>
   );
@@ -120,9 +120,26 @@ const PrioridadeBadge = ({ prioridade }: { prioridade: PrioridadeSolicitacao }) 
   return (
     <span style={{
       fontSize: 11, fontWeight: 700, borderRadius: 6, padding: '3px 10px',
+      display: 'inline-flex', alignItems: 'center', gap: 4,
       color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
     }}>
+      <span aria-hidden="true">{cfg.icon}</span>
       {prioridade}
+    </span>
+  );
+};
+
+const CriticidadeBadge = ({ criticidade }: { criticidade?: string }) => {
+  if (!criticidade) return <span className="text-xs text-muted-foreground">—</span>;
+  const cfg = CRIT_CONFIG[criticidade] ?? CRIT_CONFIG['Baixa'];
+  return (
+    <span style={{
+      fontSize: 11, fontWeight: 700, borderRadius: 6, padding: '3px 10px',
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+      color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
+    }}>
+      <span aria-hidden="true">{cfg.icon}</span>
+      {criticidade}
     </span>
   );
 };
@@ -133,6 +150,18 @@ export function PortalRequisicoes() {
   const { produtos } = useAlmoxarifado();
   const catalogo = bancoDadosStore.getProdutos();
   const catalogMap = new Map(catalogo.map(c => [c.codigoProduto ?? '', c]));
+
+  // Maior criticidade entre os itens da solicitação (para exibição rápida na Central)
+  const getCriticidadeSolicitacao = (sol: Solicitacao): string | undefined => {
+    const ordem: Record<string, number> = { Alta: 3, Média: 2, Baixa: 1 };
+    let maior: string | undefined;
+    sol.itens.forEach(item => {
+      const produtoEstoque = produtos.find(p => p.id === item.produtoId || p.nome === item.produtoNome);
+      const c = produtoEstoque?.criticidade;
+      if (c && (!maior || ordem[c] > ordem[maior])) maior = c;
+    });
+    return maior;
+  };
 
   // Shared data with Solicitacoes.tsx
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>(() => {
@@ -154,6 +183,7 @@ export function PortalRequisicoes() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null);
   const [itemQty, setItemQty] = useState(1);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -184,7 +214,27 @@ export function PortalRequisicoes() {
     setSelectedProduct(p);
     setSearchQuery(p.nome);
     setShowSuggestions(false);
+    setActiveSuggestionIndex(-1);
     setItemQty(1);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveSuggestionIndex(i => (i + 1) % suggestions.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveSuggestionIndex(i => (i <= 0 ? suggestions.length - 1 : i - 1));
+    } else if (e.key === 'Enter') {
+      if (activeSuggestionIndex >= 0 && activeSuggestionIndex < suggestions.length) {
+        e.preventDefault();
+        selectProduct(suggestions[activeSuggestionIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false);
+      setActiveSuggestionIndex(-1);
+    }
   };
 
   // ── Cart ──
@@ -229,19 +279,32 @@ export function PortalRequisicoes() {
   const [form, setForm] = useState(emptyForm);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  const CAMPO_LABEL_PORTAL: Record<string, string> = {
+    solicitante: 'Nome do Solicitante',
+    matricula: 'Matrícula',
+    setor: 'Setor',
+    dataPrevista: 'Data Prevista de Retirada',
+    cart: 'Itens da Solicitação',
+  };
+
   const validarForm = () => {
     const erros: Record<string, string> = {};
-    if (!form.solicitante.trim()) erros.solicitante = 'Campo obrigatório';
-    if (!form.matricula.trim()) erros.matricula = 'Campo obrigatório';
-    if (!form.setor.trim()) erros.setor = 'Campo obrigatório';
-    if (!form.dataPrevista) erros.dataPrevista = 'Campo obrigatório';
-    if (cart.length === 0) erros.cart = 'Adicione pelo menos um item à solicitação';
+    if (!form.solicitante.trim()) erros.solicitante = 'Informe o nome do solicitante.';
+    if (!form.matricula.trim()) erros.matricula = 'Informe a matrícula.';
+    if (!form.setor.trim()) erros.setor = 'Informe o setor.';
+    if (!form.dataPrevista) erros.dataPrevista = 'Informe a data prevista de retirada.';
+    if (cart.length === 0) erros.cart = 'Adicione pelo menos um item à solicitação.';
     setFormErrors(erros);
-    return Object.keys(erros).length === 0;
+    return erros;
   };
 
   const enviarSolicitacao = () => {
-    if (!validarForm()) { toast.error('Preencha todos os campos obrigatórios'); return; }
+    const erros = validarForm();
+    if (Object.keys(erros).length > 0) {
+      const campos = Object.keys(erros).map(k => CAMPO_LABEL_PORTAL[k] || k);
+      toast.error(`Corrija o(s) campo(s): ${campos.join(', ')}.`);
+      return;
+    }
     const nova: Solicitacao = {
       id: String(Date.now()),
       numero: gerarNumero(solicitacoes),
@@ -380,11 +443,18 @@ export function PortalRequisicoes() {
               {/* Search input with autocomplete */}
               <div ref={searchRef} className="relative">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                   <input
                     type="text"
+                    role="combobox"
+                    aria-expanded={showSuggestions && suggestions.length > 0}
+                    aria-controls="portal-produto-listbox"
+                    aria-autocomplete="list"
+                    aria-activedescendant={activeSuggestionIndex >= 0 && suggestions[activeSuggestionIndex] ? `produto-option-${suggestions[activeSuggestionIndex].id}` : undefined}
+                    aria-label="Selecionar produto do estoque"
                     value={searchQuery}
-                    onChange={e => { setSearchQuery(e.target.value); setShowSuggestions(true); setSelectedProduct(null); }}
+                    onChange={e => { setSearchQuery(e.target.value); setShowSuggestions(true); setSelectedProduct(null); setActiveSuggestionIndex(-1); }}
+                    onKeyDown={handleSearchKeyDown}
                     placeholder="Digite o nome, código ou categoria do produto..."
                     className="w-full pl-12 pr-4 py-4 text-base rounded-xl outline-none transition-all"
                     style={{
@@ -398,7 +468,7 @@ export function PortalRequisicoes() {
                     onBlur={e => { e.currentTarget.style.borderColor = 'rgba(11,24,38,0.08)'; e.currentTarget.style.background = '#F1F5FB'; }}
                   />
                   {searchQuery && (
-                    <button onClick={() => { setSearchQuery(''); setSelectedProduct(null); setShowSuggestions(false); }}
+                    <button type="button" aria-label="Limpar busca de produto" onClick={() => { setSearchQuery(''); setSelectedProduct(null); setShowSuggestions(false); setActiveSuggestionIndex(-1); }}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                       <XCircle className="w-5 h-5" />
                     </button>
@@ -407,24 +477,30 @@ export function PortalRequisicoes() {
 
                 {/* Suggestions dropdown */}
                 {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card rounded-xl border border-border shadow-xl overflow-y-auto" style={{ maxHeight: 360 }}>
-                    {suggestions.map(p => {
+                  <div id="portal-produto-listbox" role="listbox" aria-label="Produtos do estoque" className="absolute top-full left-0 right-0 z-50 mt-1 bg-card rounded-xl border border-border shadow-xl overflow-y-auto" style={{ maxHeight: 360 }}>
+                    {suggestions.map((p, idx) => {
                       const cat = catalogMap.get(p.codigoProduto ?? '')?.categoria ?? '';
                       const critCfg = CRIT_CONFIG[p.criticidade] ?? CRIT_CONFIG['Baixa'];
                       const estoqueMinimoP = catalogMap.get(p.codigoProduto ?? '')?.estoqueMinimo ?? 0;
                       const estoqueBaixoP = p.quantidade > 0 && p.quantidade <= estoqueMinimoP;
+                      const isActive = idx === activeSuggestionIndex;
                       return (
                         <button
                           key={p.id}
+                          id={`produto-option-${p.id}`}
+                          role="option"
+                          aria-selected={isActive}
+                          type="button"
                           onClick={() => selectProduct(p)}
-                          className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-muted transition-colors border-b border-border last:border-0"
+                          onMouseEnter={() => setActiveSuggestionIndex(idx)}
+                          className={`w-full flex items-center justify-between px-4 py-3.5 text-left transition-colors border-b border-border last:border-0 ${isActive ? 'bg-muted' : 'hover:bg-muted'}`}
                         >
                           <div className="flex items-center gap-3">
                             <div style={{
                               width: 36, height: 36, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
                               background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.15)',
                             }}>
-                              <Package className="w-4 h-4" style={{ color: '#1A56DB' }} />
+                              <Package className="w-4 h-4" style={{ color: '#1A56DB' }} aria-hidden="true" />
                             </div>
                             <div>
                               <p className="text-sm font-semibold text-foreground">{p.nome}</p>
@@ -438,13 +514,13 @@ export function PortalRequisicoes() {
                               </span>
                             )}
                             <span style={{ fontSize: 11, fontWeight: 600, color: critCfg.color, background: critCfg.bg, border: `1px solid ${critCfg.border}`, borderRadius: 6, padding: '2px 8px' }}>
-                              {p.criticidade}
+                              <span aria-hidden="true">{critCfg.icon}</span> {p.criticidade}
                             </span>
                             <span
                               className="text-xs font-semibold"
-                              style={{ color: p.quantidade === 0 ? '#DC2626' : estoqueBaixoP ? '#D97706' : 'var(--muted-foreground)' }}
+                              style={{ color: p.quantidade === 0 ? '#DC2626' : estoqueBaixoP ? '#92400E' : 'var(--muted-foreground)' }}
                             >
-                              {p.quantidade} un.{estoqueBaixoP && ' ⚠'}
+                              {p.quantidade} un.{estoqueBaixoP && <span aria-hidden="true"> ⚠</span>}
                             </span>
                           </div>
                         </button>
@@ -467,7 +543,7 @@ export function PortalRequisicoes() {
                 const critCfg = CRIT_CONFIG[selectedProduct.criticidade] ?? CRIT_CONFIG['Baixa'];
                 const disponivel = selectedProduct.quantidade;
                 const estoqueMinimo = cat?.estoqueMinimo ?? 0;
-                const availColor = disponivel === 0 ? '#DC2626' : disponivel < estoqueMinimo ? '#D97706' : '#16A34A';
+                const availColor = disponivel === 0 ? '#DC2626' : disponivel < estoqueMinimo ? '#92400E' : '#15803D';
                 return (
                   <div className="rounded-2xl overflow-hidden" style={{ border: '2px solid rgba(26,86,219,0.2)', background: 'rgba(26,86,219,0.02)' }}>
                     {/* Product header */}
@@ -500,7 +576,7 @@ export function PortalRequisicoes() {
                         </div>
                         <div className="text-center p-3 rounded-xl border" style={{ background: critCfg.bg, borderColor: critCfg.border }}>
                           <p className="text-xs mb-1" style={{ color: critCfg.color, opacity: 0.8 }}>Criticidade</p>
-                          <p className="text-lg font-bold" style={{ color: critCfg.color }}>{selectedProduct.criticidade}</p>
+                          <p className="text-lg font-bold" style={{ color: critCfg.color }}><span aria-hidden="true">{critCfg.icon}</span> {selectedProduct.criticidade}</p>
                         </div>
                       </div>
 
@@ -512,7 +588,7 @@ export function PortalRequisicoes() {
                             {selectedProduct.localizacoes.map(loc => (
                               <span key={loc} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium"
                                 style={{ background: 'rgba(26,86,219,0.07)', color: '#1A56DB', border: '1px solid rgba(26,86,219,0.2)' }}>
-                                <MapPin className="w-3.5 h-3.5" />
+                                <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
                                 {formatLoc(loc)}
                               </span>
                             ))}
@@ -524,21 +600,21 @@ export function PortalRequisicoes() {
                       {selectedProduct.criticidade === 'Alta' && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#DC2626' }} />
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
                           <p className="text-sm font-semibold" style={{ color: '#DC2626' }}>Item de alta criticidade — manuseio com atenção</p>
                         </div>
                       )}
                       {disponivel > 0 && disponivel <= estoqueMinimo && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#D97706' }} />
-                          <p className="text-sm font-semibold" style={{ color: '#D97706' }}>Estoque próximo do mínimo.</p>
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#92400E' }} aria-hidden="true" />
+                          <p className="text-sm font-semibold" style={{ color: '#92400E' }}>Estoque próximo do mínimo.</p>
                         </div>
                       )}
                       {disponivel === 0 && (
                         <div className="mb-3 flex items-center gap-2 px-3 py-2.5 rounded-lg"
                           style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#DC2626' }} />
+                          <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
                           <p className="text-sm font-semibold" style={{ color: '#DC2626' }}>Sem estoque disponível no momento</p>
                         </div>
                       )}
@@ -546,8 +622,9 @@ export function PortalRequisicoes() {
                       {/* Add to cart */}
                       <div className="flex items-center gap-3 pt-2 border-t border-border">
                         <div>
-                          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1">Quantidade</label>
+                          <label htmlFor="portal-quantidade" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1">Quantidade</label>
                           <input
+                            id="portal-quantidade"
                             type="number" min={1} max={disponivel}
                             value={itemQty}
                             onChange={e => setItemQty(Math.max(1, parseInt(e.target.value) || 1))}
@@ -618,13 +695,14 @@ export function PortalRequisicoes() {
                           <span className="font-semibold text-foreground text-sm">{item.produtoNome}</span>
                           {p?.criticidade && (
                             <span style={{ fontSize: 10, fontWeight: 700, color: critCfg.color, background: critCfg.bg, border: `1px solid ${critCfg.border}`, borderRadius: 6, padding: '1px 6px' }}>
-                              {p.criticidade}
+                              <span aria-hidden="true">{critCfg.icon}</span> {p.criticidade}
                             </span>
                           )}
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-sm font-bold text-foreground">{item.quantidade} un.</span>
                           <button onClick={() => removerDoCart(item.produtoId)}
+                            aria-label={`Remover ${item.produtoNome} da solicitação`}
                             className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors">
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -646,51 +724,64 @@ export function PortalRequisicoes() {
             <div className="p-6 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-semibold">Nome do Solicitante *</Label>
+                  <Label htmlFor="portal-solicitante" className="text-sm font-semibold">Nome do Solicitante *</Label>
                   <Input
+                    id="portal-solicitante"
+                    autoFocus
                     value={form.solicitante}
                     onChange={e => setForm({ ...form, solicitante: e.target.value })}
                     placeholder="Seu nome completo"
                     className={`rounded-xl h-12 text-base ${formErrors.solicitante ? 'border-red-500' : ''}`}
+                    aria-invalid={!!formErrors.solicitante}
+                    aria-describedby={formErrors.solicitante ? 'portal-solicitante-erro' : undefined}
                   />
-                  {formErrors.solicitante && <p className="text-xs text-red-600 font-semibold">{formErrors.solicitante}</p>}
+                  {formErrors.solicitante && <p id="portal-solicitante-erro" className="text-xs text-red-600 font-semibold">{formErrors.solicitante}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-semibold">Matrícula *</Label>
+                  <Label htmlFor="portal-matricula" className="text-sm font-semibold">Matrícula *</Label>
                   <Input
+                    id="portal-matricula"
                     value={form.matricula}
                     onChange={e => setForm({ ...form, matricula: e.target.value })}
                     placeholder="Número de matrícula"
                     className={`rounded-xl h-12 text-base ${formErrors.matricula ? 'border-red-500' : ''}`}
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    aria-invalid={!!formErrors.matricula}
+                    aria-describedby={formErrors.matricula ? 'portal-matricula-erro' : undefined}
                   />
-                  {formErrors.matricula && <p className="text-xs text-red-600 font-semibold">{formErrors.matricula}</p>}
+                  {formErrors.matricula && <p id="portal-matricula-erro" className="text-xs text-red-600 font-semibold">{formErrors.matricula}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-semibold">Setor *</Label>
+                  <Label htmlFor="portal-setor" className="text-sm font-semibold">Setor *</Label>
                   <Input
+                    id="portal-setor"
                     value={form.setor}
                     onChange={e => setForm({ ...form, setor: e.target.value })}
                     placeholder="Ex: Manutenção, Produção..."
                     className={`rounded-xl h-12 text-base ${formErrors.setor ? 'border-red-500' : ''}`}
+                    aria-invalid={!!formErrors.setor}
+                    aria-describedby={formErrors.setor ? 'portal-setor-erro' : undefined}
                   />
-                  {formErrors.setor && <p className="text-xs text-red-600 font-semibold">{formErrors.setor}</p>}
+                  {formErrors.setor && <p id="portal-setor-erro" className="text-xs text-red-600 font-semibold">{formErrors.setor}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-semibold">Data Prevista de Retirada *</Label>
+                  <Label htmlFor="portal-data">Data Prevista de Retirada *</Label>
                   <Input
+                    id="portal-data"
                     type="date"
                     value={form.dataPrevista}
                     onChange={e => setForm({ ...form, dataPrevista: e.target.value })}
                     className={`rounded-xl h-12 text-base ${formErrors.dataPrevista ? 'border-red-500' : ''}`}
+                    aria-invalid={!!formErrors.dataPrevista}
+                    aria-describedby={formErrors.dataPrevista ? 'portal-data-erro' : undefined}
                   />
-                  {formErrors.dataPrevista && <p className="text-xs text-red-600 font-semibold">{formErrors.dataPrevista}</p>}
+                  {formErrors.dataPrevista && <p id="portal-data-erro" className="text-xs text-red-600 font-semibold">{formErrors.dataPrevista}</p>}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Prioridade</Label>
-                <div className="flex gap-3">
+                <Label id="portal-prioridade-label" className="text-sm font-semibold">Prioridade</Label>
+                <div className="flex gap-3" role="group" aria-labelledby="portal-prioridade-label">
                   {(['Baixa', 'Média', 'Alta'] as PrioridadeSolicitacao[]).map(p => {
                     const cfg = PRIORIDADE_CONFIG[p];
                     const selected = form.prioridade === p;
@@ -698,12 +789,13 @@ export function PortalRequisicoes() {
                       <button
                         key={p}
                         onClick={() => setForm({ ...form, prioridade: p })}
+                        aria-pressed={selected}
                         className="flex-1 py-3 rounded-xl text-base font-bold transition-all"
                         style={selected
                           ? { background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` }
                           : { background: 'transparent', color: '#94A3B8', border: '2px solid rgba(11,24,38,0.1)' }}
                       >
-                        {p === 'Alta' ? '🔴' : p === 'Média' ? '🟡' : '🟢'} {p}
+                        <span aria-hidden="true">{cfg.icon}</span> {p}
                       </button>
                     );
                   })}
@@ -711,8 +803,9 @@ export function PortalRequisicoes() {
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-semibold">Observações</Label>
+                <Label htmlFor="portal-observacao" className="text-sm font-semibold">Observações</Label>
                 <textarea
+                  id="portal-observacao"
                   value={form.observacao}
                   onChange={e => setForm({ ...form, observacao: e.target.value })}
                   placeholder="Informações adicionais, urgência, contexto da solicitação..."
@@ -741,8 +834,9 @@ export function PortalRequisicoes() {
         <div className="max-w-3xl">
           <div className="flex items-center justify-between mb-5">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
               <Input
+                aria-label="Buscar minhas solicitações"
                 placeholder="Buscar por nome, matrícula ou número..."
                 value={searchMinhas}
                 onChange={e => setSearchMinhas(e.target.value)}
@@ -763,11 +857,14 @@ export function PortalRequisicoes() {
             <div className="space-y-3">
               {minhasSolicitacoes.map(sol => {
                 const cfg = STATUS_CONFIG[sol.status];
+                const criticidadeSol = getCriticidadeSolicitacao(sol);
                 return (
-                  <div
+                  <button
                     key={sol.id}
+                    type="button"
                     onClick={() => setDetalhe(sol)}
-                    className="bg-card rounded-2xl border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow overflow-hidden"
+                    aria-label={`Ver detalhes da solicitação ${sol.numero}`}
+                    className="w-full text-left bg-card rounded-2xl border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow overflow-hidden"
                     style={{ borderLeft: `4px solid ${cfg.color}` }}
                   >
                     <div className="px-6 py-5">
@@ -778,6 +875,7 @@ export function PortalRequisicoes() {
                               {sol.numero}
                             </span>
                             <PrioridadeBadge prioridade={sol.prioridade} />
+                            {criticidadeSol && <CriticidadeBadge criticidade={criticidadeSol} />}
                           </div>
                           <p className="font-semibold text-foreground">{sol.solicitante}</p>
                           <p className="text-sm text-muted-foreground">{sol.setor} · Matrícula {sol.matricula}</p>
@@ -786,20 +884,20 @@ export function PortalRequisicoes() {
                       </div>
                       <div className="flex items-center gap-5 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1.5">
-                          <Package className="w-4 h-4" />
+                          <Package className="w-4 h-4" aria-hidden="true" />
                           {sol.itens.length} {sol.itens.length === 1 ? 'item' : 'itens'}
                         </span>
                         <span className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" />
+                          <Calendar className="w-4 h-4" aria-hidden="true" />
                           Retirada: {formatDate(sol.dataPrevista)}
                         </span>
                         <span className="flex items-center gap-1.5">
-                          <ChevronRight className="w-4 h-4" />
+                          <ChevronRight className="w-4 h-4" aria-hidden="true" />
                           Criado em {formatDate(sol.dataCriacao)}
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -818,25 +916,25 @@ export function PortalRequisicoes() {
           {/* Filters */}
           <div className="flex flex-wrap gap-3 mb-5">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Buscar..." value={buscaCentral} onChange={e => setBuscaCentral(e.target.value)} className="pl-9 rounded-xl w-52" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              <Input aria-label="Buscar na central de solicitações" placeholder="Buscar..." value={buscaCentral} onChange={e => setBuscaCentral(e.target.value)} className="pl-9 rounded-xl w-52" />
             </div>
             <Select value={filtroStatus || '__all__'} onValueChange={v => setFiltroStatus(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="rounded-xl w-48"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por status" className="rounded-xl w-48"><SelectValue placeholder="Status" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todos os status</SelectItem>
                 {STATUS_TODOS.map(s => <SelectItem key={s} value={s}>{STATUS_CONFIG[s].portalLabel}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={filtroSetor || '__all__'} onValueChange={v => setFiltroSetor(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="rounded-xl w-44"><SelectValue placeholder="Setor" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por setor" className="rounded-xl w-44"><SelectValue placeholder="Setor" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todos os setores</SelectItem>
                 {setoresUnicos.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={filtroPrioridade || '__all__'} onValueChange={v => setFiltroPrioridade(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="rounded-xl w-40"><SelectValue placeholder="Prioridade" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por prioridade" className="rounded-xl w-40"><SelectValue placeholder="Prioridade" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todas</SelectItem>
                 <SelectItem value="Alta">🔴 Alta</SelectItem>
@@ -856,9 +954,9 @@ export function PortalRequisicoes() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
               { label: 'Aguardando', count: solicitacoes.filter(s => s.status === 'Solicitada').length, color: '#1A56DB' },
-              { label: 'Em análise', count: solicitacoes.filter(s => s.status === 'Em análise').length, color: '#D97706' },
+              { label: 'Em análise', count: solicitacoes.filter(s => s.status === 'Em análise').length, color: '#92400E' },
               { label: 'Em separação', count: solicitacoes.filter(s => s.status === 'Em separação').length, color: '#7C3AED' },
-              { label: 'Prontas', count: solicitacoes.filter(s => s.status === 'Pronta para retirada').length, color: '#EA580C' },
+              { label: 'Prontas', count: solicitacoes.filter(s => s.status === 'Pronta para retirada').length, color: '#9A3412' },
             ].map(kpi => (
               <div key={kpi.label} className="bg-card rounded-xl px-4 py-3 border border-border shadow-sm" style={{ borderTop: `3px solid ${kpi.color}` }}>
                 <p className="text-xs text-muted-foreground mb-1">{kpi.label}</p>
@@ -873,20 +971,22 @@ export function PortalRequisicoes() {
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th style={thStyle}>Número</th>
-                    <th style={thStyle}>Solicitante</th>
-                    <th style={thStyle}>Setor</th>
-                    <th style={thStyle}>Itens</th>
-                    <th style={thStyle}>Data Prevista</th>
-                    <th style={thStyle}>Prioridade</th>
-                    <th style={thStyle}>Status</th>
-                    <th style={thStyle}>Ações</th>
+                    <th scope="col" style={thStyle}>Número</th>
+                    <th scope="col" style={thStyle}>Solicitante</th>
+                    <th scope="col" style={thStyle}>Setor</th>
+                    <th scope="col" style={thStyle}>Itens</th>
+                    <th scope="col" style={thStyle}>Data Prevista</th>
+                    <th scope="col" style={thStyle}>Prioridade</th>
+                    <th scope="col" style={thStyle}>Criticidade</th>
+                    <th scope="col" style={thStyle}>Status</th>
+                    <th scope="col" style={thStyle}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {centralFiltradas.map((sol, idx) => {
                     const isFinal = sol.status === 'Entregue' || sol.status === 'Cancelada';
                     const rowBg = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFD';
+                    const criticidadeSol = getCriticidadeSolicitacao(sol);
                     return (
                       <tr key={sol.id} style={{ background: rowBg, borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
                         <td style={{ padding: '14px 20px' }}>
@@ -911,18 +1011,22 @@ export function PortalRequisicoes() {
                           <PrioridadeBadge prioridade={sol.prioridade} />
                         </td>
                         <td style={{ padding: '14px 20px' }}>
+                          <CriticidadeBadge criticidade={criticidadeSol} />
+                        </td>
+                        <td style={{ padding: '14px 20px' }}>
                           <StatusBadge status={sol.status} usePortalLabel />
                         </td>
                         <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                           <div className="flex items-center gap-1 flex-wrap">
                             <button onClick={() => setDetalhe(sol)}
+                              aria-label={`Visualizar solicitação ${sol.numero}`}
                               className="p-1.5 rounded-lg text-blue-500 hover:text-blue-700 hover:bg-blue-50 transition-colors" title="Visualizar">
                               <Eye className="w-4 h-4" />
                             </button>
                             {sol.status === 'Solicitada' && (
                               <button onClick={() => avancarStatus(sol, 'Em análise', 'Análise iniciada')}
                                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: '#D97706', background: 'rgba(217,119,6,0.1)' }}>
+                                style={{ color: '#92400E', background: 'rgba(217,119,6,0.1)' }}>
                                 Analisar
                               </button>
                             )}
@@ -930,7 +1034,7 @@ export function PortalRequisicoes() {
                               <>
                                 <button onClick={() => avancarStatus(sol, 'Aprovada', 'Solicitação aprovada')}
                                   className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                  style={{ color: '#10B981', background: 'rgba(16,185,129,0.1)' }}>
+                                  style={{ color: '#15803D', background: 'rgba(16,185,129,0.1)' }}>
                                   Aprovar
                                 </button>
                                 <button onClick={() => rejeitarSolicitacao(sol)}
@@ -950,7 +1054,7 @@ export function PortalRequisicoes() {
                             {sol.status === 'Em separação' && (
                               <button onClick={() => avancarStatus(sol, 'Pronta para retirada', 'Marcado como pronto')}
                                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                                style={{ color: '#EA580C', background: 'rgba(234,88,12,0.1)' }}>
+                                style={{ color: '#9A3412', background: 'rgba(234,88,12,0.1)' }}>
                                 Marcar Pronto
                               </button>
                             )}
@@ -963,6 +1067,7 @@ export function PortalRequisicoes() {
                             )}
                             {!isFinal && (
                               <button onClick={() => avancarStatus(sol, 'Cancelada', 'Solicitação cancelada')}
+                                aria-label={`Cancelar solicitação ${sol.numero}`}
                                 className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Cancelar">
                                 <XCircle className="w-4 h-4" />
                               </button>
@@ -1017,7 +1122,7 @@ export function PortalRequisicoes() {
                   return (
                     <div key={row.label} className="bg-muted rounded-xl p-3">
                       <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-                        <Icon className="w-3.5 h-3.5" />
+                        <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                         <span className="text-xs font-semibold uppercase tracking-wider">{row.label}</span>
                       </div>
                       <p className="text-sm font-semibold text-foreground" style={row.mono ? { fontFamily: "'JetBrains Mono', monospace" } : {}}>
@@ -1032,6 +1137,10 @@ export function PortalRequisicoes() {
                 <div className="flex-1 bg-muted rounded-xl p-3">
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Prioridade</p>
                   <PrioridadeBadge prioridade={detalhe.prioridade} />
+                </div>
+                <div className="flex-1 bg-muted rounded-xl p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Criticidade</p>
+                  <CriticidadeBadge criticidade={getCriticidadeSolicitacao(detalhe)} />
                 </div>
                 <div className="flex-1 bg-muted rounded-xl p-3">
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Criado em</p>
@@ -1079,7 +1188,7 @@ export function PortalRequisicoes() {
                           <div className="grid grid-cols-3 gap-3 mb-3">
                             {[
                               { label: 'Solicitado', value: item.quantidade, color: '#1A56DB' },
-                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? '#10B981' : '#DC2626' },
+                              { label: 'Disponível',  value: info.disponivel,  color: info.disponivel > 0 ? '#15803D' : '#DC2626' },
                               { label: 'Saldo',       value: info.saldo,       color: info.saldo >= 0 ? '#64748B' : '#DC2626' },
                             ].map(col => (
                               <div key={col.label} className="bg-card rounded-lg px-3 py-2.5 text-center border border-border">
@@ -1111,8 +1220,8 @@ export function PortalRequisicoes() {
                             {abaixoMin && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#CA8A04' }} />
-                                <p className="text-xs font-semibold" style={{ color: '#CA8A04' }}>
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#92400E' }} aria-hidden="true" />
+                                <p className="text-xs font-semibold" style={{ color: '#92400E' }}>
                                   Estoque ficará abaixo do mínimo recomendado ({info.estoqueMinimo} un.)
                                 </p>
                               </div>
@@ -1120,14 +1229,14 @@ export function PortalRequisicoes() {
                             {info.criticidade === 'Alta' && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} />
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
                                 <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>Item de alta criticidade</p>
                               </div>
                             )}
                             {info.saldo < 0 && (
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg"
                                 style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} />
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} aria-hidden="true" />
                                 <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>Quantidade solicitada supera o estoque disponível</p>
                               </div>
                             )}
@@ -1149,45 +1258,45 @@ export function PortalRequisicoes() {
                     {s === 'Solicitada' && (
                       <button onClick={() => avancarStatus(detalhe, 'Em análise', 'Análise iniciada')}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
-                        style={{ background: '#D97706', boxShadow: '0 4px 12px rgba(217,119,6,0.3)' }}>
-                        <Eye className="w-4 h-4" /> Analisar
+                        style={{ background: '#92400E', boxShadow: '0 4px 12px rgba(217,119,6,0.3)' }}>
+                        <Eye className="w-4 h-4" aria-hidden="true" /> Analisar
                       </button>
                     )}
                     {s === 'Em análise' && (<>
                       <button onClick={() => avancarStatus(detalhe, 'Aprovada', 'Solicitação aprovada')}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
-                        style={{ background: '#10B981', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
-                        <CheckCircle className="w-4 h-4" /> Aprovar
+                        style={{ background: '#15803D', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
+                        <CheckCircle className="w-4 h-4" aria-hidden="true" /> Aprovar
                       </button>
                       <button onClick={() => rejeitarSolicitacao(detalhe)}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
-                        <XCircle className="w-4 h-4" /> Rejeitar
+                        <XCircle className="w-4 h-4" aria-hidden="true" /> Rejeitar
                       </button>
                     </>)}
                     {s === 'Aprovada' && (
                       <button onClick={() => avancarStatus(detalhe, 'Em separação', 'Separação iniciada')}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
                         style={{ background: '#7C3AED', boxShadow: '0 4px 12px rgba(124,58,237,0.3)' }}>
-                        <Package className="w-4 h-4" /> Iniciar Separação
+                        <Package className="w-4 h-4" aria-hidden="true" /> Iniciar Separação
                       </button>
                     )}
                     {s === 'Em separação' && (
                       <button onClick={() => avancarStatus(detalhe, 'Pronta para retirada', 'Marcado como pronto')}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
-                        style={{ background: '#EA580C', boxShadow: '0 4px 12px rgba(234,88,12,0.3)' }}>
-                        <CheckCircle className="w-4 h-4" /> Marcar como Pronto
+                        style={{ background: '#9A3412', boxShadow: '0 4px 12px rgba(234,88,12,0.3)' }}>
+                        <CheckCircle className="w-4 h-4" aria-hidden="true" /> Marcar como Pronto
                       </button>
                     )}
                     {s === 'Pronta para retirada' && (
                       <button onClick={() => avancarStatus(detalhe, 'Entregue', 'Entrega confirmada')}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
                         style={{ background: '#15803D', boxShadow: '0 4px 12px rgba(21,128,61,0.3)' }}>
-                        <Truck className="w-4 h-4" /> Confirmar Entrega
+                        <Truck className="w-4 h-4" aria-hidden="true" /> Confirmar Entrega
                       </button>
                     )}
                     <button onClick={() => avancarStatus(detalhe, 'Cancelada', 'Solicitação cancelada')}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-colors ml-auto">
-                      <XCircle className="w-4 h-4" /> Cancelar Solicitação
+                      <XCircle className="w-4 h-4" aria-hidden="true" /> Cancelar Solicitação
                     </button>
                   </div>
                 );
