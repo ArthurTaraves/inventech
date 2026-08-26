@@ -59,7 +59,7 @@ export const produtosCatalogoInicial: ProdutoCatalogo[] = [
 const quantidadesEstoque: Record<string, number> = {
   'ELE-001': 5,  // Detector de Gás
   'ELE-002': 8,  // Esmerilhadeira 4"
-  'ELE-003': 4,  // Esmerilhadeira 7"
+  'ELE-003': 1,  // Esmerilhadeira 7" - abaixo do minimo (2) para demonstrar alertas
   'ELE-004': 2,  // Inversora - agora tem estoque mínimo
   'ELE-005': 15, // Furadeira
   'ELE-006': 10, // Luminária - agora tem estoque mínimo
