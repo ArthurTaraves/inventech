@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, AlertCircle, Edit, Trash2, X, History, Eye, ArrowUpRight, ArrowDownRight, User, Package, MapPin } from 'lucide-react';
+import { Search, Plus, AlertCircle, Edit, X, History, Eye, ArrowUpRight, ArrowDownRight, User, Package, MapPin } from 'lucide-react';
 import { type Produto, type Criticidade } from '../data/mockData';
 import { bancoDadosStore } from '../data/bancoDadosStore';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
@@ -14,16 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../components/ui/alert-dialog';
 import { Label } from '../components/ui/label';
 import {
   Select,
@@ -77,7 +67,6 @@ export function Estoque() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState<string | null>(null);
-  const [produtoParaDeletar, setProdutoParaDeletar] = useState<string | null>(null);
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   const [isHistoricoOpen, setIsHistoricoOpen] = useState(false);
@@ -181,13 +170,6 @@ export function Estoque() {
     }
     resetFormulario();
     setIsDialogOpen(false);
-  };
-
-  const handleDeletar = () => {
-    if (!produtoParaDeletar) return;
-    setProdutosData(produtosData.filter(p => p.id !== produtoParaDeletar));
-    toast.success('Produto removido do estoque');
-    setProdutoParaDeletar(null);
   };
 
   const formatarData = (dataISO: string) => {
@@ -431,11 +413,6 @@ export function Estoque() {
                           className="p-1.5 rounded-lg text-blue-500 hover:text-blue-700 hover:bg-blue-50 transition-colors" title="Editar">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => setProdutoParaDeletar(produto.id)}
-                          aria-label={`Excluir ${produto.nome} do estoque`}
-                          className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Excluir">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -653,20 +630,6 @@ export function Estoque() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Delete confirm */}
-      <AlertDialog open={!!produtoParaDeletar} onOpenChange={open => !open && setProdutoParaDeletar(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-            <AlertDialogDescription>Esta ação removerá o produto do estoque e não pode ser desfeita.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeletar} className="bg-red-600 hover:bg-red-700">Excluir</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
