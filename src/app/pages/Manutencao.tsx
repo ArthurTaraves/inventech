@@ -119,6 +119,20 @@ function MaintenanceTimeline({ item }: { item: ItemManutencao }) {
   );
 }
 
+// Gera o próximo número de OS sequencial do ano corrente (ex: OS-2026-0001),
+// reiniciando a numeração a cada ano. Independente do número de série do
+// equipamento, já que o mesmo equipamento pode gerar várias OS ao longo do tempo.
+const gerarNumeroOS = (itensExistentes: ItemManutencao[]) => {
+  const ano = new Date().getFullYear();
+  const prefixo = `OS-${ano}-`;
+  const max = itensExistentes.reduce((acc, item) => {
+    if (!item.numeroOS?.startsWith(prefixo)) return acc;
+    const n = parseInt(item.numeroOS.slice(prefixo.length));
+    return isNaN(n) ? acc : Math.max(acc, n);
+  }, 0);
+  return `${prefixo}${String(max + 1).padStart(4, '0')}`;
+};
+
 export function Manutencao() {
   const { produtos, setProdutos, itensManutencao: itensData, setItensManutencao: setItensData } = useAlmoxarifado();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -291,6 +305,7 @@ export function Manutencao() {
       produtoId,
       produtoNome: produto.nome,
       numeroSerie: numeroSerieSelecionado || undefined,
+      numeroOS: gerarNumeroOS(itensData),
       status: 'Envio',
       dataEnvio: new Date().toISOString().split('T')[0],
       responsavel,
@@ -595,6 +610,9 @@ export function Manutencao() {
                 </div>
 
                 <div className="flex-1 min-w-0">
+                  {item.numeroOS && (
+                    <p className="text-xs font-semibold mb-0.5" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'var(--muted-foreground)' }}>{item.numeroOS}</p>
+                  )}
                   <div className="flex items-center gap-2 flex-wrap">
                     {temInercia && <span className="font-semibold text-xs" style={{ color: 'var(--text-red)' }}><span aria-hidden="true">⚠️</span> Sem atualização</span>}
                     <p className="font-semibold text-foreground">{item.produtoNome}</p>

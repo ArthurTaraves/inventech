@@ -29,6 +29,7 @@ export interface ItemManutencao {
   produtoId: string;
   produtoNome: string;
   numeroSerie?: string; // Número de série específico (ex: ELE-001-01)
+  numeroOS?: string; // Número da Ordem de Serviço (ex: OS-2026-0001) - identifica o processo, independente do número de série do equipamento
   status: StatusManutencao;
   dataEnvio: string;
   dataRetorno?: string;
@@ -77,6 +78,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoId: '2',
     produtoNome: 'Esmerilhadeira 4"',
     numeroSerie: 'ELE-002-01',
+    numeroOS: 'OS-2026-0001',
     status: 'Execução',
     dataEnvio: '2026-08-06',
     responsavel: 'Carlos Souza',
@@ -93,6 +95,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoId: '3',
     produtoNome: 'Esmerilhadeira 7"',
     numeroSerie: 'ELE-003-02',
+    numeroOS: 'OS-2026-0004',
     status: 'Peritagem',
     dataEnvio: '2026-08-18',
     responsavel: 'Marina Lopes',
@@ -107,6 +110,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoId: '6',
     produtoNome: 'Bomba Hidráulica',
     numeroSerie: 'HID-001-01',
+    numeroOS: 'OS-2026-0005',
     status: 'Envio',
     dataEnvio: '2026-08-24',
     responsavel: 'Paulo Mendes',
@@ -120,6 +124,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoId: '4',
     produtoNome: 'Furadeira',
     numeroSerie: 'ELE-005-03',
+    numeroOS: 'OS-2026-0002',
     status: 'Retorno',
     dataEnvio: '2026-08-10',
     dataRetorno: '2026-08-18',
@@ -138,6 +143,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoId: '5',
     produtoNome: 'Parafusadeira',
     numeroSerie: 'ELE-008-02',
+    numeroOS: 'OS-2026-0003',
     status: 'Retorno',
     dataEnvio: '2026-08-15',
     dataRetorno: '2026-08-20',

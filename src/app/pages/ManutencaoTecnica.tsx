@@ -353,6 +353,9 @@ export function ManutencaoTecnica() {
                 </span>
               )}
             </div>
+            {item.numeroOS && (
+              <p className="text-xs font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'var(--muted-foreground)' }}>{item.numeroOS}</p>
+            )}
             <p className="font-semibold text-foreground text-sm leading-tight truncate">{item.produtoNome}</p>
             {item.numeroSerie && (
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 5px', display: 'inline-block', marginTop: 2 }}>
@@ -485,7 +488,9 @@ export function ManutencaoTecnica() {
           <DialogHeader>
             <div style={{ background: 'linear-gradient(135deg, #0B1826 0%, #1E3A5F 100%)', margin: '-24px -24px 20px', padding: '20px 24px', borderRadius: '12px 12px 0 0' }}>
               <h2 className="text-white font-bold text-lg" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Ordem de Serviço</h2>
-              <p className="text-blue-300 text-sm mt-0.5">Informações completas e atualização de status</p>
+              <p className="text-blue-300 text-sm mt-0.5">
+                {itemSelecionado?.numeroOS ? <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>{itemSelecionado.numeroOS}</span> : 'Informações completas e atualização de status'}
+              </p>
             </div>
             <DialogTitle className="sr-only">Detalhes da Ordem de Serviço</DialogTitle>
             <DialogDescription className="sr-only">Informações e atualização de status</DialogDescription>
@@ -591,7 +596,7 @@ export function ManutencaoTecnica() {
                       <SelectItem value="Peritagem">🔍 Peritagem</SelectItem>
                       <SelectItem value="Aprovação">✅ Aprovação</SelectItem>
                       <SelectItem value="Execução">🔧 Execução</SelectItem>
-                      <SelectItem value="Retorno">🚚 Retorno ao estoque</SelectItem>
+                      <SelectItem value="Retorno">🏁 Dar Baixa (Concluir OS)</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : (
