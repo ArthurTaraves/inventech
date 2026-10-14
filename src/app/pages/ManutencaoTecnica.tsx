@@ -442,11 +442,16 @@ export function ManutencaoTecnica() {
       <div className="mb-6 flex flex-wrap gap-3">
         <div className="relative flex-1" style={{ minWidth: 240 }}>
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+          {/* border-input é transparent no tema claro (theme.css), deixando o
+              contorno invisível; #4B5768 (mesmo tom de --muted-foreground)
+              dá 6.6:1 de contraste contra o fundo, acima do mínimo 3:1 do
+              WCAG 1.4.11. No modo escuro o border-input original já é
+              visível, então ele é mantido via dark:border-input. */}
           <Input aria-label="Buscar ordens de serviço" placeholder="Buscar por produto, status, responsável ou empresa..." value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl" />
+            onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl border-[#4B5768] dark:border-input" />
         </div>
         <Select value={filtroEmpresa || '__all__'} onValueChange={v => setFiltroEmpresa(v === '__all__' ? '' : v)}>
-          <SelectTrigger aria-label="Filtrar por empresa de reparo" className="rounded-xl w-56"><SelectValue placeholder="Empresa" /></SelectTrigger>
+          <SelectTrigger aria-label="Filtrar por empresa de reparo" className="rounded-xl w-56 border-[#4B5768] dark:border-input"><SelectValue placeholder="Empresa" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">Todas as empresas</SelectItem>
             {empresasReparo.map(empresa => (
