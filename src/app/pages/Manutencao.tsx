@@ -637,11 +637,9 @@ export function Manutencao() {
                       <User className="w-3 h-3" />{item.responsavel}
                     </p>
                   )}
-                  {item.empresaReparo && (
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <Building2 className="w-3 h-3" />{item.empresaReparo}
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                    <Building2 className="w-3 h-3" />{item.empresaReparo || 'Empresa não informada'}
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
