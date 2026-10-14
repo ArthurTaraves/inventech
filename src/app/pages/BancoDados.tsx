@@ -402,7 +402,7 @@ export function BancoDados() {
             placeholder="Buscar produto ou categoria..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="pl-10 rounded-xl"
+            className="pl-10 rounded-xl border-[#4B5768] dark:border-input"
           />
         </div>
       </div>
