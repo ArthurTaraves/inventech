@@ -349,7 +349,7 @@ export function Solicitacoes() {
             placeholder="Buscar por número ou solicitante..."
             value={buscaSolicitante}
             onChange={e => setBuscaSolicitante(e.target.value)}
-            className="pl-10 rounded-xl"
+            className="pl-10 rounded-xl border-[#4B5768] dark:border-input"
           />
         </div>
         <button

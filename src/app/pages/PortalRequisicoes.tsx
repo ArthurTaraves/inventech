@@ -978,7 +978,7 @@ export function PortalRequisicoes() {
                 placeholder="Buscar por nome, matrícula ou número..."
                 value={searchMinhas}
                 onChange={e => setSearchMinhas(e.target.value)}
-                className="pl-10 rounded-xl"
+                className="pl-10 rounded-xl border-[#4B5768] dark:border-input"
               />
             </div>
           </div>
@@ -1056,24 +1056,24 @@ export function PortalRequisicoes() {
           <div className="flex flex-wrap gap-3 mb-5">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-              <Input aria-label="Buscar na central de solicitações" placeholder="Buscar..." value={buscaCentral} onChange={e => setBuscaCentral(e.target.value)} className="pl-9 rounded-xl w-52" />
+              <Input aria-label="Buscar na central de solicitações" placeholder="Buscar..." value={buscaCentral} onChange={e => setBuscaCentral(e.target.value)} className="pl-9 rounded-xl w-52 border-[#4B5768] dark:border-input" />
             </div>
             <Select value={filtroStatus || '__all__'} onValueChange={v => setFiltroStatus(v === '__all__' ? '' : v)}>
-              <SelectTrigger aria-label="Filtrar por status" className="rounded-xl w-48"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por status" className="rounded-xl w-48 border-[#4B5768] dark:border-input"><SelectValue placeholder="Status" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todos os status</SelectItem>
                 {STATUS_TODOS.map(s => <SelectItem key={s} value={s}>{STATUS_CONFIG[s].portalLabel}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={filtroSetor || '__all__'} onValueChange={v => setFiltroSetor(v === '__all__' ? '' : v)}>
-              <SelectTrigger aria-label="Filtrar por setor" className="rounded-xl w-44"><SelectValue placeholder="Setor" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por setor" className="rounded-xl w-44 border-[#4B5768] dark:border-input"><SelectValue placeholder="Setor" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todos os setores</SelectItem>
                 {setoresUnicos.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={filtroPrioridade || '__all__'} onValueChange={v => setFiltroPrioridade(v === '__all__' ? '' : v)}>
-              <SelectTrigger aria-label="Filtrar por prioridade" className="rounded-xl w-40"><SelectValue placeholder="Prioridade" /></SelectTrigger>
+              <SelectTrigger aria-label="Filtrar por prioridade" className="rounded-xl w-40 border-[#4B5768] dark:border-input"><SelectValue placeholder="Prioridade" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Todas</SelectItem>
                 <SelectItem value="Alta">🔴 Alta</SelectItem>

@@ -318,7 +318,7 @@ export function Estoque() {
         <div className="relative">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <Input type="text" aria-label="Buscar produtos no estoque" placeholder="Buscar por código, nome, categoria ou localização..."
-            value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl" />
+            value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl border-[#4B5768] dark:border-input" />
         </div>
       </div>
 

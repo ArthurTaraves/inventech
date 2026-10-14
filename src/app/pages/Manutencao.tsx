@@ -560,7 +560,7 @@ export function Manutencao() {
             placeholder="Buscar por produto, número de série, responsável ou status..."
             value={filtro}
             onChange={e => setFiltro(e.target.value)}
-            className="pl-10 rounded-xl"
+            className="pl-10 rounded-xl border-[#4B5768] dark:border-input"
           />
         </div>
       </div>
