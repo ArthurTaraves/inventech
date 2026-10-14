@@ -1,4 +1,4 @@
-import { Accessibility, Type, Contrast, MonitorPause, Moon } from 'lucide-react';
+import { Accessibility, Type, Contrast, Moon } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
@@ -11,7 +11,7 @@ const FONT_OPTIONS: { value: 'normal' | 'grande' | 'extra-grande'; label: string
 ];
 
 export function AccessibilityMenu() {
-  const { fontScale, setFontScale, highContrast, setHighContrast, reduceMotion, setReduceMotion, darkMode, setDarkMode } = useAccessibility();
+  const { fontScale, setFontScale, highContrast, setHighContrast, darkMode, setDarkMode } = useAccessibility();
 
   return (
     <Popover>
@@ -62,13 +62,6 @@ export function AccessibilityMenu() {
               <Contrast className="w-4 h-4" aria-hidden="true" /> Alto contraste
             </Label>
             <Switch id="a11y-high-contrast" checked={highContrast} onCheckedChange={setHighContrast} />
-          </div>
-
-          <div className="flex items-center justify-between gap-3">
-            <Label htmlFor="a11y-reduce-motion" className="flex items-center gap-2 text-sm font-medium text-foreground cursor-pointer">
-              <MonitorPause className="w-4 h-4" aria-hidden="true" /> Reduzir animações
-            </Label>
-            <Switch id="a11y-reduce-motion" checked={reduceMotion} onCheckedChange={setReduceMotion} />
           </div>
 
           <div className="flex items-center justify-between gap-3">
