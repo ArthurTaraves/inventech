@@ -30,6 +30,7 @@ export interface ItemManutencao {
   produtoNome: string;
   numeroSerie?: string; // Número de série específico (ex: ELE-001-01)
   numeroOS?: string; // Número da Ordem de Serviço (ex: OS-2026-0001) - identifica o processo, independente do número de série do equipamento
+  empresaReparo?: string; // Empresa terceirizada que executa o reparo externo
   status: StatusManutencao;
   dataEnvio: string;
   dataRetorno?: string;
@@ -45,6 +46,12 @@ export interface ItemManutencao {
   timestampExecucao?: string;
   timestampRetorno?: string;
 }
+
+export const empresasReparo = [
+  'Oficina Alfa Eletromecânica',
+  'Hidráulica Beta Serviços',
+  'Gama Eletrotécnica',
+];
 
 export const produtos: Produto[] = [
   { id: '1', nome: 'Detector de Gás', quantidade: 5, localizacoes: ['A-1'], criticidade: 'Alta', codigoProduto: 'ELE-001' },
@@ -79,6 +86,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoNome: 'Esmerilhadeira 4"',
     numeroSerie: 'ELE-002-01',
     numeroOS: 'OS-2026-0001',
+    empresaReparo: 'Oficina Alfa Eletromecânica',
     status: 'Execução',
     dataEnvio: '2026-08-06',
     responsavel: 'Carlos Souza',
@@ -96,6 +104,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoNome: 'Esmerilhadeira 7"',
     numeroSerie: 'ELE-003-02',
     numeroOS: 'OS-2026-0004',
+    empresaReparo: 'Oficina Alfa Eletromecânica',
     status: 'Peritagem',
     dataEnvio: '2026-08-18',
     responsavel: 'Marina Lopes',
@@ -111,6 +120,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoNome: 'Bomba Hidráulica',
     numeroSerie: 'HID-001-01',
     numeroOS: 'OS-2026-0005',
+    empresaReparo: 'Hidráulica Beta Serviços',
     status: 'Envio',
     dataEnvio: '2026-08-24',
     responsavel: 'Paulo Mendes',
@@ -125,6 +135,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoNome: 'Furadeira',
     numeroSerie: 'ELE-005-03',
     numeroOS: 'OS-2026-0002',
+    empresaReparo: 'Gama Eletrotécnica',
     status: 'Retorno',
     dataEnvio: '2026-08-10',
     dataRetorno: '2026-08-18',
@@ -144,6 +155,7 @@ export const itensManutencao: ItemManutencao[] = [
     produtoNome: 'Parafusadeira',
     numeroSerie: 'ELE-008-02',
     numeroOS: 'OS-2026-0003',
+    empresaReparo: 'Gama Eletrotécnica',
     status: 'Retorno',
     dataEnvio: '2026-08-15',
     dataRetorno: '2026-08-20',

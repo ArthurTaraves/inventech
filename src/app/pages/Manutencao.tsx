@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Wrench, Plus, CheckCircle, AlertCircle, Info, Calendar, ArrowRight, User, Clock, Search, ChevronDown, ChevronUp, Package, Truck, Tag, X } from 'lucide-react';
-import { type StatusManutencao, type ItemManutencao, type CriticidadeABC } from '../data/mockData';
+import { Wrench, Plus, CheckCircle, AlertCircle, Info, Calendar, ArrowRight, User, Clock, Search, ChevronDown, ChevronUp, Package, Truck, Tag, X, Building2 } from 'lucide-react';
+import { type StatusManutencao, type ItemManutencao, type CriticidadeABC, empresasReparo } from '../data/mockData';
 import { bancoDadosStore } from '../data/bancoDadosStore';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
 import { Button } from '../components/ui/button';
@@ -139,6 +139,7 @@ export function Manutencao() {
   const [produtoId, setProdutoId] = useState('');
   const [quantidade, setQuantidade] = useState('');
   const [responsavel, setResponsavel] = useState('');
+  const [empresaReparo, setEmpresaReparo] = useState('');
   const [observacao, setObservacao] = useState('');
   const [criticidadeABC, setCriticidadeABC] = useState<CriticidadeABC>('B');
   const [numeroSerieSelecionado, setNumeroSerieSelecionado] = useState<string>('');
@@ -291,6 +292,7 @@ export function Manutencao() {
     if (!produtoId) { toast.error('Selecione o produto a ser enviado para manutenção.'); return; }
     if (!quantidade) { toast.error('Informe a quantidade a ser enviada.'); return; }
     if (!responsavel) { toast.error('Informe o nome do responsável pelo envio.'); return; }
+    if (!empresaReparo) { toast.error('Selecione a empresa de reparo.'); return; }
     const produto = produtos.find(p => p.id === produtoId);
     if (!produto) return;
     const qtd = parseInt(quantidade);
@@ -309,6 +311,7 @@ export function Manutencao() {
       status: 'Envio',
       dataEnvio: new Date().toISOString().split('T')[0],
       responsavel,
+      empresaReparo,
       quantidadeEnviada: qtd,
       observacao: observacao || undefined,
       criticidadeABC,
@@ -316,7 +319,7 @@ export function Manutencao() {
       timestampEnvio: now,
     };
     setItensData([novoItem, ...itensData]);
-    setProdutoId(''); setQuantidade(''); setResponsavel(''); setObservacao('');
+    setProdutoId(''); setQuantidade(''); setResponsavel(''); setEmpresaReparo(''); setObservacao('');
     setCriticidadeABC('B'); setNumeroSerieSelecionado('');
     limparSelecaoProduto();
     setIsDialogOpen(false);
@@ -486,6 +489,18 @@ export function Manutencao() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="man-empresa-reparo">Empresa de reparo *</Label>
+                <Select value={empresaReparo} onValueChange={setEmpresaReparo}>
+                  <SelectTrigger id="man-empresa-reparo"><SelectValue placeholder="Selecione a empresa responsável" /></SelectTrigger>
+                  <SelectContent>
+                    {empresasReparo.map(empresa => (
+                      <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="man-criticidade">Grau de Criticidade *</Label>
                 <Select value={criticidadeABC} onValueChange={v => setCriticidadeABC(v as CriticidadeABC)}>
                   <SelectTrigger id="man-criticidade"><SelectValue /></SelectTrigger>
@@ -622,6 +637,9 @@ export function Manutencao() {
                       <User className="w-3 h-3" />{item.responsavel}
                     </p>
                   )}
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                    <Building2 className="w-3 h-3" />{item.empresaReparo || 'Empresa não informada'}
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">

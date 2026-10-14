@@ -25,6 +25,19 @@ function sincronizarLocalizacoes(produto: Produto): Produto {
 // sem apagar edições manuais feitas pelo usuário depois disso.
 const LOCALIZACOES_MIGRADAS_KEY = 'almoxarifado_localizacoes_migradas_v1';
 
+// Preenche empresaReparo em itens de manutenção salvos antes desse campo
+// existir, usando o item de mesmo id no mock como referência. Itens sem
+// correspondência no mock (criados pelo usuário) ficam sem empresa.
+function sincronizarEmpresaReparo(item: ItemManutencao): ItemManutencao {
+  if (item.empresaReparo) return item;
+  const itemMock = itensManutencaoIniciais.find(i => i.id === item.id);
+  return itemMock?.empresaReparo
+    ? { ...item, empresaReparo: itemMock.empresaReparo }
+    : item;
+}
+
+const EMPRESAS_REPARO_MIGRADAS_KEY = 'almoxarifado_empresas_reparo_migradas_v1';
+
 interface AlmoxarifadoContextType {
   produtos: Produto[];
   setProdutos: (produtos: Produto[]) => void;
@@ -94,7 +107,7 @@ export function AlmoxarifadoProvider({ children }: { children: ReactNode }) {
     if (saved) {
       const parsedData = JSON.parse(saved);
       // Migração automática: converter status antigos e adicionar criticidadeABC
-      return parsedData.map((item: any) => {
+      let itensCarregados: ItemManutencao[] = parsedData.map((item: any) => {
         const migratedItem = { ...item };
 
         // Mapear status antigos para novos
@@ -159,7 +172,17 @@ export function AlmoxarifadoProvider({ children }: { children: ReactNode }) {
 
         return migratedItem;
       });
+
+      // Limpeza pontual (uma vez só): preenche empresaReparo nos itens salvos
+      // antes desse campo existir, sem sobrescrever o que já estiver preenchido.
+      if (localStorage.getItem(EMPRESAS_REPARO_MIGRADAS_KEY) !== '1') {
+        itensCarregados = itensCarregados.map(sincronizarEmpresaReparo);
+        localStorage.setItem(EMPRESAS_REPARO_MIGRADAS_KEY, '1');
+      }
+
+      return itensCarregados;
     }
+    localStorage.setItem(EMPRESAS_REPARO_MIGRADAS_KEY, '1');
     return itensManutencaoIniciais;
   });
 

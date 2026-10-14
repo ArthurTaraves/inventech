@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Settings, CheckCircle, AlertCircle, Clock, User, Calendar, Wrench, Search, Lock, Eye, EyeOff } from 'lucide-react';
-import { type StatusManutencao, type ItemManutencao, type CriticidadeABC } from '../data/mockData';
+import { Settings, CheckCircle, AlertCircle, Clock, User, Calendar, Wrench, Search, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
+import { type StatusManutencao, type ItemManutencao, type CriticidadeABC, empresasReparo } from '../data/mockData';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -86,6 +86,7 @@ export function ManutencaoTecnica() {
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filtroEmpresa, setFiltroEmpresa] = useState('');
   const [itemSelecionado, setItemSelecionado] = useState<ItemManutencao | null>(null);
   const [isDetalhesOpen, setIsDetalhesOpen] = useState(false);
 
@@ -304,8 +305,10 @@ export function ManutencaoTecnica() {
       item.produtoNome.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (item.responsavel && item.responsavel.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.numeroSerie && item.numeroSerie.toLowerCase().includes(searchTerm.toLowerCase()))
+      (item.numeroSerie && item.numeroSerie.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (item.empresaReparo && item.empresaReparo.toLowerCase().includes(searchTerm.toLowerCase()))
     )
+    .filter(item => !filtroEmpresa || item.empresaReparo === filtroEmpresa)
     .sort((a, b) => ({ A: 3, B: 2, C: 1 }[b.criticidadeABC] - { A: 3, B: 2, C: 1 }[a.criticidadeABC]));
 
   const itensPendentes = itensFiltrados.filter(i => i.status === 'Envio' || i.status === 'Peritagem');
@@ -374,6 +377,9 @@ export function ManutencaoTecnica() {
               <User className="w-3 h-3" aria-hidden="true" />{item.responsavel}
             </p>
           )}
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <Building2 className="w-3 h-3" aria-hidden="true" />{item.empresaReparo || 'Empresa não informada'}
+          </p>
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Calendar className="w-3 h-3" aria-hidden="true" />{formatarData(item.dataEnvio)}
@@ -432,13 +438,22 @@ export function ManutencaoTecnica() {
         ))}
       </div>
 
-      {/* Search */}
-      <div className="mb-6">
-        <div className="relative">
+      {/* Search + filters */}
+      <div className="mb-6 flex flex-wrap gap-3">
+        <div className="relative flex-1" style={{ minWidth: 240 }}>
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-          <Input aria-label="Buscar ordens de serviço" placeholder="Buscar por produto, status ou responsável..." value={searchTerm}
+          <Input aria-label="Buscar ordens de serviço" placeholder="Buscar por produto, status, responsável ou empresa..." value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl" />
         </div>
+        <Select value={filtroEmpresa || '__all__'} onValueChange={v => setFiltroEmpresa(v === '__all__' ? '' : v)}>
+          <SelectTrigger aria-label="Filtrar por empresa de reparo" className="rounded-xl w-56"><SelectValue placeholder="Empresa" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">Todas as empresas</SelectItem>
+            {empresasReparo.map(empresa => (
+              <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Kanban board */}
@@ -528,6 +543,13 @@ export function ManutencaoTecnica() {
                   <div>
                     <p className="text-xs text-muted-foreground">Solicitante</p>
                     <p className="font-medium text-foreground text-sm">{itemSelecionado.responsavel || '—'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border border-border">
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Empresa de reparo</p>
+                    <p className="font-medium text-foreground text-sm">{itemSelecionado.empresaReparo || 'Empresa não informada'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border border-border">
