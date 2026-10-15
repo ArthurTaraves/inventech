@@ -339,7 +339,7 @@ export function ManutencaoTecnica() {
         type="button"
         onClick={() => { setItemSelecionado(item); setIsDetalhesOpen(true); }}
         aria-label={`${item.produtoNome} — ${getCriticidadeLabel(item.criticidadeABC)}${semaforoLabel ? ` — ${semaforoLabel}` : ''} — abrir ordem de serviço`}
-        className="w-full text-left p-3 bg-card rounded-xl cursor-pointer transition-all hover:shadow-md"
+        className="w-full min-w-0 text-left p-3 bg-card rounded-xl cursor-pointer transition-all hover:shadow-md"
         style={{
           border: `1.5px solid ${temInercia ? '#EF4444' : atrasado ? 'rgba(239,68,68,0.35)' : 'rgba(11,24,38,0.1)'}`,
         }}
@@ -359,7 +359,7 @@ export function ManutencaoTecnica() {
             {item.numeroOS && (
               <p className="text-xs font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'var(--muted-foreground)' }}>{item.numeroOS}</p>
             )}
-            <p className="font-semibold text-foreground text-sm leading-tight truncate">{item.produtoNome}</p>
+            <p className="font-semibold text-foreground text-sm leading-tight break-words">{item.produtoNome}</p>
             {item.numeroSerie && (
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 5px', display: 'inline-block', marginTop: 2 }}>
                 #{item.numeroSerie}
@@ -373,20 +373,23 @@ export function ManutencaoTecnica() {
 
         <div className="space-y-1">
           {item.responsavel && (
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <User className="w-3 h-3" aria-hidden="true" />{item.responsavel}
+            <p className="text-xs text-muted-foreground flex items-center gap-1 min-w-0">
+              <User className="w-3 h-3 shrink-0" aria-hidden="true" />
+              <span className="truncate" title={item.responsavel}>{item.responsavel}</span>
             </p>
           )}
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <Building2 className="w-3 h-3" aria-hidden="true" />{item.empresaReparo || 'Empresa não informada'}
+          <p className="text-xs text-muted-foreground flex items-center gap-1 min-w-0">
+            <Building2 className="w-3 h-3 shrink-0" aria-hidden="true" />
+            <span className="truncate" title={item.empresaReparo || 'Empresa não informada'}>{item.empresaReparo || 'Empresa não informada'}</span>
           </p>
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Calendar className="w-3 h-3" aria-hidden="true" />{formatarData(item.dataEnvio)}
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <p className="text-xs text-muted-foreground flex items-center gap-1 min-w-0 shrink">
+              <Calendar className="w-3 h-3 shrink-0" aria-hidden="true" />
+              <span className="truncate">{formatarData(item.dataEnvio)}</span>
             </p>
             {item.status !== 'Retorno' && (
-              <span className="text-xs font-bold flex items-center gap-1" style={{ color: atrasado ? 'var(--text-red)' : dias > 7 ? 'var(--text-amber)' : 'var(--text-green)' }}>
-                <span className="w-2 h-2 rounded-full inline-block" style={{ background: semaforoColor }} aria-hidden="true" />
+              <span className="text-xs font-bold flex items-center gap-1 shrink-0 whitespace-nowrap" style={{ color: atrasado ? 'var(--text-red)' : dias > 7 ? 'var(--text-amber)' : 'var(--text-green)' }}>
+                <span className="w-2 h-2 rounded-full inline-block shrink-0" style={{ background: semaforoColor }} aria-hidden="true" />
                 {dias}d · {semaforoLabel}
               </span>
             )}
@@ -461,25 +464,31 @@ export function ManutencaoTecnica() {
         </Select>
       </div>
 
-      {/* Kanban board */}
-      <div className="overflow-x-auto pb-4">
-        <div className="flex gap-4" style={{ minWidth: `${KANBAN_COLUMNS.length * 280}px` }}>
+      {/* Kanban board — grid de colunas fluidas (minmax(0,1fr) impede o conteudo
+          dos cards de alargar a coluna) a partir de ~1100px, largura da tela
+          onde as 5 colunas cabem confortavelmente sem cortar texto. Abaixo
+          disso, mantem o layout antigo com rolagem lateral. */}
+      <div className="overflow-x-auto pb-4 min-[1100px]:overflow-visible">
+        <div
+          className="flex gap-4 min-w-[1400px] min-[1100px]:grid min-[1100px]:gap-3 min-[1100px]:min-w-0 min-[1100px]:w-full"
+          style={{ gridTemplateColumns: `repeat(${KANBAN_COLUMNS.length}, minmax(0, 1fr))` }}
+        >
           {KANBAN_COLUMNS.map(col => {
             const colItems = itensFiltrados.filter(i => i.status === col.status);
             return (
-              <div key={col.status} className="flex-1" style={{ minWidth: '260px' }}>
+              <div key={col.status} className="flex-1 min-w-[260px] min-[1100px]:min-w-0">
                 {/* Column header */}
                 <div
-                  className="rounded-xl mb-3 px-4 py-3"
+                  className="rounded-xl mb-3 px-3 py-2.5"
                   style={{ background: col.headerBg, border: `1px solid ${col.cardBorderActive}` }}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">{col.emoji}</span>
-                      <h3 className="font-bold text-sm" style={{ color: col.headerText }}>{col.label}</h3>
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-base shrink-0">{col.emoji}</span>
+                      <h3 className="font-bold text-sm truncate" style={{ color: col.headerText }} title={col.label}>{col.label}</h3>
                     </div>
                     <span
-                      className="text-xs font-bold px-2 py-0.5 rounded-full"
+                      className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
                       style={{ background: `${col.accent}20`, color: col.headerText, border: `1px solid ${col.cardBorderActive}` }}
                     >
                       {colItems.length}
@@ -488,7 +497,7 @@ export function ManutencaoTecnica() {
                 </div>
 
                 {/* Cards */}
-                <div className="space-y-3 min-h-[200px]">
+                <div className="space-y-3 min-h-[200px] min-w-0">
                   {colItems.map(renderKanbanCard)}
                   {colItems.length === 0 && (
                     <div className="text-center py-10 border-2 border-dashed border-border rounded-xl">
