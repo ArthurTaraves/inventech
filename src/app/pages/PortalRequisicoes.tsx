@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   Search, Plus, Trash2, CheckCircle, XCircle, Eye, EyeOff, AlertTriangle, Package,
-  MapPin, User, Hash, Building2, Calendar, ShoppingCart, Inbox, Layers,
-  MessageSquare, ChevronRight, Flag, Truck, ClipboardCheck, Lock,
+  MapPin, User, Hash, Building2, Calendar, ShoppingCart, Layers,
+  MessageSquare, Flag, Truck, ClipboardCheck, Lock,
 } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -191,7 +191,7 @@ export function PortalRequisicoes() {
   }, [solicitacoes]);
 
   // ── Tab state ──
-  const [activeTab, setActiveTab] = useState<'nova' | 'minhas' | 'central'>('nova');
+  const [activeTab, setActiveTab] = useState<'nova' | 'central'>('nova');
 
   // ── Product search ──
   const [searchQuery, setSearchQuery] = useState('');
@@ -334,17 +334,8 @@ export function PortalRequisicoes() {
     setForm(emptyForm);
     setFormErrors({});
     toast.success(`Solicitação ${nova.numero} enviada com sucesso! O almoxarifado foi notificado.`);
-    setActiveTab('minhas');
+    setActiveTab('central');
   };
-
-  // ── My requests ──
-  const [searchMinhas, setSearchMinhas] = useState('');
-  const minhasSolicitacoes = solicitacoes.filter(s =>
-    !searchMinhas ||
-    s.solicitante.toLowerCase().includes(searchMinhas.toLowerCase()) ||
-    s.matricula.includes(searchMinhas) ||
-    s.numero.toLowerCase().includes(searchMinhas.toLowerCase())
-  );
 
   // ── Central filters & actions ──
   const [filtroStatus, setFiltroStatus] = useState('');
@@ -508,7 +499,6 @@ export function PortalRequisicoes() {
 
   const tabDef = [
     { key: 'nova',    label: 'Nova Solicitação',       icon: Plus,           badge: cart.length > 0 ? cart.length : null },
-    { key: 'minhas',  label: 'Minhas Solicitações',    icon: Inbox,          badge: null },
     { key: 'central', label: 'Central do Almoxarifado', icon: Layers,        badge: solicitacoes.filter(s => s.status === 'Solicitada').length || null },
   ];
 
@@ -543,7 +533,7 @@ export function PortalRequisicoes() {
           return (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key as 'nova' | 'minhas' | 'central')}
+              onClick={() => setActiveTab(tab.key as 'nova' | 'central')}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all relative"
               style={active ? {
                 background: '#1A56DB', color: 'white', boxShadow: '0 2px 8px rgba(26,86,219,0.3)',
@@ -967,81 +957,6 @@ export function PortalRequisicoes() {
         </div>
       )}
 
-      {/* ══ MINHAS SOLICITAÇÕES ════════════════════════════════════════════════ */}
-      {activeTab === 'minhas' && (
-        <div>
-          <div className="flex items-center justify-between mb-5">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-              <Input
-                aria-label="Buscar minhas solicitações"
-                placeholder="Buscar por nome, matrícula ou número..."
-                value={searchMinhas}
-                onChange={e => setSearchMinhas(e.target.value)}
-                className="pl-10 rounded-xl border-[#4B5768] dark:border-input"
-              />
-            </div>
-          </div>
-
-          {minhasSolicitacoes.length === 0 ? (
-            <div className="bg-card rounded-2xl border border-border flex flex-col items-center justify-center py-20 shadow-sm">
-              <Inbox className="w-14 h-14 text-muted-foreground/25 mb-3" />
-              <p className="text-muted-foreground font-medium">Nenhuma solicitação encontrada</p>
-              <button onClick={() => setActiveTab('nova')} className="mt-3 text-sm font-semibold text-blue-600 hover:underline">
-                Criar nova solicitação →
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {minhasSolicitacoes.map(sol => {
-                const cfg = STATUS_CONFIG[sol.status];
-                const criticidadeSol = getCriticidadeSolicitacao(sol);
-                return (
-                  <button
-                    key={sol.id}
-                    type="button"
-                    onClick={() => setDetalhe(sol)}
-                    aria-label={`Ver detalhes da solicitação ${sol.numero}`}
-                    className="w-full text-left bg-card rounded-2xl border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow overflow-hidden"
-                    style={{ borderLeft: `4px solid ${cfg.color}` }}
-                  >
-                    <div className="px-6 py-5">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 6, padding: '2px 8px' }}>
-                              {sol.numero}
-                            </span>
-                            <PrioridadeBadge prioridade={sol.prioridade} />
-                            {criticidadeSol && <CriticidadeBadge criticidade={criticidadeSol} />}
-                          </div>
-                          <p className="font-semibold text-foreground">{sol.solicitante}</p>
-                          <p className="text-sm text-muted-foreground">{sol.setor} · Matrícula {sol.matricula}</p>
-                        </div>
-                        <StatusBadge status={sol.status} usePortalLabel />
-                      </div>
-                      <div className="flex items-center gap-5 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                          <Package className="w-4 h-4" aria-hidden="true" />
-                          {sol.itens.length} {sol.itens.length === 1 ? 'item' : 'itens'}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" aria-hidden="true" />
-                          Retirada: {formatDate(sol.dataPrevista)}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <ChevronRight className="w-4 h-4" aria-hidden="true" />
-                          Criado em {formatDate(sol.dataCriacao)}
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
       </div>
 
       {/* ══ CENTRAL DO ALMOXARIFADO ════════════════════════════════════════════ */}
