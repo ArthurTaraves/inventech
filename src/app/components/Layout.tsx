@@ -24,7 +24,7 @@ const NAV_GROUPS = [
     label: 'MANUTENÇÃO',
     items: [
       { path: '/manutencao', icon: Wrench, label: 'Manutenção' },
-      { path: '/manutencao-tecnica', icon: Eye, label: 'Manutenção Visual' },
+      { path: '/manutencao-tecnica', icon: Eye, label: 'Empresa de Reparo' },
     ],
   },
   {
@@ -120,7 +120,7 @@ export function Layout() {
                         }}
                       >
                         <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
-                        <span>{item.label}</span>
+                        <span className="truncate min-w-0" title={item.label}>{item.label}</span>
                       </Link>
                     </li>
                   );

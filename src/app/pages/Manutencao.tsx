@@ -348,8 +348,14 @@ export function Manutencao() {
     <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Manutenção</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Rastreabilidade completa · Ordered by criticidade ABC</p>
+          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Manutenção · Almoxarifado</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Envio de itens para reparo externo e controle do almoxarifado · Ordenado por criticidade ABC</p>
+          <span
+            className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full mt-2"
+            style={{ color: 'var(--text-blue)', background: 'rgba(26,86,219,0.1)', border: '1px solid rgba(26,86,219,0.2)' }}
+          >
+            Uso do almoxarifado
+          </span>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) limparSelecaoProduto(); }}>
@@ -520,7 +526,7 @@ export function Manutencao() {
               <div className="p-3 rounded-xl flex items-start gap-2" style={{ background: 'rgba(26,86,219,0.06)', border: '1px solid rgba(26,86,219,0.15)' }}>
                 <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: 'var(--text-blue)' }} aria-hidden="true" />
                 <p className="text-xs" style={{ color: 'var(--text-blue)' }}>
-                  Ao enviar, o item sai do estoque. Ao marcar como "Retorno" na Manutenção Visual, as unidades retornam automaticamente.
+                  Ao enviar, o item sai do estoque. Ao marcar como "Retorno" no Painel da Empresa de Reparo, as unidades retornam automaticamente.
                 </p>
               </div>
             </div>
@@ -548,7 +554,7 @@ export function Manutencao() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground mt-2">O status é atualizado pela equipe técnica na aba "Manutenção Visual".</p>
+        <p className="text-xs text-muted-foreground mt-2">O status é atualizado pela empresa de reparo na aba "Painel da Empresa de Reparo".</p>
       </div>
 
       {/* Search */}
