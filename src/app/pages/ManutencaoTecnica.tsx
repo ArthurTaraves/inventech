@@ -218,11 +218,11 @@ export function ManutencaoTecnica() {
             <h1 className="text-2xl font-bold text-white mt-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '0.04em' }}>
               InvenTech
             </h1>
-            <p className="text-sm mt-1" style={{ color: 'rgba(184,200,217,0.7)' }}>Manutenção Visual</p>
+            <p className="text-sm mt-1" style={{ color: 'rgba(184,200,217,0.7)' }}>Painel da Empresa de Reparo</p>
           </div>
 
           <div className="mb-2 text-center">
-            <p className="text-sm font-medium" style={{ color: 'rgba(184,200,217,0.9)' }}>Acesso Restrito</p>
+            <p className="text-sm font-medium" style={{ color: 'rgba(184,200,217,0.9)' }}>Acesso da empresa de reparo</p>
             <p className="text-xs mt-0.5" style={{ color: 'rgba(184,200,217,0.5)' }}>Informe suas credenciais para continuar</p>
           </div>
 
@@ -409,8 +409,14 @@ export function ManutencaoTecnica() {
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Manutenção Visual</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Kanban de ordens de serviço · Ordenado por Criticidade ABC</p>
+          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Painel da Empresa de Reparo</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Acompanhamento e atualização de status pelas empresas de reparo · Ordenado por Criticidade ABC</p>
+          <span
+            className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full mt-2"
+            style={{ color: 'var(--text-violet)', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}
+          >
+            Uso da empresa de reparo
+          </span>
         </div>
         <Button
           onClick={() => { setAutenticado(false); setUsuario(''); setSenha(''); toast.success('Logout realizado'); }}

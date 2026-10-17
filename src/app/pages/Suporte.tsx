@@ -112,9 +112,9 @@ export function Suporte() {
   const faqs = [
     { pergunta: 'Como adiciono um novo produto ao estoque?', resposta: 'Primeiro, cadastre o produto na "Área Administrativa". Depois, vá até "Estoque" e clique em "Novo Produto" para informar a quantidade e localização.' },
     { pergunta: 'Como faço para registrar uma movimentação?', resposta: 'Acesse a aba "Movimentação", selecione o tipo (Entrada ou Saída), escolha o produto, informe a quantidade e clique em "Confirmar Movimentação".' },
-    { pergunta: 'Como acompanho o status de um item em manutenção?', resposta: 'Na aba "Manutenção", clique em qualquer item para expandir a linha do tempo completa com todas as etapas e timestamps.' },
-    { pergunta: 'O que são os semáforos 🟢🟡🔴?', resposta: 'Indicam o prazo da manutenção: Verde (≤7 dias), Amarelo (8-14 dias) e Vermelho (+14 dias). Aparecem no Dashboard e na Manutenção.' },
-    { pergunta: 'Como envio um equipamento para manutenção?', resposta: 'Na aba "Manutenção", clique em "Enviar para Manutenção", selecione o produto e confirme. Acompanhe o processo pela mesma tela ou pela "Manutenção Visual".' },
+    { pergunta: 'Como acompanho o status de um item em manutenção?', resposta: 'Na aba "Manutenção · Almoxarifado", clique em qualquer item para expandir a linha do tempo completa com todas as etapas e timestamps.' },
+    { pergunta: 'O que são os semáforos 🟢🟡🔴?', resposta: 'Indicam o prazo da manutenção: Verde (≤7 dias), Amarelo (8-14 dias) e Vermelho (+14 dias). Aparecem no Dashboard e na "Manutenção · Almoxarifado".' },
+    { pergunta: 'Como envio um equipamento para manutenção?', resposta: 'Na aba "Manutenção · Almoxarifado", clique em "Enviar para Manutenção", selecione o produto, escolha a empresa de reparo e confirme. O acompanhamento das etapas é feito pela empresa de reparo no "Painel da Empresa de Reparo".' },
     { pergunta: 'Os dados são salvos automaticamente?', resposta: 'Sim! Todas as alterações são salvas automaticamente no navegador (localStorage). Os dados permanecem disponíveis mesmo após fechar o sistema.' },
   ];
 
