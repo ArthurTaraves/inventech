@@ -23,8 +23,8 @@ const NAV_GROUPS = [
   {
     label: 'MANUTENÇÃO',
     items: [
-      { path: '/manutencao', icon: Wrench, label: 'Manutenção · Almoxarifado' },
-      { path: '/manutencao-tecnica', icon: Eye, label: 'Painel da Empresa de Reparo' },
+      { path: '/manutencao', icon: Wrench, label: 'Manutenção' },
+      { path: '/manutencao-tecnica', icon: Eye, label: 'Empresa de Reparo' },
     ],
   },
   {
