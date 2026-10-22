@@ -199,6 +199,31 @@ export function AlmoxarifadoProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('almoxarifado_manutencao', JSON.stringify(itensManutencao));
   }, [itensManutencao]);
 
+  // Criticidade é definida somente na Área Administrativa (bancoDadosStore é a
+  // fonte única de verdade) — diferente das migrações pontuais acima, esta
+  // sincronização é contínua: roda no carregamento e a cada mudança no
+  // catálogo, refletindo imediatamente em todas as telas sem precisar recarregar
+  // a página. Só atualiza o estado quando alguma criticidade realmente mudou,
+  // para não causar renderizações nem gravações no localStorage desnecessárias.
+  useEffect(() => {
+    const sincronizarCriticidadeComCatalogo = () => {
+      setProdutosState(prev => {
+        let mudou = false;
+        const atualizados = prev.map(produto => {
+          if (!produto.codigoProduto) return produto;
+          const criticidadeCatalogo = bancoDadosStore.getCriticidadePorCodigo(produto.codigoProduto);
+          if (!criticidadeCatalogo || criticidadeCatalogo === produto.criticidade) return produto;
+          mudou = true;
+          return { ...produto, criticidade: criticidadeCatalogo };
+        });
+        return mudou ? atualizados : prev;
+      });
+    };
+
+    sincronizarCriticidadeComCatalogo();
+    return bancoDadosStore.subscribe(sincronizarCriticidadeComCatalogo);
+  }, []);
+
   // Funções auxiliares
   const setProdutos = (novosProdutos: Produto[]) => {
     setProdutosState(novosProdutos);

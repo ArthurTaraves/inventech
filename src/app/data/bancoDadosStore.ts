@@ -1,3 +1,5 @@
+import type { Criticidade, CriticidadeABC, Produto, ItemManutencao } from './mockData';
+
 export interface ProdutoCatalogo {
   id: string;
   codigoProduto: string; // ID manual visível em todas as telas
@@ -7,6 +9,7 @@ export interface ProdutoCatalogo {
   estoqueMinimo: number;
   estoqueMaximo: number;
   ativo: boolean;
+  criticidade: Criticidade; // Definida somente na Área Administrativa — fonte única para todas as telas
 }
 
 // Produto Individual Serializado (cada unidade física)
@@ -26,33 +29,33 @@ export interface ProdutoSerializadoDB {
 // Banco de dados inicial de produtos válidos
 export const produtosCatalogoInicial: ProdutoCatalogo[] = [
   // Ferramentas Elétricas
-  { id: '1', codigoProduto: 'ELE-001', nome: 'Detector de Gás', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 10, ativo: true },
-  { id: '2', codigoProduto: 'ELE-002', nome: 'Esmerilhadeira 4"', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 3, estoqueMaximo: 15, ativo: true },
-  { id: '3', codigoProduto: 'ELE-003', nome: 'Esmerilhadeira 7"', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 10, ativo: true },
-  { id: '4', codigoProduto: 'ELE-004', nome: 'Inversora', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 8, ativo: true },
-  { id: '5', codigoProduto: 'ELE-005', nome: 'Furadeira', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true },
-  { id: '6', codigoProduto: 'ELE-006', nome: 'Luminária', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 30, ativo: true },
-  { id: '7', codigoProduto: 'ELE-007', nome: 'Furadeira de Mesa', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 1, estoqueMaximo: 5, ativo: true },
-  { id: '8', codigoProduto: 'ELE-008', nome: 'Parafusadeira', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true },
-  { id: '9', codigoProduto: 'ELE-009', nome: 'Soprador', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 3, estoqueMaximo: 12, ativo: true },
+  { id: '1', codigoProduto: 'ELE-001', nome: 'Detector de Gás', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 10, ativo: true, criticidade: 'Alta' },
+  { id: '2', codigoProduto: 'ELE-002', nome: 'Esmerilhadeira 4"', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 3, estoqueMaximo: 15, ativo: true, criticidade: 'Alta' },
+  { id: '3', codigoProduto: 'ELE-003', nome: 'Esmerilhadeira 7"', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 10, ativo: true, criticidade: 'Alta' },
+  { id: '4', codigoProduto: 'ELE-004', nome: 'Inversora', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 8, ativo: true, criticidade: 'Média' },
+  { id: '5', codigoProduto: 'ELE-005', nome: 'Furadeira', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true, criticidade: 'Média' },
+  { id: '6', codigoProduto: 'ELE-006', nome: 'Luminária', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 30, ativo: true, criticidade: 'Média' },
+  { id: '7', codigoProduto: 'ELE-007', nome: 'Furadeira de Mesa', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 1, estoqueMaximo: 5, ativo: true, criticidade: 'Média' },
+  { id: '8', codigoProduto: 'ELE-008', nome: 'Parafusadeira', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true, criticidade: 'Média' },
+  { id: '9', codigoProduto: 'ELE-009', nome: 'Soprador', categoria: 'Ferramentas Elétricas', unidadeMedida: 'UN', estoqueMinimo: 3, estoqueMaximo: 12, ativo: true, criticidade: 'Média' },
 
   // Equipamentos Hidráulicos
-  { id: '10', codigoProduto: 'HID-001', nome: 'Bomba Hidráulica', categoria: 'Equipamentos Hidráulicos', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 8, ativo: true },
-  { id: '11', codigoProduto: 'HID-002', nome: 'Macaco Hidráulico', categoria: 'Equipamentos Hidráulicos', unidadeMedida: 'UN', estoqueMinimo: 3, estoqueMaximo: 12, ativo: true },
-  { id: '12', codigoProduto: 'HID-003', nome: 'Manifold', categoria: 'Equipamentos Hidráulicos', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 10, ativo: true },
+  { id: '10', codigoProduto: 'HID-001', nome: 'Bomba Hidráulica', categoria: 'Equipamentos Hidráulicos', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 8, ativo: true, criticidade: 'Alta' },
+  { id: '11', codigoProduto: 'HID-002', nome: 'Macaco Hidráulico', categoria: 'Equipamentos Hidráulicos', unidadeMedida: 'UN', estoqueMinimo: 3, estoqueMaximo: 12, ativo: true, criticidade: 'Média' },
+  { id: '12', codigoProduto: 'HID-003', nome: 'Manifold', categoria: 'Equipamentos Hidráulicos', unidadeMedida: 'UN', estoqueMinimo: 2, estoqueMaximo: 10, ativo: true, criticidade: 'Média' },
 
   // Equipamentos de Segurança
-  { id: '13', codigoProduto: 'SEG-001', nome: 'Máscara de Fuga', categoria: 'Equipamentos de Segurança', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true },
+  { id: '13', codigoProduto: 'SEG-001', nome: 'Máscara de Fuga', categoria: 'Equipamentos de Segurança', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true, criticidade: 'Alta' },
 
   // Ferramentas Manuais
-  { id: '14', codigoProduto: 'MAN-001', nome: 'Marreta', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true },
-  { id: '15', codigoProduto: 'MAN-002', nome: 'Chave Combinada', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 40, ativo: true },
-  { id: '16', codigoProduto: 'MAN-003', nome: 'Chave Grifo', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true },
-  { id: '17', codigoProduto: 'MAN-004', nome: 'Chave Inglesa', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 8, estoqueMaximo: 25, ativo: true },
-  { id: '18', codigoProduto: 'MAN-005', nome: 'Martelo Bola', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 15, ativo: true },
-  { id: '19', codigoProduto: 'MAN-006', nome: 'Punção', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 30, ativo: true },
-  { id: '20', codigoProduto: 'MAN-007', nome: 'Espina', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 30, ativo: true },
-  { id: '21', codigoProduto: 'MAN-008', nome: 'Soquete', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 15, estoqueMaximo: 50, ativo: true },
+  { id: '14', codigoProduto: 'MAN-001', nome: 'Marreta', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true, criticidade: 'Baixa' },
+  { id: '15', codigoProduto: 'MAN-002', nome: 'Chave Combinada', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 40, ativo: true, criticidade: 'Média' },
+  { id: '16', codigoProduto: 'MAN-003', nome: 'Chave Grifo', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 20, ativo: true, criticidade: 'Média' },
+  { id: '17', codigoProduto: 'MAN-004', nome: 'Chave Inglesa', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 8, estoqueMaximo: 25, ativo: true, criticidade: 'Média' },
+  { id: '18', codigoProduto: 'MAN-005', nome: 'Martelo Bola', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 5, estoqueMaximo: 15, ativo: true, criticidade: 'Média' },
+  { id: '19', codigoProduto: 'MAN-006', nome: 'Punção', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 30, ativo: true, criticidade: 'Média' },
+  { id: '20', codigoProduto: 'MAN-007', nome: 'Espina', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 10, estoqueMaximo: 30, ativo: true, criticidade: 'Média' },
+  { id: '21', codigoProduto: 'MAN-008', nome: 'Soquete', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 15, estoqueMaximo: 50, ativo: true, criticidade: 'Baixa' },
 ];
 
 // Quantidades em estoque de cada produto - TODOS os produtos devem ter pelo menos estoqueMinimo unidades
@@ -135,8 +138,63 @@ const gerarProdutosSerializados = (): ProdutoSerializadoDB[] => {
   return serializados;
 };
 
+const CATALOGO_STORAGE_KEY = 'almoxarifado_catalogo_v1';
+const CRITICIDADES_VALIDAS: Criticidade[] = ['Baixa', 'Média', 'Alta'];
+
+function validarItemCatalogo(item: any): boolean {
+  return (
+    item &&
+    typeof item.id === 'string' &&
+    typeof item.codigoProduto === 'string' &&
+    typeof item.nome === 'string' &&
+    typeof item.categoria === 'string' &&
+    typeof item.unidadeMedida === 'string' &&
+    typeof item.estoqueMinimo === 'number' &&
+    typeof item.estoqueMaximo === 'number' &&
+    typeof item.ativo === 'boolean'
+  );
+}
+
+// Carrega o catálogo salvo pela Área Administrativa. Em caso de dado ausente
+// ou corrompido, volta ao catálogo inicial em vez de quebrar a aplicação.
+function carregarCatalogoPersistido(): ProdutoCatalogo[] {
+  try {
+    const salvo = localStorage.getItem(CATALOGO_STORAGE_KEY);
+    if (!salvo) return [...produtosCatalogoInicial];
+
+    const parsed = JSON.parse(salvo);
+    if (!Array.isArray(parsed) || parsed.length === 0 || !parsed.every(validarItemCatalogo)) {
+      return [...produtosCatalogoInicial];
+    }
+
+    // Itens salvos por uma versão anterior ao campo criticidade recebem o
+    // padrão 'Média' em vez de terem o restante dos dados descartado.
+    return parsed.map((item: any): ProdutoCatalogo => ({
+      ...item,
+      criticidade: CRITICIDADES_VALIDAS.includes(item.criticidade) ? item.criticidade : 'Média',
+    }));
+  } catch {
+    return [...produtosCatalogoInicial];
+  }
+}
+
+function salvarCatalogoPersistido(produtos: ProdutoCatalogo[]) {
+  try {
+    localStorage.setItem(CATALOGO_STORAGE_KEY, JSON.stringify(produtos));
+  } catch {
+    // localStorage indisponível (modo privado, cota excedida etc.) — o
+    // catálogo continua funcionando em memória nesta sessão, só não persiste.
+  }
+}
+
+type ListenerCatalogo = () => void;
+const listenersCatalogo = new Set<ListenerCatalogo>();
+function notificarMudancaCatalogo() {
+  listenersCatalogo.forEach(fn => fn());
+}
+
 // Store simples em memória
-let produtosCatalogo = [...produtosCatalogoInicial];
+let produtosCatalogo = carregarCatalogoPersistido();
 let produtosSerializados = gerarProdutosSerializados();
 
 export const bancoDadosStore = {
@@ -146,7 +204,19 @@ export const bancoDadosStore = {
 
   setProdutos: (produtos: ProdutoCatalogo[]) => {
     produtosCatalogo = produtos;
+    salvarCatalogoPersistido(produtosCatalogo);
+    notificarMudancaCatalogo();
   },
+
+  // Assina mudanças no catálogo (ex.: edição de criticidade na Área
+  // Administrativa). Retorna a função de cancelamento da inscrição.
+  subscribe: (listener: ListenerCatalogo) => {
+    listenersCatalogo.add(listener);
+    return () => listenersCatalogo.delete(listener);
+  },
+
+  getCriticidadePorCodigo: (codigoProduto: string): Criticidade | undefined =>
+    produtosCatalogo.find(p => p.codigoProduto === codigoProduto)?.criticidade,
 
   getProdutoByNome: (nome: string) =>
     produtosCatalogo.find(p => p.nome.toLowerCase() === nome.toLowerCase()),
@@ -222,3 +292,24 @@ export const bancoDadosStore = {
     return Array.from(new Set(locais)).sort();
   },
 };
+
+// Conversão única da escala de 3 níveis (catálogo/estoque) para a escala ABC
+// (ordens de manutenção) — único lugar do sistema que faz essa conversão.
+export function criticidadeParaABC(criticidade: Criticidade): CriticidadeABC {
+  if (criticidade === 'Alta') return 'A';
+  if (criticidade === 'Média') return 'B';
+  return 'C';
+}
+
+// Criticidade ABC de uma ordem de manutenção, derivada ao vivo da criticidade
+// atual do produto (já sincronizada com o catálogo pelo AlmoxarifadoContext) —
+// nunca uma cópia parada. Cai no valor salvo na própria ordem só quando o
+// produto correspondente não existe mais (ex.: removido do catálogo), para
+// não quebrar ordens antigas.
+export function getCriticidadeABCDoItem(
+  item: Pick<ItemManutencao, 'produtoId' | 'produtoNome' | 'criticidadeABC'>,
+  produtos: Pick<Produto, 'id' | 'nome' | 'criticidade'>[]
+): CriticidadeABC {
+  const produto = produtos.find(p => p.id === item.produtoId || p.nome === item.produtoNome);
+  return produto ? criticidadeParaABC(produto.criticidade) : item.criticidadeABC;
+}
