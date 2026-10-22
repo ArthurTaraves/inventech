@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Package, Wrench, AlertTriangle, TrendingUp, ArrowUpRight, ArrowDownRight, Clock, BarChart3, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
-import { bancoDadosStore } from '../data/bancoDadosStore';
+import { bancoDadosStore, getCriticidadeABCDoItem } from '../data/bancoDadosStore';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog';
 
 const SemaforoIndicator = ({ status, contexto = 'prazo' }: { status: 'green' | 'yellow' | 'red'; contexto?: 'prazo' | 'estoque' }) => {
@@ -461,16 +461,17 @@ export function Dashboard() {
                   <div className="space-y-2">
                     {itensAtrasados.map(item => {
                       const dias = Math.floor((new Date().getTime() - new Date(item.dataEnvio).getTime()) / (1000 * 60 * 60 * 24));
+                      const critABC = getCriticidadeABCDoItem(item, produtos);
                       return (
                         <div key={item.id} className="flex items-center justify-between p-3 rounded-lg border" style={{ background: 'rgba(239,68,68,0.04)', borderColor: 'rgba(239,68,68,0.2)' }}>
                           <div className="flex items-center gap-2">
                             <Wrench className="w-4 h-4 text-red-400" />
                             <span className="text-sm font-medium text-foreground">{item.produtoNome}</span>
                             <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${
-                              item.criticidadeABC === 'A' ? 'bg-red-100 text-red-700' :
-                              item.criticidadeABC === 'B' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                              critABC === 'A' ? 'bg-red-100 text-red-700' :
+                              critABC === 'B' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
                             }`}>
-                              {item.criticidadeABC} · {labelCriticidadeABC[item.criticidadeABC]}
+                              {critABC} · {labelCriticidadeABC[critABC]}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -627,11 +628,15 @@ export function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {itensManutencao
                 .filter(i => i.status !== 'Retorno')
-                .sort((a, b) => ({ A: 3, B: 2, C: 1 }[b.criticidadeABC] - { A: 3, B: 2, C: 1 }[a.criticidadeABC]))
+                .sort((a, b) => {
+                  const ord: Record<string, number> = { A: 3, B: 2, C: 1 };
+                  return ord[getCriticidadeABCDoItem(b, produtos)] - ord[getCriticidadeABCDoItem(a, produtos)];
+                })
                 .slice(0, 9)
                 .map(item => {
                   const dias = Math.floor((new Date().getTime() - new Date(item.dataEnvio).getTime()) / (1000 * 60 * 60 * 24));
                   const s = getSemaforoManutencao(item);
+                  const critABC = getCriticidadeABCDoItem(item, produtos);
                   const borderColors = { red: '#EF4444', yellow: '#EAB308', green: '#22C55E' };
                   const bgColors = { red: 'rgba(239,68,68,0.05)', yellow: 'rgba(234,179,8,0.05)', green: 'rgba(34,197,94,0.05)' };
                   return (
@@ -639,10 +644,10 @@ export function Dashboard() {
                       <div className="flex items-start justify-between mb-1.5">
                         <span className="text-sm font-medium text-foreground truncate flex-1">{item.produtoNome}</span>
                         <span className={`text-xs px-1.5 py-0.5 rounded font-bold ml-2 whitespace-nowrap ${
-                          item.criticidadeABC === 'A' ? 'bg-red-100 text-red-800' :
-                          item.criticidadeABC === 'B' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                          critABC === 'A' ? 'bg-red-100 text-red-800' :
+                          critABC === 'B' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
                         }`}>
-                          {item.criticidadeABC} · {labelCriticidadeABC[item.criticidadeABC]}
+                          {critABC} · {labelCriticidadeABC[critABC]}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">

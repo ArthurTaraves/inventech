@@ -311,5 +311,6 @@ export function getCriticidadeABCDoItem(
   produtos: Pick<Produto, 'id' | 'nome' | 'criticidade'>[]
 ): CriticidadeABC {
   const produto = produtos.find(p => p.id === item.produtoId || p.nome === item.produtoNome);
-  return produto ? criticidadeParaABC(produto.criticidade) : item.criticidadeABC;
+  if (!produto || !CRITICIDADES_VALIDAS.includes(produto.criticidade)) return item.criticidadeABC;
+  return criticidadeParaABC(produto.criticidade);
 }

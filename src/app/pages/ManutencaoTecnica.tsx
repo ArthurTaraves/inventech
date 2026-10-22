@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Settings, CheckCircle, AlertCircle, Clock, User, Calendar, Wrench, Search, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
 import { type StatusManutencao, type ItemManutencao, type CriticidadeABC, empresasReparo } from '../data/mockData';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
+import { getCriticidadeABCDoItem } from '../data/bancoDadosStore';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -309,7 +310,10 @@ export function ManutencaoTecnica() {
       (item.empresaReparo && item.empresaReparo.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .filter(item => !filtroEmpresa || item.empresaReparo === filtroEmpresa)
-    .sort((a, b) => ({ A: 3, B: 2, C: 1 }[b.criticidadeABC] - { A: 3, B: 2, C: 1 }[a.criticidadeABC]));
+    .sort((a, b) => {
+      const ord: Record<string, number> = { A: 3, B: 2, C: 1 };
+      return ord[getCriticidadeABCDoItem(b, produtos)] - ord[getCriticidadeABCDoItem(a, produtos)];
+    });
 
   const itensPendentes = itensFiltrados.filter(i => i.status === 'Envio' || i.status === 'Peritagem');
   const itensEmAndamento = itensFiltrados.filter(i => i.status === 'Aprovação' || i.status === 'Execução');
@@ -328,7 +332,8 @@ export function ManutencaoTecnica() {
     const dias = getDaysElapsed(item.dataEnvio);
     const temInercia = verificarInercia(item);
     const atrasado = isAtrasado(item);
-    const critStyle = getCriticidadeStyle(item.criticidadeABC);
+    const critABC = getCriticidadeABCDoItem(item, produtos);
+    const critStyle = getCriticidadeStyle(critABC);
     const semaforoColor = atrasado ? '#EF4444' : dias > 7 ? '#EAB308' : '#22C55E';
 
     const semaforoLabel = item.status === 'Retorno' ? null : atrasado ? 'Atrasado' : dias > 7 ? 'Atenção' : 'No prazo';
@@ -338,7 +343,7 @@ export function ManutencaoTecnica() {
         key={item.id}
         type="button"
         onClick={() => { setItemSelecionado(item); setIsDetalhesOpen(true); }}
-        aria-label={`${item.produtoNome} — ${getCriticidadeLabel(item.criticidadeABC)}${semaforoLabel ? ` — ${semaforoLabel}` : ''} — abrir ordem de serviço`}
+        aria-label={`${item.produtoNome} — ${getCriticidadeLabel(critABC)}${semaforoLabel ? ` — ${semaforoLabel}` : ''} — abrir ordem de serviço`}
         className="w-full min-w-0 text-left p-3 bg-card rounded-xl cursor-pointer transition-all hover:shadow-md"
         style={{
           border: `1.5px solid ${temInercia ? '#EF4444' : atrasado ? 'rgba(239,68,68,0.35)' : 'rgba(11,24,38,0.1)'}`,
@@ -367,7 +372,7 @@ export function ManutencaoTecnica() {
             )}
           </div>
           <span className="text-xs font-bold px-2 py-0.5 rounded-full ml-2 shrink-0 whitespace-nowrap" style={critStyle}>
-            {item.criticidadeABC} · {getCriticidadeLabel(item.criticidadeABC)}
+            {critABC} · {getCriticidadeLabel(critABC)}
           </span>
         </div>
 
@@ -548,8 +553,8 @@ export function ManutencaoTecnica() {
                   </span>
                 )}
                 <div className="flex gap-2 flex-wrap">
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full" style={getCriticidadeStyle(itemSelecionado.criticidadeABC)}>
-                    {itemSelecionado.criticidadeABC} — {getCriticidadeLabel(itemSelecionado.criticidadeABC)}
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full" style={getCriticidadeStyle(getCriticidadeABCDoItem(itemSelecionado, produtos))}>
+                    {getCriticidadeABCDoItem(itemSelecionado, produtos)} — {getCriticidadeLabel(getCriticidadeABCDoItem(itemSelecionado, produtos))}
                   </span>
                   <span className={`text-xs px-2.5 py-0.5 rounded-full border ${getStatusColor(itemSelecionado.status)}`}>
                     {itemSelecionado.status}

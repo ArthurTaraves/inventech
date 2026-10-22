@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Wrench, Plus, CheckCircle, AlertCircle, Info, Calendar, ArrowRight, User, Clock, Search, ChevronDown, ChevronUp, Package, Truck, Tag, X, Building2 } from 'lucide-react';
 import { type StatusManutencao, type ItemManutencao, type CriticidadeABC, empresasReparo } from '../data/mockData';
-import { bancoDadosStore } from '../data/bancoDadosStore';
+import { bancoDadosStore, getCriticidadeABCDoItem, criticidadeParaABC } from '../data/bancoDadosStore';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
@@ -141,7 +141,6 @@ export function Manutencao() {
   const [responsavel, setResponsavel] = useState('');
   const [empresaReparo, setEmpresaReparo] = useState('');
   const [observacao, setObservacao] = useState('');
-  const [criticidadeABC, setCriticidadeABC] = useState<CriticidadeABC>('B');
   const [numeroSerieSelecionado, setNumeroSerieSelecionado] = useState<string>('');
   const [filtro, setFiltro] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -314,13 +313,14 @@ export function Manutencao() {
       empresaReparo,
       quantidadeEnviada: qtd,
       observacao: observacao || undefined,
-      criticidadeABC,
+      // Criticidade vem do catálogo (Área Administrativa) — nunca escolhida aqui.
+      criticidadeABC: criticidadeParaABC(produto.criticidade),
       ultimaAtualizacao: now,
       timestampEnvio: now,
     };
     setItensData([novoItem, ...itensData]);
     setProdutoId(''); setQuantidade(''); setResponsavel(''); setEmpresaReparo(''); setObservacao('');
-    setCriticidadeABC('B'); setNumeroSerieSelecionado('');
+    setNumeroSerieSelecionado('');
     limparSelecaoProduto();
     setIsDialogOpen(false);
     toast.success(`${qtd} unidade(s) de ${produto.nome} enviada(s) para manutenção.`);
@@ -339,7 +339,7 @@ export function Manutencao() {
     })
     .sort((a, b) => {
       const ord: Record<CriticidadeABC, number> = { A: 3, B: 2, C: 1 };
-      return ord[b.criticidadeABC] - ord[a.criticidadeABC];
+      return ord[getCriticidadeABCDoItem(b, produtos)] - ord[getCriticidadeABCDoItem(a, produtos)];
     });
 
   const semaforoColors = { red: '#EF4444', yellow: '#EAB308', green: '#22C55E' };
@@ -506,17 +506,22 @@ export function Manutencao() {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="man-criticidade">Grau de Criticidade *</Label>
-                <Select value={criticidadeABC} onValueChange={v => setCriticidadeABC(v as CriticidadeABC)}>
-                  <SelectTrigger id="man-criticidade"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="A">🔴 A — Crítico</SelectItem>
-                    <SelectItem value="B">🟡 B — Médio</SelectItem>
-                    <SelectItem value="C">🟢 C — Baixo</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {produtoId && (() => {
+                const produtoSelecionado = produtos.find(p => p.id === produtoId);
+                if (!produtoSelecionado) return null;
+                const critABC = criticidadeParaABC(produtoSelecionado.criticidade);
+                return (
+                  <div className="space-y-2">
+                    <Label>Criticidade</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap" style={getCriticidadeStyle(critABC)}>
+                        {critABC} · {getCriticidadeLabel(critABC)}
+                      </span>
+                      <p className="text-xs text-muted-foreground">Definida na Área Administrativa</p>
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="space-y-2">
                 <Label htmlFor="man-observacao">Observação (opcional)</Label>
@@ -586,7 +591,8 @@ export function Manutencao() {
           const temInercia = verificarInercia(item);
           const semaforo = getSemaforoStatus(item);
           const isExpanded = expandedId === item.id;
-          const critStyle = getCriticidadeStyle(item.criticidadeABC);
+          const critABC = getCriticidadeABCDoItem(item, produtos);
+          const critStyle = getCriticidadeStyle(critABC);
           const cardBorderColor = temInercia ? '#EF4444' : semaforo === 'red' ? 'rgba(239,68,68,0.4)' : semaforo === 'yellow' ? 'rgba(234,179,8,0.4)' : 'rgba(11,24,38,0.1)';
 
           return (
@@ -650,7 +656,7 @@ export function Manutencao() {
 
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap" style={critStyle}>
-                    {item.criticidadeABC} · {getCriticidadeLabel(item.criticidadeABC)}
+                    {critABC} · {getCriticidadeLabel(critABC)}
                   </span>
                   <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusColor(item.status)}`}>
                     {item.status}

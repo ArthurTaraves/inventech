@@ -217,7 +217,7 @@ export function BancoDados() {
       unidadeMedida: formulario.unidadeMedida,
       estoqueMinimo: parseInt(formulario.estoqueMinimo),
       estoqueMaximo: parseInt(formulario.estoqueMaximo),
-      ativo: true,
+      ativo: isEditMode ? (produtos.find(p => p.id === produtoSelecionado)?.ativo ?? true) : true,
       criticidade: formulario.criticidade,
     };
 

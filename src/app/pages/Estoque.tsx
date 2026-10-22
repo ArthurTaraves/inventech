@@ -79,7 +79,6 @@ export function Estoque() {
     quantidade: '',
     localizacoes: [] as string[],
     novaLocalizacao: '',
-    criticidade: 'Média' as Criticidade,
   });
 
   const produtosCatalogo = bancoDadosStore.getProdutosAtivos();
@@ -107,7 +106,7 @@ export function Estoque() {
   };
 
   const resetFormulario = () => {
-    setNovoProduto({ produtoId: '', quantidade: '', localizacoes: [], novaLocalizacao: '', criticidade: 'Média' });
+    setNovoProduto({ produtoId: '', quantidade: '', localizacoes: [], novaLocalizacao: '' });
     setIsEditMode(false);
     setProdutoEditando(null);
   };
@@ -119,7 +118,6 @@ export function Estoque() {
       quantidade: String(produto.quantidade),
       localizacoes: produto.localizacoes ? [...produto.localizacoes] : [],
       novaLocalizacao: '',
-      criticidade: produto.criticidade,
     });
     setProdutoEditando(produto.id);
     setIsEditMode(true);
@@ -153,16 +151,18 @@ export function Estoque() {
 
     if (isEditMode && produtoEditando) {
       setProdutosData(produtosData.map(p =>
-        p.id === produtoEditando ? { ...p, quantidade, localizacoes: novoProduto.localizacoes, criticidade: novoProduto.criticidade } : p
+        p.id === produtoEditando ? { ...p, quantidade, localizacoes: novoProduto.localizacoes } : p
       ));
       toast.success('Produto atualizado com sucesso!');
     } else {
+      // Criticidade vem do catálogo (Área Administrativa) — fonte única, nunca
+      // escolhida aqui. codigoProduto do catálogo é sempre preenchido.
       const produto: Produto = {
         id: String(Date.now()),
         nome: produtoCatalogo.nome,
         quantidade,
         localizacoes: novoProduto.localizacoes,
-        criticidade: novoProduto.criticidade,
+        criticidade: produtoCatalogo.criticidade,
         codigoProduto: produtoCatalogo.codigoProduto,
       };
       setProdutosData([...produtosData, produto]);
@@ -282,17 +282,18 @@ export function Estoque() {
                   </div>
                 )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="estoque-criticidade">Criticidade</Label>
-                <Select value={novoProduto.criticidade} onValueChange={v => setNovoProduto({ ...novoProduto, criticidade: v as Criticidade })}>
-                  <SelectTrigger id="estoque-criticidade"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Baixa">🟢 Baixa</SelectItem>
-                    <SelectItem value="Média">🟡 Média</SelectItem>
-                    <SelectItem value="Alta">🔴 Alta</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {novoProduto.produtoId && (() => {
+                const cat = produtosCatalogo.find(p => p.id === novoProduto.produtoId);
+                return cat ? (
+                  <div className="space-y-1.5">
+                    <Label>Criticidade</Label>
+                    <div className="flex items-center gap-2">
+                      <CritBadge c={cat.criticidade} />
+                      <p className="text-xs text-muted-foreground">Definida na Área Administrativa</p>
+                    </div>
+                  </div>
+                ) : null;
+              })()}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
