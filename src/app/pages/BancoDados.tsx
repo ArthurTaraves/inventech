@@ -30,8 +30,24 @@ import {
 } from '../components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { bancoDadosStore, type ProdutoCatalogo } from '../data/bancoDadosStore';
+import type { Criticidade } from '../data/mockData';
 
 const unidadesMedida = ['UN', 'KG', 'M', 'L', 'CX', 'PCT'];
+
+const CritBadge = ({ c }: { c: Criticidade }) => {
+  const cfg: Record<Criticidade, { bg: string; color: string; border: string; label: string; icon: string }> = {
+    Alta: { bg: 'rgba(239,68,68,0.1)', color: 'var(--text-red)', border: 'rgba(239,68,68,0.3)', label: 'Alta', icon: '🔴' },
+    Média: { bg: 'rgba(245,158,11,0.1)', color: 'var(--text-amber)', border: 'rgba(245,158,11,0.3)', label: 'Média', icon: '🟡' },
+    Baixa: { bg: 'rgba(34,197,94,0.1)', color: 'var(--text-green)', border: 'rgba(34,197,94,0.3)', label: 'Baixa', icon: '🟢' },
+  };
+  const s = cfg[c] || cfg['Baixa'];
+  return (
+    <span style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}`, borderRadius: '9999px', padding: '2px 10px', fontSize: '11px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+      <span aria-hidden="true">{s.icon}</span>
+      {s.label}
+    </span>
+  );
+};
 
 const thStyle: React.CSSProperties = {
   padding: '10px 20px',
@@ -91,6 +107,7 @@ export function BancoDados() {
     unidadeMedida: 'UN',
     estoqueMinimo: '',
     estoqueMaximo: '',
+    criticidade: 'Média' as Criticidade,
   });
 
   const produtosFiltrados = produtos.filter((produto) =>
@@ -149,7 +166,7 @@ export function BancoDados() {
   };
 
   const resetFormulario = () => {
-    setFormulario({ codigoProduto: '', nome: '', categoria: '', unidadeMedida: 'UN', estoqueMinimo: '', estoqueMaximo: '' });
+    setFormulario({ codigoProduto: '', nome: '', categoria: '', unidadeMedida: 'UN', estoqueMinimo: '', estoqueMaximo: '', criticidade: 'Média' });
     setErros({});
     setIsEditMode(false);
     setProdutoSelecionado(null);
@@ -168,6 +185,7 @@ export function BancoDados() {
       unidadeMedida: produto.unidadeMedida,
       estoqueMinimo: String(produto.estoqueMinimo),
       estoqueMaximo: String(produto.estoqueMaximo),
+      criticidade: produto.criticidade,
     });
     setProdutoSelecionado(produto.id);
     setIsEditMode(true);
@@ -200,6 +218,7 @@ export function BancoDados() {
       estoqueMinimo: parseInt(formulario.estoqueMinimo),
       estoqueMaximo: parseInt(formulario.estoqueMaximo),
       ativo: true,
+      criticidade: formulario.criticidade,
     };
 
     if (isEditMode) {
@@ -419,6 +438,7 @@ export function BancoDados() {
                 <th scope="col" style={thStyle}>Categoria</th>
                 <th scope="col" style={thStyle}>Unidade</th>
                 <th scope="col" style={thStyle}>Estoque Mín/Máx</th>
+                <th scope="col" style={thStyle}>Criticidade</th>
                 <th scope="col" style={thStyle}>Ações</th>
               </tr>
             </thead>
@@ -493,6 +513,9 @@ export function BancoDados() {
                         <span className="text-sm text-foreground">{produto.estoqueMinimo} <span className="text-muted-foreground">/</span> {produto.estoqueMaximo}</span>
                       </td>
                       <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
+                        <CritBadge c={produto.criticidade} />
+                      </td>
+                      <td style={{ padding: '14px 20px', whiteSpace: 'nowrap' }}>
                         <div className="flex items-center gap-1">
                           <button onClick={() => abrirDialogEditar(produto)}
                             aria-label={`Editar ${produto.nome}`}
@@ -518,7 +541,7 @@ export function BancoDados() {
 
                     {isExpandido && totalUnidades > 0 && (
                       <tr key={`${produto.id}-expanded`}>
-                        <td colSpan={7} style={{ padding: 0, background: 'var(--surface-alt)', borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
+                        <td colSpan={8} style={{ padding: 0, background: 'var(--surface-alt)', borderBottom: '1px solid rgba(11,24,38,0.06)' }}>
                           <div className="px-10 py-5" style={{ borderLeft: '3px solid rgba(26,86,219,0.3)', marginLeft: 20 }}>
                             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
                               Unidades Serializadas — {produto.codigoProduto}
@@ -689,6 +712,22 @@ export function BancoDados() {
                 />
                 {erros.estoqueMaximo && <p id="bd-estoque-max-erro" className="text-xs" style={{ color: 'var(--text-red)' }}>{erros.estoqueMaximo}</p>}
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bd-criticidade">Criticidade *</Label>
+              <Select
+                value={formulario.criticidade}
+                onValueChange={(value) => setFormulario({ ...formulario, criticidade: value as Criticidade })}
+              >
+                <SelectTrigger id="bd-criticidade" className="rounded-xl"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Baixa">🟢 Baixa</SelectItem>
+                  <SelectItem value="Média">🟡 Média</SelectItem>
+                  <SelectItem value="Alta">🔴 Alta</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">A criticidade é definida somente aqui e vale para todas as telas.</p>
             </div>
           </div>
           <DialogFooter>
