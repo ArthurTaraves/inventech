@@ -378,6 +378,11 @@ export function Manutencao() {
 
   // Só valida e abre a confirmação — nada é gravado até o usuário confirmar.
   const handleEnviarManutencao = () => {
+    if (produtoId) {
+      const produtoPendente = produtos.find(p => p.id === produtoId);
+      toast.error(`Você escolheu ${produtoPendente?.nome || 'um produto'} mas ainda não adicionou à ordem. Clique em "Adicionar à ordem" ou limpe a seleção.`);
+      return;
+    }
     if (itensDaOrdem.length === 0) { toast.error('Adicione pelo menos um item à ordem.'); return; }
     if (!responsavel) { toast.error('Informe o nome do responsável pelo envio.'); return; }
     if (!empresaReparo) { toast.error('Selecione a empresa de reparo.'); return; }
@@ -722,22 +727,21 @@ export function Manutencao() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="man-responsavel">Responsável *</Label>
-                  <Input id="man-responsavel" value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="man-empresa-reparo">Empresa de reparo *</Label>
-                  <Select value={empresaReparo} onValueChange={setEmpresaReparo}>
-                    <SelectTrigger id="man-empresa-reparo"><SelectValue placeholder="Selecione a empresa responsável" /></SelectTrigger>
-                    <SelectContent>
-                      {empresasReparo.map(empresa => (
-                        <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="man-responsavel">Responsável *</Label>
+                <Input id="man-responsavel" value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="man-empresa-reparo">Empresa de reparo *</Label>
+                <Select value={empresaReparo} onValueChange={setEmpresaReparo}>
+                  <SelectTrigger id="man-empresa-reparo"><SelectValue placeholder="Selecione a empresa responsável" /></SelectTrigger>
+                  <SelectContent>
+                    {empresasReparo.map(empresa => (
+                      <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -756,7 +760,7 @@ export function Manutencao() {
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
               <Button
                 onClick={handleEnviarManutencao}
-                disabled={itensDaOrdem.length === 0 || !responsavel || !empresaReparo}
+                disabled={(itensDaOrdem.length === 0 && !produtoId) || !responsavel || !empresaReparo}
                 style={{ background: '#1A56DB', color: 'white' }}
                 className="hover:opacity-90"
               >
@@ -771,14 +775,9 @@ export function Manutencao() {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Confirmar envio para manutenção</AlertDialogTitle>
-              <AlertDialogDescription>Confira a empresa de reparo e o item antes de confirmar.</AlertDialogDescription>
+              <AlertDialogDescription>Confira a empresa de reparo e os itens antes de confirmar.</AlertDialogDescription>
             </AlertDialogHeader>
-            {/* Resumo mínimo nesta etapa — a Etapa 2 lista cada linha da ordem aqui. */}
-            <div className="space-y-2 py-2 text-sm">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-muted-foreground">Itens</span>
-                <span className="font-semibold text-foreground">{itensDaOrdem.length}</span>
-              </div>
+            <div className="space-y-3 py-2 text-sm">
               <div className="flex items-center justify-between gap-3 p-2.5 rounded-lg" style={{ background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)' }}>
                 <span className="text-muted-foreground">Empresa de reparo</span>
                 <span className="font-bold" style={{ color: 'var(--text-blue)' }}>{empresaReparo}</span>
@@ -786,6 +785,41 @@ export function Manutencao() {
               <div className="flex items-center justify-between gap-3">
                 <span className="text-muted-foreground">Responsável</span>
                 <span className="font-semibold text-foreground">{responsavel}</span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-2">Itens ({itensDaOrdem.length})</p>
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {itensDaOrdem.map(linha => {
+                    const produtoLinha = produtos.find(p => p.id === linha.produtoId);
+                    const critLinha = produtoLinha ? criticidadeParaABC(produtoLinha.criticidade) : null;
+                    return (
+                      <div key={linha.chave} className="flex items-center justify-between gap-2 p-2 rounded-lg border border-border">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                            {linha.codigoProduto && (
+                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 5px' }}>
+                                {linha.codigoProduto}
+                              </span>
+                            )}
+                            {linha.numeroSerie && (
+                              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 5px' }}>
+                                #{linha.numeroSerie}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {linha.produtoNome} <span className="text-muted-foreground font-normal">× {linha.quantidade}</span>
+                          </p>
+                        </div>
+                        {critLinha && (
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0" style={getCriticidadeStyle(critLinha)}>
+                            {critLinha} · {getCriticidadeLabel(critLinha)}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <AlertDialogFooter>
