@@ -601,7 +601,7 @@ export function Manutencao() {
               <div className="p-3 rounded-xl flex items-start gap-2" style={{ background: 'rgba(26,86,219,0.06)', border: '1px solid rgba(26,86,219,0.15)' }}>
                 <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: 'var(--text-blue)' }} aria-hidden="true" />
                 <p className="text-xs" style={{ color: 'var(--text-blue)' }}>
-                  Ao enviar, o item sai do estoque. Ao marcar como "Retorno" no Painel da Empresa de Reparo, as unidades retornam automaticamente.
+                  Ao enviar, o item sai do estoque. As unidades voltam ao estoque quando o almoxarifado confirma o recebimento.
                 </p>
               </div>
             </div>
@@ -720,7 +720,7 @@ export function Manutencao() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground mt-2">O status é atualizado pela empresa de reparo na aba "Painel da Empresa de Reparo".</p>
+        <p className="text-xs text-muted-foreground mt-2">O status é atualizado pela empresa de reparo. O retorno ao estoque é confirmado pelo almoxarifado.</p>
       </div>
 
       {/* Search */}
@@ -891,7 +891,7 @@ export function Manutencao() {
                         { key: 'Peritagem', ts: item.timestampPeritagem, label: 'Peritagem iniciada', by: null },
                         { key: 'Aprovação', ts: item.timestampAprovacao, label: 'Manutenção aprovada', by: null },
                         { key: 'Execução', ts: item.timestampExecucao, label: 'Execução iniciada', by: null },
-                        { key: 'Retorno', ts: item.timestampRetorno, label: 'Item retornado ao estoque', by: null },
+                        { key: 'Retorno', ts: item.timestampRetorno, label: item.aguardandoRecebimento ? 'Reparo concluído — aguardando confirmação do almoxarifado' : 'Item retornado ao estoque', by: null },
                       ].filter(e => e.ts).map(event => (
                         <div key={event.key} className="flex items-start gap-3 p-2.5 bg-card rounded-lg border border-border">
                           <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ background: '#1A56DB' }} />
