@@ -891,7 +891,17 @@ export function Manutencao() {
                         { key: 'Peritagem', ts: item.timestampPeritagem, label: 'Peritagem iniciada', by: null },
                         { key: 'Aprovação', ts: item.timestampAprovacao, label: 'Manutenção aprovada', by: null },
                         { key: 'Execução', ts: item.timestampExecucao, label: 'Execução iniciada', by: null },
-                        { key: 'Retorno', ts: item.timestampRetorno, label: item.aguardandoRecebimento ? 'Reparo concluído — aguardando confirmação do almoxarifado' : 'Item retornado ao estoque', by: null },
+                        {
+                          key: 'Retorno',
+                          // Já recebido: mostra quando o almoxarifado confirmou (não quando a
+                          // empresa marcou como concluído). Itens antigos, sem esse registro,
+                          // continuam usando timestampRetorno.
+                          ts: (item.aguardandoRecebimento === false && item.recebimentoConfirmadoEm)
+                            ? item.recebimentoConfirmadoEm
+                            : item.timestampRetorno,
+                          label: item.aguardandoRecebimento ? 'Reparo concluído — aguardando confirmação do almoxarifado' : 'Item retornado ao estoque',
+                          by: null,
+                        },
                       ].filter(e => e.ts).map(event => (
                         <div key={event.key} className="flex items-start gap-3 p-2.5 bg-card rounded-lg border border-border">
                           <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ background: '#1A56DB' }} />
