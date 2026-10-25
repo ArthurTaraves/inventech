@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Settings, CheckCircle, AlertCircle, Clock, User, Calendar, Wrench, Search, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
-import { type StatusManutencao, type ItemManutencao, type CriticidadeABC, empresasReparo } from '../data/mockData';
+import { type StatusManutencao, type ItemManutencao, type CriticidadeABC } from '../data/mockData';
 import { useAlmoxarifado } from '../context/AlmoxarifadoContext';
 import { getCriticidadeABCDoItem } from '../data/bancoDadosStore';
 import { Button } from '../components/ui/button';
@@ -87,7 +87,6 @@ export function ManutencaoTecnica() {
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filtroEmpresa, setFiltroEmpresa] = useState('');
   const [itemSelecionado, setItemSelecionado] = useState<ItemManutencao | null>(null);
   const [isDetalhesOpen, setIsDetalhesOpen] = useState(false);
 
@@ -303,7 +302,6 @@ export function ManutencaoTecnica() {
       (item.numeroSerie && item.numeroSerie.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (item.empresaReparo && item.empresaReparo.toLowerCase().includes(searchTerm.toLowerCase()))
     )
-    .filter(item => !filtroEmpresa || item.empresaReparo === filtroEmpresa)
     .sort((a, b) => {
       const ord: Record<string, number> = { A: 3, B: 2, C: 1 };
       return ord[getCriticidadeABCDoItem(b, produtos)] - ord[getCriticidadeABCDoItem(a, produtos)];
@@ -466,15 +464,6 @@ export function ManutencaoTecnica() {
           <Input aria-label="Buscar ordens de serviço" placeholder="Buscar por produto, status, responsável ou empresa..." value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)} className="pl-10 rounded-xl border-[#4B5768] dark:border-input" />
         </div>
-        <Select value={filtroEmpresa || '__all__'} onValueChange={v => setFiltroEmpresa(v === '__all__' ? '' : v)}>
-          <SelectTrigger aria-label="Filtrar por empresa de reparo" className="rounded-xl w-56 border-[#4B5768] dark:border-input"><SelectValue placeholder="Empresa" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__all__">Todas as empresas</SelectItem>
-            {empresasReparo.map(empresa => (
-              <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Kanban board — grid de colunas fluidas (minmax(0,1fr) impede o conteudo

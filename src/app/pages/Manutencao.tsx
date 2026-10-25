@@ -165,6 +165,7 @@ export function Manutencao() {
   const [numeroSerieSelecionado, setNumeroSerieSelecionado] = useState<string>('');
   const [itensDaOrdem, setItensDaOrdem] = useState<LinhaOrdemManutencao[]>([]);
   const [filtro, setFiltro] = useState('');
+  const [filtroEmpresa, setFiltroEmpresa] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isConfirmacaoEnvioOpen, setIsConfirmacaoEnvioOpen] = useState(false);
   const [enviando, setEnviando] = useState(false);
@@ -490,6 +491,7 @@ export function Manutencao() {
         (item.responsavel && item.responsavel.toLowerCase().includes(q)) ||
         item.status.toLowerCase().includes(q);
     })
+    .filter(item => !filtroEmpresa || item.empresaReparo === filtroEmpresa)
     .sort((a, b) => {
       const ord: Record<CriticidadeABC, number> = { A: 3, B: 2, C: 1 };
       return ord[getCriticidadeABCDoItem(b, produtos)] - ord[getCriticidadeABCDoItem(a, produtos)];
@@ -499,7 +501,7 @@ export function Manutencao() {
 
   return (
     <div className="p-8">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex items-center flex-wrap gap-3 justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Manutenção · Almoxarifado</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Envio de itens para reparo externo e controle do almoxarifado · Ordenado por criticidade ABC</p>
@@ -513,8 +515,8 @@ export function Manutencao() {
 
         <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) limparSelecaoProduto(); }}>
           <DialogTrigger asChild>
-            <Button style={{ background: '#1A56DB', color: 'white' }} className="hover:opacity-90">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button style={{ background: '#1A56DB', color: 'white' }} className="hover:opacity-90 whitespace-normal h-auto text-center py-2">
+              <Plus className="w-4 h-4 mr-2 shrink-0" />
               Enviar para Manutenção
             </Button>
           </DialogTrigger>
@@ -889,9 +891,9 @@ export function Manutencao() {
         <p className="text-xs text-muted-foreground mt-2">O status é atualizado pela empresa de reparo. O retorno ao estoque é confirmado pelo almoxarifado.</p>
       </div>
 
-      {/* Search */}
-      <div className="mb-6">
-        <div className="relative">
+      {/* Search + filtro por empresa de reparo */}
+      <div className="mb-6 flex flex-wrap gap-3">
+        <div className="relative flex-1 min-w-[160px]">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <Input
             aria-label="Buscar ordens de manutenção"
@@ -901,6 +903,15 @@ export function Manutencao() {
             className="pl-10 rounded-xl border-[#4B5768] dark:border-input"
           />
         </div>
+        <Select value={filtroEmpresa || '__all__'} onValueChange={v => setFiltroEmpresa(v === '__all__' ? '' : v)}>
+          <SelectTrigger aria-label="Filtrar por empresa de reparo" className="rounded-xl w-full sm:w-56 border-[#4B5768] dark:border-input"><SelectValue placeholder="Empresa" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">Todas as empresas</SelectItem>
+            {empresasReparo.map(empresa => (
+              <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Items list */}
@@ -931,7 +942,7 @@ export function Manutencao() {
               {/* Header row */}
               <button
                 type="button"
-                className="w-full flex items-center gap-4 px-5 py-4 cursor-pointer transition-colors hover:bg-muted/40 text-left"
+                className="w-full flex items-center flex-wrap gap-x-4 gap-y-2 px-5 py-4 cursor-pointer transition-colors hover:bg-muted/40 text-left"
                 onClick={() => setExpandedId(isExpanded ? null : item.id)}
                 aria-expanded={isExpanded}
               >
@@ -981,7 +992,7 @@ export function Manutencao() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center flex-wrap gap-2">
                   <span className="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap" style={critStyle}>
                     {critABC} · {getCriticidadeLabel(critABC)}
                   </span>
