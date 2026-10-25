@@ -518,7 +518,7 @@ export function Manutencao() {
               Enviar para Manutenção
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
             <DialogHeader>
               <div style={{ background: 'linear-gradient(135deg, #0B1826 0%, #1E3A5F 100%)', margin: '-24px -24px 20px', padding: '20px 24px', borderRadius: '12px 12px 0 0' }}>
                 <div className="flex items-center gap-2 text-white">
@@ -530,7 +530,7 @@ export function Manutencao() {
               <DialogTitle className="sr-only">Enviar para Manutenção</DialogTitle>
               <DialogDescription className="sr-only">Formulário de envio para manutenção</DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-2">
+            <div className="space-y-4 py-2 overflow-y-auto min-h-0 px-1 -mx-1">
               <div className="space-y-2">
                 <Label htmlFor="man-produto">Produto *</Label>
                 <div ref={searchRef} className="relative">
@@ -553,7 +553,7 @@ export function Manutencao() {
                     )}
                   </div>
                   {showSugestoes && sugestoes.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+                    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-xl shadow-lg overflow-y-auto max-h-64">
                       {sugestoes.map((s, idx) => (
                         <button key={idx} type="button" onClick={() => selecionarProdutoSugestao(s)}
                           className="w-full flex items-start gap-3 px-4 py-3 hover:bg-muted/60 transition-colors text-left border-b border-border last:border-0">
@@ -686,7 +686,7 @@ export function Manutencao() {
               {itensDaOrdem.length > 0 && (
                 <div className="space-y-2" role="region" aria-label="Itens da ordem">
                   <p className="text-sm font-semibold text-foreground">Itens da ordem ({itensDaOrdem.length})</p>
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  <div className="space-y-2">
                     {itensDaOrdem.map(linha => {
                       const produtoLinha = produtos.find(p => p.id === linha.produtoId);
                       const critLinha = produtoLinha ? criticidadeParaABC(produtoLinha.criticidade) : null;
