@@ -45,6 +45,13 @@ export interface ItemManutencao {
   timestampAprovacao?: string;
   timestampExecucao?: string;
   timestampRetorno?: string;
+  // Retorno em duas etapas: a empresa de reparo marca o reparo como concluído
+  // (status vira 'Retorno' + aguardandoRecebimento: true, sem mexer no estoque);
+  // só quando o almoxarifado confirma o recebimento é que o estoque é somado.
+  // undefined = já recebido (itens antigos, sem migração necessária).
+  aguardandoRecebimento?: boolean;
+  recebimentoConfirmadoEm?: string;
+  recebimentoConfirmadoPor?: string;
 }
 
 export const empresasReparo = [

@@ -80,7 +80,7 @@ const KANBAN_COLUMNS: {
 ];
 
 export function ManutencaoTecnica() {
-  const { produtos, setProdutos, itensManutencao: itensData, setItensManutencao: setItensData } = useAlmoxarifado();
+  const { produtos, itensManutencao: itensData, setItensManutencao: setItensData } = useAlmoxarifado();
 
   const [autenticado, setAutenticado] = useState(false);
   const [usuario, setUsuario] = useState('');
@@ -145,19 +145,11 @@ export function ManutencaoTecnica() {
     return `${dias}d ${horas}h`;
   };
 
+  // Reparo concluído pela empresa de reparo NÃO mexe no estoque — isso só
+  // acontece quando o almoxarifado confirma o recebimento (aba "Manutenção").
   const handleAtualizarStatus = (itemId: string, novoStatus: StatusManutencao) => {
     const item = itensData.find(i => i.id === itemId);
     if (!item) return;
-
-    if (novoStatus === 'Retorno' && item.status !== 'Retorno') {
-      const produto = produtos.find(p => p.id === item.produtoId);
-      if (produto && item.quantidadeEnviada) {
-        setProdutos(produtos.map(p =>
-          p.id === item.produtoId ? { ...p, quantidade: p.quantidade + (item.quantidadeEnviada || 0) } : p
-        ));
-        toast.success(`${item.produtoNome} retornou! ${item.quantidadeEnviada} unidade(s) devolvida(s) ao estoque.`);
-      }
-    }
 
     const now = new Date().toISOString();
     setItensData(itensData.map(i => {
@@ -170,6 +162,7 @@ export function ManutencaoTecnica() {
       else if (novoStatus === 'Retorno') {
         u.timestampRetorno = now;
         if (!i.dataRetorno) u.dataRetorno = new Date().toISOString().split('T')[0];
+        if (i.status !== 'Retorno') u.aguardandoRecebimento = true;
       }
       return u;
     }));
@@ -179,8 +172,9 @@ export function ManutencaoTecnica() {
       Peritagem: 'Peritagem iniciada',
       'Aprovação': 'Aprovado para manutenção',
       'Execução': 'Reparo em andamento',
+      'Retorno': 'Reparo concluído. Aguardando confirmação de recebimento do almoxarifado.',
     };
-    if (novoStatus !== 'Retorno') toast.success(mensagens[novoStatus] || 'Status atualizado');
+    toast.success(mensagens[novoStatus] || 'Status atualizado');
 
     setIsDetalhesOpen(false);
     setItemSelecionado(null);
@@ -317,7 +311,9 @@ export function ManutencaoTecnica() {
 
   const itensPendentes = itensFiltrados.filter(i => i.status === 'Envio' || i.status === 'Peritagem');
   const itensEmAndamento = itensFiltrados.filter(i => i.status === 'Aprovação' || i.status === 'Execução');
-  const itensConcluidos = itensFiltrados.filter(i => i.status === 'Retorno');
+  // "Concluído" só conta quando o almoxarifado já confirmou o recebimento —
+  // itens aguardando confirmação continuam na coluna, mas não contam aqui.
+  const itensConcluidos = itensFiltrados.filter(i => i.status === 'Retorno' && !i.aguardandoRecebimento);
   const itensAtrasadosCount = itensFiltrados.filter(isAtrasado).length;
 
   const kpiCards = [
@@ -404,6 +400,12 @@ export function ManutencaoTecnica() {
         {temInercia && (
           <div className="mt-2 text-xs rounded-lg px-2 py-1" style={{ color: 'var(--text-red)', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
             <span aria-hidden="true">⚠️</span> +48h sem atualização
+          </div>
+        )}
+
+        {item.aguardandoRecebimento && (
+          <div className="mt-2 text-xs rounded-lg px-2 py-1" style={{ color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)' }}>
+            <span aria-hidden="true">📦</span> Aguardando confirmação do almoxarifado
           </div>
         )}
       </button>
@@ -594,13 +596,23 @@ export function ManutencaoTecnica() {
                   </div>
                 </div>
                 {itemSelecionado.dataRetorno && (
-                  <div className="flex items-center gap-2 p-3 rounded-lg border" style={{ background: 'rgba(34,197,94,0.05)', borderColor: 'rgba(34,197,94,0.25)' }}>
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <div>
-                      <p className="text-xs" style={{ color: 'var(--text-green)' }}>Retornado em</p>
-                      <p className="font-medium text-sm" style={{ color: 'var(--text-green)' }}>{formatarData(itemSelecionado.dataRetorno)}</p>
+                  itemSelecionado.aguardandoRecebimento ? (
+                    <div className="flex items-center gap-2 p-3 rounded-lg border" style={{ background: 'rgba(26,86,219,0.05)', borderColor: 'rgba(26,86,219,0.25)' }}>
+                      <CheckCircle className="w-4 h-4" style={{ color: 'var(--text-blue)' }} />
+                      <div>
+                        <p className="text-xs" style={{ color: 'var(--text-blue)' }}>Reparo concluído em</p>
+                        <p className="font-medium text-sm" style={{ color: 'var(--text-blue)' }}>{formatarData(itemSelecionado.dataRetorno)}</p>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex items-center gap-2 p-3 rounded-lg border" style={{ background: 'rgba(34,197,94,0.05)', borderColor: 'rgba(34,197,94,0.25)' }}>
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <div>
+                        <p className="text-xs" style={{ color: 'var(--text-green)' }}>Retornado em</p>
+                        <p className="font-medium text-sm" style={{ color: 'var(--text-green)' }}>{formatarData(itemSelecionado.dataRetorno)}</p>
+                      </div>
+                    </div>
+                  )
                 )}
               </div>
 
@@ -643,9 +655,14 @@ export function ManutencaoTecnica() {
                       <SelectItem value="Peritagem">🔍 Peritagem</SelectItem>
                       <SelectItem value="Aprovação">✅ Aprovação</SelectItem>
                       <SelectItem value="Execução">🔧 Execução</SelectItem>
-                      <SelectItem value="Retorno">🏁 Dar Baixa (Concluir OS)</SelectItem>
+                      <SelectItem value="Retorno">🏁 Reparo concluído — enviar de volta ao almoxarifado</SelectItem>
                     </SelectContent>
                   </Select>
+                ) : itemSelecionado.aguardandoRecebimento ? (
+                  <div className="flex items-center gap-2 rounded-lg px-4 py-3" style={{ background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.25)', color: 'var(--text-blue)' }}>
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="font-semibold">Reparo concluído — aguardando confirmação do almoxarifado</span>
+                  </div>
                 ) : (
                   <div className="flex items-center gap-2 rounded-lg px-4 py-3" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)', color: 'var(--text-green)' }}>
                     <CheckCircle className="w-5 h-5" />

@@ -157,6 +157,9 @@ export function Manutencao() {
   const [isConfirmacaoEnvioOpen, setIsConfirmacaoEnvioOpen] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const envioEmAndamentoRef = useRef(false);
+  const [itemParaConfirmarRecebimento, setItemParaConfirmarRecebimento] = useState<ItemManutencao | null>(null);
+  const [confirmandoRecebimento, setConfirmandoRecebimento] = useState(false);
+  const confirmandoRecebimentoRef = useRef(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sugestoes, setSugestoes] = useState<{ produtoId: string; produtoNome: string; codigoProduto?: string; categoria: string; numeroSerie?: string; label: string }[]>([]);
@@ -360,6 +363,36 @@ export function Manutencao() {
     } finally {
       envioEmAndamentoRef.current = false;
       setEnviando(false);
+    }
+  };
+
+  // Confirma que o item chegou fisicamente ao almoxarifado: só agora o estoque
+  // é somado — uma única vez, protegido por ref + checagem do estado mais atual
+  // (não do item capturado ao abrir o diálogo) contra duplo clique.
+  const confirmarRecebimento = () => {
+    if (confirmandoRecebimentoRef.current || !itemParaConfirmarRecebimento) return;
+    confirmandoRecebimentoRef.current = true;
+    setConfirmandoRecebimento(true);
+    try {
+      const itemAtual = itensData.find(i => i.id === itemParaConfirmarRecebimento.id);
+      if (!itemAtual || !itemAtual.aguardandoRecebimento) {
+        setItemParaConfirmarRecebimento(null);
+        return;
+      }
+      const now = new Date().toISOString();
+      setItensData(itensData.map(i =>
+        i.id === itemAtual.id
+          ? { ...i, aguardandoRecebimento: false, recebimentoConfirmadoEm: now, recebimentoConfirmadoPor: 'Almoxarifado' }
+          : i
+      ));
+      setProdutos(produtos.map(p =>
+        p.id === itemAtual.produtoId ? { ...p, quantidade: p.quantidade + (itemAtual.quantidadeEnviada || 0) } : p
+      ));
+      toast.success(`${itemAtual.quantidadeEnviada || 0} unidade(s) de ${itemAtual.produtoNome} voltaram ao estoque.`);
+      setItemParaConfirmarRecebimento(null);
+    } finally {
+      confirmandoRecebimentoRef.current = false;
+      setConfirmandoRecebimento(false);
     }
   };
 
@@ -631,6 +664,48 @@ export function Manutencao() {
         </AlertDialog>
       </div>
 
+      {/* Confirmação de recebimento — só aqui o estoque é somado de volta */}
+      <AlertDialog open={!!itemParaConfirmarRecebimento} onOpenChange={(open) => { if (!open) setItemParaConfirmarRecebimento(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar recebimento do item</AlertDialogTitle>
+            <AlertDialogDescription>Confirme somente se o item está fisicamente no almoxarifado.</AlertDialogDescription>
+          </AlertDialogHeader>
+          {itemParaConfirmarRecebimento && (
+            <div className="space-y-2 py-2 text-sm">
+              {itemParaConfirmarRecebimento.numeroOS && (
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-muted-foreground">Nº da OS</span>
+                  <span className="font-semibold text-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{itemParaConfirmarRecebimento.numeroOS}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">Produto</span>
+                <span className="font-semibold text-foreground text-right">{itemParaConfirmarRecebimento.produtoNome}</span>
+              </div>
+              {itemParaConfirmarRecebimento.numeroSerie && (
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-muted-foreground">Número de série</span>
+                  <span className="font-semibold text-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#{itemParaConfirmarRecebimento.numeroSerie}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">Quantidade</span>
+                <span className="font-semibold text-foreground">{itemParaConfirmarRecebimento.quantidadeEnviada ?? '—'}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3 p-2.5 rounded-lg" style={{ background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)' }}>
+                <span className="text-muted-foreground">Empresa de reparo</span>
+                <span className="font-bold" style={{ color: 'var(--text-blue)' }}>{itemParaConfirmarRecebimento.empresaReparo || 'Empresa não informada'}</span>
+              </div>
+            </div>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmarRecebimento} disabled={confirmandoRecebimento}>Confirmar recebimento</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Process flow */}
       <div className="mb-6 bg-card border border-border rounded-xl p-4 shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Fluxo do Processo</p>
@@ -747,7 +822,9 @@ export function Manutencao() {
                   <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusColor(item.status)}`}>
                     {item.status}
                   </span>
-                  <span className="text-xs text-muted-foreground">{item.status !== 'Retorno' ? `${dias}d` : '✓'}</span>
+                  <span className="text-xs font-medium" style={{ color: item.aguardandoRecebimento ? 'var(--text-blue)' : 'var(--muted-foreground)' }}>
+                    {item.status !== 'Retorno' ? `${dias}d` : item.aguardandoRecebimento ? 'Aguardando' : '✓'}
+                  </span>
                   {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" aria-hidden="true" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" aria-hidden="true" />}
                 </div>
               </button>
@@ -871,6 +948,18 @@ export function Manutencao() {
                     <div className="p-3 rounded-lg flex items-center gap-2" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)' }}>
                       <AlertCircle className="w-4 h-4 text-red-500 shrink-0" aria-hidden="true" />
                       <p className="text-sm font-medium" style={{ color: 'var(--text-red)' }}>Sem atualização há mais de 48 horas — requer atenção imediata.</p>
+                    </div>
+                  )}
+
+                  {item.status === 'Retorno' && item.aguardandoRecebimento && (
+                    <div className="p-3 rounded-lg flex items-center justify-between gap-3 flex-wrap" style={{ background: 'rgba(26,86,219,0.06)', border: '1px solid rgba(26,86,219,0.2)' }}>
+                      <div className="flex items-center gap-2">
+                        <Truck className="w-4 h-4 shrink-0" style={{ color: 'var(--text-blue)' }} aria-hidden="true" />
+                        <p className="text-sm font-medium" style={{ color: 'var(--text-blue)' }}>Aguardando confirmação do almoxarifado</p>
+                      </div>
+                      <Button onClick={() => setItemParaConfirmarRecebimento(item)} style={{ background: '#1A56DB', color: 'white' }} className="hover:opacity-90">
+                        Confirmar recebimento
+                      </Button>
                     </div>
                   )}
                 </div>
