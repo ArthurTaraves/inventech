@@ -129,6 +129,17 @@ function MaintenanceTimeline({ item }: { item: ItemManutencao }) {
   );
 }
 
+// Uma linha da ordem sendo montada no formulário — vira um ItemManutencao
+// próprio ao confirmar o envio, todos compartilhando o mesmo numeroOS.
+interface LinhaOrdemManutencao {
+  chave: string;
+  produtoId: string;
+  produtoNome: string;
+  codigoProduto?: string;
+  numeroSerie?: string;
+  quantidade: number;
+}
+
 // Gera o próximo número de OS sequencial do ano corrente (ex: OS-2026-0001),
 // reiniciando a numeração a cada ano. Independente do número de série do
 // equipamento, já que o mesmo equipamento pode gerar várias OS ao longo do tempo.
@@ -152,6 +163,7 @@ export function Manutencao() {
   const [empresaReparo, setEmpresaReparo] = useState('');
   const [observacao, setObservacao] = useState('');
   const [numeroSerieSelecionado, setNumeroSerieSelecionado] = useState<string>('');
+  const [itensDaOrdem, setItensDaOrdem] = useState<LinhaOrdemManutencao[]>([]);
   const [filtro, setFiltro] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isConfirmacaoEnvioOpen, setIsConfirmacaoEnvioOpen] = useState(false);
@@ -242,6 +254,8 @@ export function Manutencao() {
   const selecionarProdutoSugestao = (item: typeof sugestoes[0]) => {
     setProdutoId(item.produtoId);
     setNumeroSerieSelecionado(item.numeroSerie || '');
+    // Unidade com número de série é sempre uma unidade física — quantidade 1.
+    if (item.numeroSerie) setQuantidade('1');
     setSearchQuery(item.label);
     setProdutoSelecionadoInfo({ produtoNome: item.produtoNome, codigoProduto: item.codigoProduto, categoria: item.categoria, numeroSerie: item.numeroSerie });
     setShowSugestoes(false);
@@ -253,6 +267,46 @@ export function Manutencao() {
     setSearchQuery('');
     setProdutoSelecionadoInfo(null);
     setSugestoes([]);
+  };
+
+  // Adiciona a linha sendo montada à lista da ordem. Nada é gravado no estoque
+  // ainda — isso só acontece ao confirmar o envio da ordem inteira.
+  const adicionarItemNaOrdem = () => {
+    if (!produtoId) { toast.error('Selecione um produto.'); return; }
+    const produto = produtos.find(p => p.id === produtoId);
+    if (!produto) return;
+    if (!quantidade || parseInt(quantidade) <= 0) { toast.error('Informe uma quantidade válida.'); return; }
+    const qtd = parseInt(quantidade);
+    if (numeroSerieSelecionado && qtd !== 1) {
+      toast.error('Itens com número de série só podem ser adicionados com quantidade 1.');
+      return;
+    }
+    if (numeroSerieSelecionado && itensDaOrdem.some(l => l.numeroSerie === numeroSerieSelecionado)) {
+      toast.error('Esta unidade já foi adicionada a esta ordem.');
+      return;
+    }
+    const jaReservado = itensDaOrdem
+      .filter(l => l.produtoId === produtoId)
+      .reduce((acc, l) => acc + l.quantidade, 0);
+    if (jaReservado + qtd > produto.quantidade) {
+      toast.error(`Estoque insuficiente para ${produto.nome}: disponível ${produto.quantidade}, já reservado ${jaReservado} nesta ordem.`);
+      return;
+    }
+    const novaLinha: LinhaOrdemManutencao = {
+      chave: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      produtoId,
+      produtoNome: produto.nome,
+      codigoProduto: produto.codigoProduto,
+      numeroSerie: numeroSerieSelecionado || undefined,
+      quantidade: qtd,
+    };
+    setItensDaOrdem([...itensDaOrdem, novaLinha]);
+    limparSelecaoProduto();
+    setQuantidade('');
+  };
+
+  const removerItemDaOrdem = (chave: string) => {
+    setItensDaOrdem(itensDaOrdem.filter(l => l.chave !== chave));
   };
 
   const getStatusColor = (status: StatusManutencao) => {
@@ -303,63 +357,87 @@ export function Manutencao() {
     return `${dias}d ${horas}h`;
   };
 
+  // Soma a quantidade reservada por produto em toda a ordem sendo montada.
+  const calcularTotalPorProduto = (linhas: LinhaOrdemManutencao[]) => {
+    const totais = new Map<string, number>();
+    linhas.forEach(l => totais.set(l.produtoId, (totais.get(l.produtoId) || 0) + l.quantidade));
+    return totais;
+  };
+
+  // Confere se a soma de cada produto na ordem ainda cabe no estoque atual.
+  // Retorna null se está tudo certo, ou a mensagem de erro do primeiro problema.
+  const validarEstoqueDaOrdem = (totais: Map<string, number>): string | null => {
+    for (const [produtoId, qtd] of totais) {
+      const p = produtos.find(p => p.id === produtoId);
+      if (!p || p.quantidade < qtd) {
+        return `Estoque insuficiente para ${p?.nome || 'produto'}: disponível ${p?.quantidade ?? 0}, solicitado ${qtd}.`;
+      }
+    }
+    return null;
+  };
+
   // Só valida e abre a confirmação — nada é gravado até o usuário confirmar.
   const handleEnviarManutencao = () => {
-    if (!produtoId) { toast.error('Selecione o produto a ser enviado para manutenção.'); return; }
-    if (!quantidade) { toast.error('Informe a quantidade a ser enviada.'); return; }
+    if (itensDaOrdem.length === 0) { toast.error('Adicione pelo menos um item à ordem.'); return; }
     if (!responsavel) { toast.error('Informe o nome do responsável pelo envio.'); return; }
     if (!empresaReparo) { toast.error('Selecione a empresa de reparo.'); return; }
-    const produto = produtos.find(p => p.id === produtoId);
-    if (!produto) return;
-    const qtd = parseInt(quantidade);
-    if (produto.quantidade < qtd) {
-      toast.error(`Estoque insuficiente! Disponível: ${produto.quantidade} unidades`);
-      return;
-    }
+    const erroEstoque = validarEstoqueDaOrdem(calcularTotalPorProduto(itensDaOrdem));
+    if (erroEstoque) { toast.error(erroEstoque); return; }
     setIsDialogOpen(false);
     setIsConfirmacaoEnvioOpen(true);
   };
 
-  // Executa o envio de fato (baixa no estoque + criação da ordem). Protegido por
-  // ref (guarda síncrona) + estado (desabilita o botão) contra duplo clique.
+  // Executa o envio de fato: UM número de OS, UMA atualização de estoque
+  // (soma por produto, nunca sobrescrevendo uma linha com outra) e um
+  // ItemManutencao por linha, todos com o mesmo numeroOS e ids únicos.
+  // Protegido por ref (guarda síncrona) + estado (desabilita o botão) contra
+  // duplo clique.
   const confirmarEnvioManutencao = () => {
     if (envioEmAndamentoRef.current) return;
     envioEmAndamentoRef.current = true;
     setEnviando(true);
     try {
-      const produto = produtos.find(p => p.id === produtoId);
-      if (!produto) { setIsConfirmacaoEnvioOpen(false); return; }
-      const qtd = parseInt(quantidade);
-      if (!qtd || produto.quantidade < qtd) {
-        toast.error(`Estoque insuficiente! Disponível: ${produto.quantidade} unidades`);
+      if (itensDaOrdem.length === 0) { setIsConfirmacaoEnvioOpen(false); return; }
+      const totalPorProduto = calcularTotalPorProduto(itensDaOrdem);
+      // Revalida contra o estoque mais atual antes de gravar qualquer coisa.
+      const erroEstoque = validarEstoqueDaOrdem(totalPorProduto);
+      if (erroEstoque) {
+        toast.error(erroEstoque);
         setIsConfirmacaoEnvioOpen(false);
         return;
       }
-      setProdutos(produtos.map(p => p.id === produtoId ? { ...p, quantidade: p.quantidade - qtd } : p));
+      const numeroOS = gerarNumeroOS(itensData);
       const now = new Date().toISOString();
-      const novoItem: ItemManutencao = {
-        id: String(Date.now()),
-        produtoId,
-        produtoNome: produto.nome,
-        numeroSerie: numeroSerieSelecionado || undefined,
-        numeroOS: gerarNumeroOS(itensData),
-        status: 'Envio',
-        dataEnvio: new Date().toISOString().split('T')[0],
-        responsavel,
-        empresaReparo,
-        quantidadeEnviada: qtd,
-        observacao: observacao || undefined,
-        // Criticidade vem do catálogo (Área Administrativa) — nunca escolhida aqui.
-        criticidadeABC: criticidadeParaABC(produto.criticidade),
-        ultimaAtualizacao: now,
-        timestampEnvio: now,
-      };
-      setItensData([novoItem, ...itensData]);
-      setProdutoId(''); setQuantidade(''); setResponsavel(''); setEmpresaReparo(''); setObservacao('');
-      setNumeroSerieSelecionado('');
+      const dataEnvio = new Date().toISOString().split('T')[0];
+      const novosItens: ItemManutencao[] = itensDaOrdem.map((linha, idx) => {
+        const produtoDaLinha = produtos.find(p => p.id === linha.produtoId)!;
+        return {
+          id: `${Date.now()}-${idx}`,
+          produtoId: linha.produtoId,
+          produtoNome: linha.produtoNome,
+          numeroSerie: linha.numeroSerie,
+          numeroOS,
+          status: 'Envio',
+          dataEnvio,
+          responsavel,
+          empresaReparo,
+          quantidadeEnviada: linha.quantidade,
+          observacao: observacao || undefined,
+          // Criticidade vem do catálogo (Área Administrativa) — nunca escolhida aqui.
+          criticidadeABC: criticidadeParaABC(produtoDaLinha.criticidade),
+          ultimaAtualizacao: now,
+          timestampEnvio: now,
+        };
+      });
+      setProdutos(produtos.map(p =>
+        totalPorProduto.has(p.id) ? { ...p, quantidade: p.quantidade - totalPorProduto.get(p.id)! } : p
+      ));
+      setItensData([...novosItens, ...itensData]);
+      setItensDaOrdem([]);
+      setQuantidade(''); setResponsavel(''); setEmpresaReparo(''); setObservacao('');
       limparSelecaoProduto();
       setIsConfirmacaoEnvioOpen(false);
-      toast.success(`${qtd} unidade(s) de ${produto.nome} enviada(s) para manutenção.`);
+      toast.success(`${novosItens.length} ${novosItens.length === 1 ? 'item enviado' : 'itens enviados'} para manutenção na OS ${numeroOS}.`);
     } finally {
       envioEmAndamentoRef.current = false;
       setEnviando(false);
@@ -529,10 +607,17 @@ export function Manutencao() {
                     {serializados.length > 0 && !produtoSelecionadoInfo?.numeroSerie && (
                       <div className="pt-2 mt-2 border-t border-blue-200">
                         <Label htmlFor="man-unidade" className="text-xs text-muted-foreground mb-1.5 block">Unidade Serializada (opcional)</Label>
-                        <Select value={numeroSerieSelecionado} onValueChange={setNumeroSerieSelecionado}>
+                        <Select
+                          value={numeroSerieSelecionado || '__nenhuma__'}
+                          onValueChange={(v) => {
+                            const valor = v === '__nenhuma__' ? '' : v;
+                            setNumeroSerieSelecionado(valor);
+                            if (valor) setQuantidade('1');
+                          }}
+                        >
                           <SelectTrigger id="man-unidade" className="bg-card text-sm"><SelectValue placeholder="Selecione (opcional)" /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">Não especificar</SelectItem>
+                            <SelectItem value="__nenhuma__">Não especificar</SelectItem>
                             {serializados.map(ps => (
                               <SelectItem key={ps.id} value={ps.numeroSerie}>
                                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: 'var(--text-violet)' }}>#{ps.numeroSerie}</span>
@@ -553,27 +638,27 @@ export function Manutencao() {
                 );
               })()}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+              <div className="flex items-end gap-3">
+                <div className="space-y-2 flex-1">
                   <Label htmlFor="man-quantidade">Quantidade *</Label>
-                  <Input id="man-quantidade" type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} placeholder="Qtd" min="1" className="rounded-xl" />
+                  <Input
+                    id="man-quantidade"
+                    type="number"
+                    value={quantidade}
+                    onChange={e => setQuantidade(e.target.value)}
+                    placeholder="Qtd"
+                    min="1"
+                    className="rounded-xl"
+                    disabled={!!numeroSerieSelecionado}
+                    aria-describedby={numeroSerieSelecionado ? 'man-quantidade-hint' : undefined}
+                  />
+                  {numeroSerieSelecionado && (
+                    <p id="man-quantidade-hint" className="text-xs text-muted-foreground">Unidade com número de série: quantidade fixa em 1.</p>
+                  )}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="man-responsavel">Responsável *</Label>
-                  <Input id="man-responsavel" value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="man-empresa-reparo">Empresa de reparo *</Label>
-                <Select value={empresaReparo} onValueChange={setEmpresaReparo}>
-                  <SelectTrigger id="man-empresa-reparo"><SelectValue placeholder="Selecione a empresa responsável" /></SelectTrigger>
-                  <SelectContent>
-                    {empresasReparo.map(empresa => (
-                      <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Button type="button" variant="outline" onClick={adicionarItemNaOrdem} disabled={!produtoId} className="rounded-xl">
+                  <Plus className="w-4 h-4 mr-2" />Adicionar à ordem
+                </Button>
               </div>
 
               {produtoId && (() => {
@@ -593,6 +678,68 @@ export function Manutencao() {
                 );
               })()}
 
+              {itensDaOrdem.length > 0 && (
+                <div className="space-y-2" role="region" aria-label="Itens da ordem">
+                  <p className="text-sm font-semibold text-foreground">Itens da ordem ({itensDaOrdem.length})</p>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {itensDaOrdem.map(linha => {
+                      const produtoLinha = produtos.find(p => p.id === linha.produtoId);
+                      const critLinha = produtoLinha ? criticidadeParaABC(produtoLinha.criticidade) : null;
+                      return (
+                        <div key={linha.chave} className="flex items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-muted/30">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                              {linha.codigoProduto && (
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-blue)', background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)', borderRadius: 4, padding: '1px 5px' }}>
+                                  {linha.codigoProduto}
+                                </span>
+                              )}
+                              {linha.numeroSerie && (
+                                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: 'var(--text-violet)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 4, padding: '1px 5px' }}>
+                                  #{linha.numeroSerie}
+                                </span>
+                              )}
+                              {critLinha && (
+                                <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={getCriticidadeStyle(critLinha)}>{critLinha} · {getCriticidadeLabel(critLinha)}</span>
+                              )}
+                            </div>
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {linha.produtoNome} <span className="text-muted-foreground font-normal">× {linha.quantidade}</span>
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removerItemDaOrdem(linha.chave)}
+                            aria-label={`Remover ${linha.produtoNome}${linha.numeroSerie ? ` #${linha.numeroSerie}` : ''} da ordem`}
+                            className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors shrink-0"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="man-responsavel">Responsável *</Label>
+                  <Input id="man-responsavel" value={responsavel} onChange={e => setResponsavel(e.target.value)} placeholder="Nome completo" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="man-empresa-reparo">Empresa de reparo *</Label>
+                  <Select value={empresaReparo} onValueChange={setEmpresaReparo}>
+                    <SelectTrigger id="man-empresa-reparo"><SelectValue placeholder="Selecione a empresa responsável" /></SelectTrigger>
+                    <SelectContent>
+                      {empresasReparo.map(empresa => (
+                        <SelectItem key={empresa} value={empresa}>{empresa}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="man-observacao">Observação (opcional)</Label>
                 <Textarea id="man-observacao" value={observacao} onChange={e => setObservacao(e.target.value)} placeholder="Descreva o problema..." rows={3} className="rounded-xl" />
@@ -601,13 +748,18 @@ export function Manutencao() {
               <div className="p-3 rounded-xl flex items-start gap-2" style={{ background: 'rgba(26,86,219,0.06)', border: '1px solid rgba(26,86,219,0.15)' }}>
                 <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: 'var(--text-blue)' }} aria-hidden="true" />
                 <p className="text-xs" style={{ color: 'var(--text-blue)' }}>
-                  Ao enviar, o item sai do estoque. As unidades voltam ao estoque quando o almoxarifado confirma o recebimento.
+                  Ao enviar, os itens saem do estoque. As unidades voltam ao estoque quando o almoxarifado confirma o recebimento.
                 </p>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
-              <Button onClick={handleEnviarManutencao} style={{ background: '#1A56DB', color: 'white' }} className="hover:opacity-90">
+              <Button
+                onClick={handleEnviarManutencao}
+                disabled={itensDaOrdem.length === 0 || !responsavel || !empresaReparo}
+                style={{ background: '#1A56DB', color: 'white' }}
+                className="hover:opacity-90"
+              >
                 <Wrench className="w-4 h-4 mr-2" />Enviar
               </Button>
             </DialogFooter>
@@ -621,41 +773,21 @@ export function Manutencao() {
               <AlertDialogTitle>Confirmar envio para manutenção</AlertDialogTitle>
               <AlertDialogDescription>Confira a empresa de reparo e o item antes de confirmar.</AlertDialogDescription>
             </AlertDialogHeader>
-            {(() => {
-              const produto = produtos.find(p => p.id === produtoId);
-              if (!produto) return null;
-              const critABC = criticidadeParaABC(produto.criticidade);
-              return (
-                <div className="space-y-2 py-2 text-sm">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-muted-foreground">Produto</span>
-                    <span className="font-semibold text-foreground text-right">{produto.nome}</span>
-                  </div>
-                  {numeroSerieSelecionado && (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-muted-foreground">Número de série</span>
-                      <span className="font-semibold text-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#{numeroSerieSelecionado}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-muted-foreground">Quantidade</span>
-                    <span className="font-semibold text-foreground">{quantidade}</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-3 p-2.5 rounded-lg" style={{ background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)' }}>
-                    <span className="text-muted-foreground">Empresa de reparo</span>
-                    <span className="font-bold" style={{ color: 'var(--text-blue)' }}>{empresaReparo}</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-muted-foreground">Criticidade</span>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={getCriticidadeStyle(critABC)}>{critABC} · {getCriticidadeLabel(critABC)}</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-muted-foreground">Responsável</span>
-                    <span className="font-semibold text-foreground">{responsavel}</span>
-                  </div>
-                </div>
-              );
-            })()}
+            {/* Resumo mínimo nesta etapa — a Etapa 2 lista cada linha da ordem aqui. */}
+            <div className="space-y-2 py-2 text-sm">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">Itens</span>
+                <span className="font-semibold text-foreground">{itensDaOrdem.length}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3 p-2.5 rounded-lg" style={{ background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)' }}>
+                <span className="text-muted-foreground">Empresa de reparo</span>
+                <span className="font-bold" style={{ color: 'var(--text-blue)' }}>{empresaReparo}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">Responsável</span>
+                <span className="font-semibold text-foreground">{responsavel}</span>
+              </div>
+            </div>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => setIsDialogOpen(true)}>Voltar e corrigir</AlertDialogCancel>
               <AlertDialogAction onClick={confirmarEnvioManutencao} disabled={enviando}>Confirmar envio</AlertDialogAction>
