@@ -23,6 +23,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../components/ui/alert-dialog';
 import { toast } from 'sonner';
 
 const STEPS: { key: StatusManutencao; label: string; emoji: string; desc: string }[] = [
@@ -144,6 +154,9 @@ export function Manutencao() {
   const [numeroSerieSelecionado, setNumeroSerieSelecionado] = useState<string>('');
   const [filtro, setFiltro] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [isConfirmacaoEnvioOpen, setIsConfirmacaoEnvioOpen] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const envioEmAndamentoRef = useRef(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sugestoes, setSugestoes] = useState<{ produtoId: string; produtoNome: string; codigoProduto?: string; categoria: string; numeroSerie?: string; label: string }[]>([]);
@@ -287,6 +300,7 @@ export function Manutencao() {
     return `${dias}d ${horas}h`;
   };
 
+  // Só valida e abre a confirmação — nada é gravado até o usuário confirmar.
   const handleEnviarManutencao = () => {
     if (!produtoId) { toast.error('Selecione o produto a ser enviado para manutenção.'); return; }
     if (!quantidade) { toast.error('Informe a quantidade a ser enviada.'); return; }
@@ -299,31 +313,54 @@ export function Manutencao() {
       toast.error(`Estoque insuficiente! Disponível: ${produto.quantidade} unidades`);
       return;
     }
-    setProdutos(produtos.map(p => p.id === produtoId ? { ...p, quantidade: p.quantidade - qtd } : p));
-    const now = new Date().toISOString();
-    const novoItem: ItemManutencao = {
-      id: String(Date.now()),
-      produtoId,
-      produtoNome: produto.nome,
-      numeroSerie: numeroSerieSelecionado || undefined,
-      numeroOS: gerarNumeroOS(itensData),
-      status: 'Envio',
-      dataEnvio: new Date().toISOString().split('T')[0],
-      responsavel,
-      empresaReparo,
-      quantidadeEnviada: qtd,
-      observacao: observacao || undefined,
-      // Criticidade vem do catálogo (Área Administrativa) — nunca escolhida aqui.
-      criticidadeABC: criticidadeParaABC(produto.criticidade),
-      ultimaAtualizacao: now,
-      timestampEnvio: now,
-    };
-    setItensData([novoItem, ...itensData]);
-    setProdutoId(''); setQuantidade(''); setResponsavel(''); setEmpresaReparo(''); setObservacao('');
-    setNumeroSerieSelecionado('');
-    limparSelecaoProduto();
     setIsDialogOpen(false);
-    toast.success(`${qtd} unidade(s) de ${produto.nome} enviada(s) para manutenção.`);
+    setIsConfirmacaoEnvioOpen(true);
+  };
+
+  // Executa o envio de fato (baixa no estoque + criação da ordem). Protegido por
+  // ref (guarda síncrona) + estado (desabilita o botão) contra duplo clique.
+  const confirmarEnvioManutencao = () => {
+    if (envioEmAndamentoRef.current) return;
+    envioEmAndamentoRef.current = true;
+    setEnviando(true);
+    try {
+      const produto = produtos.find(p => p.id === produtoId);
+      if (!produto) { setIsConfirmacaoEnvioOpen(false); return; }
+      const qtd = parseInt(quantidade);
+      if (!qtd || produto.quantidade < qtd) {
+        toast.error(`Estoque insuficiente! Disponível: ${produto.quantidade} unidades`);
+        setIsConfirmacaoEnvioOpen(false);
+        return;
+      }
+      setProdutos(produtos.map(p => p.id === produtoId ? { ...p, quantidade: p.quantidade - qtd } : p));
+      const now = new Date().toISOString();
+      const novoItem: ItemManutencao = {
+        id: String(Date.now()),
+        produtoId,
+        produtoNome: produto.nome,
+        numeroSerie: numeroSerieSelecionado || undefined,
+        numeroOS: gerarNumeroOS(itensData),
+        status: 'Envio',
+        dataEnvio: new Date().toISOString().split('T')[0],
+        responsavel,
+        empresaReparo,
+        quantidadeEnviada: qtd,
+        observacao: observacao || undefined,
+        // Criticidade vem do catálogo (Área Administrativa) — nunca escolhida aqui.
+        criticidadeABC: criticidadeParaABC(produto.criticidade),
+        ultimaAtualizacao: now,
+        timestampEnvio: now,
+      };
+      setItensData([novoItem, ...itensData]);
+      setProdutoId(''); setQuantidade(''); setResponsavel(''); setEmpresaReparo(''); setObservacao('');
+      setNumeroSerieSelecionado('');
+      limparSelecaoProduto();
+      setIsConfirmacaoEnvioOpen(false);
+      toast.success(`${qtd} unidade(s) de ${produto.nome} enviada(s) para manutenção.`);
+    } finally {
+      envioEmAndamentoRef.current = false;
+      setEnviando(false);
+    }
   };
 
   const formatarData = (data: string) => new Intl.DateTimeFormat('pt-BR').format(new Date(data));
@@ -543,6 +580,55 @@ export function Manutencao() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Confirmação antes de enviar — nada é gravado até o usuário confirmar aqui */}
+        <AlertDialog open={isConfirmacaoEnvioOpen} onOpenChange={setIsConfirmacaoEnvioOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar envio para manutenção</AlertDialogTitle>
+              <AlertDialogDescription>Confira a empresa de reparo e o item antes de confirmar.</AlertDialogDescription>
+            </AlertDialogHeader>
+            {(() => {
+              const produto = produtos.find(p => p.id === produtoId);
+              if (!produto) return null;
+              const critABC = criticidadeParaABC(produto.criticidade);
+              return (
+                <div className="space-y-2 py-2 text-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-muted-foreground">Produto</span>
+                    <span className="font-semibold text-foreground text-right">{produto.nome}</span>
+                  </div>
+                  {numeroSerieSelecionado && (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-muted-foreground">Número de série</span>
+                      <span className="font-semibold text-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#{numeroSerieSelecionado}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-muted-foreground">Quantidade</span>
+                    <span className="font-semibold text-foreground">{quantidade}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 p-2.5 rounded-lg" style={{ background: 'rgba(26,86,219,0.08)', border: '1px solid rgba(26,86,219,0.2)' }}>
+                    <span className="text-muted-foreground">Empresa de reparo</span>
+                    <span className="font-bold" style={{ color: 'var(--text-blue)' }}>{empresaReparo}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-muted-foreground">Criticidade</span>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={getCriticidadeStyle(critABC)}>{critABC} · {getCriticidadeLabel(critABC)}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-muted-foreground">Responsável</span>
+                    <span className="font-semibold text-foreground">{responsavel}</span>
+                  </div>
+                </div>
+              );
+            })()}
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setIsDialogOpen(true)}>Voltar e corrigir</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmarEnvioManutencao} disabled={enviando}>Confirmar envio</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       {/* Process flow */}
