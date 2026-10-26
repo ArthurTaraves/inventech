@@ -501,7 +501,7 @@ export function Manutencao() {
 
   return (
     <div className="p-8">
-      <div className="mb-8 flex items-center flex-wrap gap-3 justify-between">
+      <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Manutenção · Almoxarifado</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Envio de itens para reparo externo e controle do almoxarifado · Ordenado por criticidade ABC</p>
@@ -515,8 +515,8 @@ export function Manutencao() {
 
         <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) limparSelecaoProduto(); }}>
           <DialogTrigger asChild>
-            <Button style={{ background: '#1A56DB', color: 'white' }} className="hover:opacity-90 whitespace-normal h-auto text-center py-2">
-              <Plus className="w-4 h-4 mr-2 shrink-0" />
+            <Button style={{ background: '#1A56DB', color: 'white' }} className="hover:opacity-90">
+              <Plus className="w-4 h-4 mr-2" />
               Enviar para Manutenção
             </Button>
           </DialogTrigger>
@@ -942,7 +942,7 @@ export function Manutencao() {
               {/* Header row */}
               <button
                 type="button"
-                className="w-full flex items-center flex-wrap gap-x-4 gap-y-2 px-5 py-4 cursor-pointer transition-colors hover:bg-muted/40 text-left"
+                className="w-full flex items-center gap-4 px-5 py-4 cursor-pointer transition-colors hover:bg-muted/40 text-left"
                 onClick={() => setExpandedId(isExpanded ? null : item.id)}
                 aria-expanded={isExpanded}
               >
@@ -992,7 +992,7 @@ export function Manutencao() {
                   </p>
                 </div>
 
-                <div className="flex items-center flex-wrap gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap" style={critStyle}>
                     {critABC} · {getCriticidadeLabel(critABC)}
                   </span>
