@@ -58,7 +58,8 @@ export const produtosCatalogoInicial: ProdutoCatalogo[] = [
   { id: '21', codigoProduto: 'MAN-008', nome: 'Soquete', categoria: 'Ferramentas Manuais', unidadeMedida: 'UN', estoqueMinimo: 15, estoqueMaximo: 50, ativo: true, criticidade: 'Baixa' },
 ];
 
-// Quantidades em estoque de cada produto - TODOS os produtos devem ter pelo menos estoqueMinimo unidades
+// Quantidades em estoque de cada produto. A maioria fica acima do estoqueMinimo;
+// alguns ficam abaixo de propósito para demonstrar os alertas do Dashboard.
 const quantidadesEstoque: Record<string, number> = {
   'ELE-001': 5,  // Detector de Gás
   'ELE-002': 8,  // Esmerilhadeira 4"
@@ -73,14 +74,14 @@ const quantidadesEstoque: Record<string, number> = {
   'HID-002': 6,  // Macaco Hidráulico
   'HID-003': 2,  // Manifold - agora tem estoque mínimo
   'SEG-001': 12, // Máscara de Fuga
-  'MAN-001': 10, // Marreta
-  'MAN-002': 25, // Chave Combinada
+  'MAN-001': 0,  // Marreta - ruptura (demonstração)
+  'MAN-002': 11, // Chave Combinada - abaixo do mínimo (demonstração)
   'MAN-003': 5,  // Chave Grifo - agora tem estoque mínimo
-  'MAN-004': 15, // Chave Inglesa
+  'MAN-004': 7,  // Chave Inglesa - abaixo do mínimo (demonstração)
   'MAN-005': 5,  // Martelo Bola - agora tem estoque mínimo
   'MAN-006': 10, // Punção - agora tem estoque mínimo
   'MAN-007': 10, // Espina - agora tem estoque mínimo
-  'MAN-008': 30, // Soquete
+  'MAN-008': 18, // Soquete - atenção (demonstração)
 };
 
 // Localização física (corredor + prateleiras vizinhas) de cada produto — todas as
